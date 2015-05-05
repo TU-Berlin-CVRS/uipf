@@ -1,8 +1,7 @@
-#Summary Requirements Unified Image Processing Framework#
+# Summary Requirements Unified Image Processing Framework
 
-----------
 
-##General##
+## General
 
 * Plattformindependent with linux as primary target (C++,Qt, Boost, OpenCV)
 * GUI and cmd-line mode 
@@ -11,7 +10,7 @@
 * Focus on framework-design
 * CMake
 
-##Moduls##
+## Moduls
 
 * Capsulate functionality like Filters, wrappers for OpenCV etc.
 * Have their own GUI-window
@@ -19,7 +18,7 @@
 * Are part of processing chain and can be connected
 * Logging
 
-###Datasources###
+### Datasources
 
 * Can be all types of images, binary data, Metadata (xml)
 * Should be fuseable (enhance and complement each other e.g. with Metadata)
@@ -27,18 +26,18 @@
  * Blockbased processing
 * Writeable vs. Locked
 
-###Datasinks###
+### Datasinks
 
 * Store, visualize results
 * Output in arbitrary format
 
-##Persistence##
+## Persistence
 
 * Configfile with settings (xml)
 * Store graph and modul settings
 * Every modul has its own settings
 
-##Open##
+## Open
 
 Coding Style
 ...
