@@ -22,3 +22,11 @@ Input and output can have the following data types (specifics to be defined):
 - string
 - list/vector of one of the above types
 
+
+Loading of dynamic libraries
+----------------------------
+
+
+### Resources
+
+- "Dynamic Libraries in C++" <http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2002/n1418.html#manually%20load>
