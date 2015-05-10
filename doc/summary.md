@@ -11,7 +11,7 @@
 * Focus on framework-design
 * CMake
 
-##Moduls##
+## Moduls
 
 * Capsulate functionality like Filters, wrappers for OpenCV etc.
 * Have their own GUI-window
@@ -19,26 +19,26 @@
 * Are part of processing chain and can be connected
 * Logging
 
-###Datasources###
+### Datasources
 
 * Can be all types of images, binary data, Metadata (xml)
 * Should be fuseable (enhance and complement each other e.g. with Metadata)
 * Efficient handling of big datasources (in terms of memory consumption)
- * Blockbased processing
+  * Blockbased processing
 * Writeable vs. Locked
 
-###Datasinks###
+### Datasinks
 
 * Store, visualize results
 * Output in arbitrary format
 
-##Persistence##
+## Persistence
 
 * Configfile with settings (xml)
 * Store graph and modul settings
 * Every modul has its own settings
 
-##Open##
+## Open
 
 Coding Style
 ...
