@@ -7,7 +7,7 @@ We provide two different interfaces to the framework.
 1. GUI Interface which allows creating the chain
 2. Console interface to run configured chains
 
-The following is a schematic overview of th components:
+The following is a schematic overview of the components:
 
     +-----------------+     +---------------------+   
     |                 |     |                     |   
@@ -38,7 +38,7 @@ The following is a schematic overview of th components:
 GUI Interface
 -------------
 
-TDB
+TBD
 
 Console Interface
 -----------------
