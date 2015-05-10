@@ -1,0 +1,276 @@
+\documentclass{beamer}
+%~ \documentclass[hyperref={pdfpagelabels=false}]{beamer}
+
+\usepackage[ngerman,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{beamerthemeshadow}
+
+%\usepackage{la}
+\usepackage[T1]{fontenc}
+
+\definecolor{mygreen}{rgb}{0,0.5,0}
+\usecolortheme[named=mygreen]{structure}
+
+\usepackage{listings}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
+
+\title{A Unified Framework for Digital Image Processing in Computer Vision and Remote Sensing}
+\author{
+Carsten Brandt,
+Ludmilla Brandt,
+Akarsh Seggemu,\\
+Onur Ünal,
+Marcus Zepp
+}
+\date{\today}
+
+\newcommand{\beginbackup}{
+   \newcounter{framenumbervorappendix}
+   \setcounter{framenumbervorappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumbervorappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumbervorappendix}}
+}
+
+% table of contents should not show subsections
+\setcounter{tocdepth}{1}
+
+% allow using color
+\usepackage{color}
+\usepackage{xcolor}
+
+% the lstlistings package
+\usepackage{listings}
+% highlighting lines in listings
+\usepackage{linehighlight}
+
+% set colors for code background and highlighting
+\definecolor{codehighlight}{rgb}{0.95,0.8,0.8}
+\definecolor{codebackground}{rgb}{0.95,0.95,0.95}
+
+%~ % Dadurch wird verhindert, dass die Navigationsleiste angezeigt wird.
+%~ \setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+	  \begin{beamercolorbox}[wd=.75\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+			\usebeamerfont{author in head/foot}\insertshortauthor%~~(\insertshortinstitute)
+	  \end{beamercolorbox}%
+%	  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+%			\usebeamerfont{title in head/foot}\insertshorttitle
+%	  \end{beamercolorbox}%
+	  \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+			\usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+			\insertframenumber{} / \inserttotalframenumber % hier hat's sich geändert
+	  \end{beamercolorbox}
+	  }%
+  \vskip0pt%
+}
+
+% http://tex.stackexchange.com/questions/16357/how-can-i-position-an-image-in-an-arbitrary-position-in-beamer
+\usepackage{tikz}
+%\usetikzlibrary{calc, trees, positioning, arrows, shapes, shapes.multipart, shadows, matrix, decorations.pathreplacing, decorations.pathmorphing}
+\usetikzlibrary{arrows}%, shapes, shapes.multipart}
+
+% creating histograms
+% http://tex.stackexchange.com/questions/130531/automatic-binning-of-histogram-using-raw-gnuplot-in-pgfplot
+% \usepackage{pgfplots}
+% \usepackage{pgfplotstable}
+% \usetikzlibrary{external}
+% \tikzexternalize
+% \tikzset{external/force remake}
+% %\pgfplotsset{compat=1.8}
+
+
+\tikzset{
+  every boverlay node/.style={
+    draw=black,fill=white,rounded corners,anchor=north west,
+  },
+}
+\tikzset{
+  every overlay node/.style={
+    %draw=white,fill=white,rounded corners,anchor=north west,
+    anchor=north west
+  },
+}
+% Usage:
+% \tikzoverlay at (-1cm,-5cm) {content};
+% or
+% \tikzoverlay[text width=5cm] at (-1cm,-5cm) {content};
+\def\tikzboverlay{%
+   \tikz[baseline,overlay]\node[every boverlay node]
+}%
+\def\tikzoverlay{%
+   \tikz[baseline,overlay]\node[every overlay node]
+}%
+
+\usetheme{default}
+% default, bars, boxes, classic, lined, plain, shadow, sidebar, split, tree
+% Berlin, Darmstadt, Dresden, Frankfurt, Goettingen, Hannover, Ilmenau, Luebeck, . . . , Warsaw
+
+\usepackage{pdfpcnotes}
+
+% Notizen zu jeder Folie auf zweitem Bildschirm anzeigen
+%~ \setbeameroption{show notes on second screen = right}
+% Notizen beliebig innerhalb des Frames setzen:
+% 1 (...)
+% 2 \note{Hier eine Notiz}
+% 3 (...)
+% 4 \note[item]{und noch eine Notiz , diesmal geordnet}
+% 5 (...)
+
+
+
+\definecolor{codehighlight}{rgb}{0.95,0.8,0.8}
+\definecolor{codebackground}{rgb}{0.95,0.95,0.95}
+
+\definecolor{exercisecolor}{rgb}{0.63, 0.90, 1.00}
+
+\definecolor{lightgrey}{rgb}{0.9,0.9,0.9}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+%	backgroundcolor=\color{lightgrey},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+	breakatwhitespace=true,          % sets if automatic breaks should only happen at whitespace
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+%	deletekeywords={...},            % if you want to delete keywords from the given language
+%	escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+%	extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+	frame=single,                    % adds a frame around the code
+	keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+	language=PHP,                    % the language of the code
+	morekeywords={*,php,class,extends,public,protected,private,foreach,if,else,elseif,%
+		function,return,new,echo,endforeach
+	},            % if you want to add more keywords to the set
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=10pt,                   % how far the line-numbers are from the code
+%	rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+	showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+	showstringspaces=false,          % underline spaces within strings only
+	showtabs=false,                  % show tabs within strings adding particular underscores
+	stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+	tabsize=4,                       % sets default tabsize to 2 spaces
+%	title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\color{purple!40!black},
+	identifierstyle=\color{black},
+	stringstyle=\color{orange},
+	numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+}
+
+%  \beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
+%  sorgt dafuer das die Elemente die erst noch (zukuenftig) kommen
+%  nur schwach angedeutet erscheinen
+\beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
+% klappt auch bei Tabellen, wenn teTeX verwendet wird\ldots
+
+\begin{document}
+
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}
+	\tableofcontents  \pnote{}
+\end{frame}
+
+% Vor jedem Abschnitt automatisch Inhaltsverzeichnis anzeigen:
+\AtBeginSection []{
+\begin{frame}
+	\tableofcontents [currentsection]
+
+	\pnote{
+		notes go here...
+	}
+\end{frame}
+}
+
+%---------------------------------------------------------------------------------------------------------------------------------------------
+\section{Organisation}
+\subsection{Gitlab}
+\begin{frame}{Gitlab}
+
+	Gitlab
+
+\end{frame}
+
+\subsection{Gitlab Issues}
+\begin{frame}{Gitlab Issues}
+
+	Gitlab Issues
+
+\end{frame}
+
+\subsection{Gitlab Merge Requests}
+\begin{frame}{Gitlab Merge Requests}
+
+	Gitlab Merge Requests
+
+\end{frame}
+
+
+\section{System Overview}
+\begin{frame}{System Overview}
+
+System Overview
+
+\end{frame}
+
+\subsection{Framework}
+\begin{frame}{Framework}
+
+	Framework
+\end{frame}
+
+\subsection{GUI}
+\begin{frame}{GUI}
+
+	GUI
+\end{frame}
+
+\subsection{Storage}
+\begin{frame}{Storage}
+	storage
+\end{frame}
+
+\subsection{Modules}
+\begin{frame}{Modules}
+	modules and interface
+\end{frame}
+
+\section{Implementation}
+\begin{frame}{Implementation}
+
+	Language: C++
+	CMake
+
+\end{frame}
+
+\section{Time Schedule}
+\begin{frame}{Time Schedule}
+
+
+\end{frame}
+
+
+
+
+
+%\beginbackup
+%\section{Appendix}
+
+%\begin{frame}
+%	\frametitle{Pack-Man}
+%...
+%\end{frame}
+
+%\backupend
+
+\end{document}
