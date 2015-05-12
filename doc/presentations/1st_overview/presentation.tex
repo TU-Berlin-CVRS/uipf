@@ -197,22 +197,44 @@ Marcus Zepp
 \subsection{Gitlab}
 \begin{frame}{Gitlab}
 
-	Gitlab
+	\begin{itemize}
+		\item A private and free Github \pause
+		\item Share and version code \pause
+		\item Issue/Task tracking + Milestones \pause
+		\item Merge Requests/Pull Requests
+	\end{itemize}
 
 \end{frame}
 
 \subsection{Gitlab Issues}
 \begin{frame}{Gitlab Issues}
-
-	Gitlab Issues
-
+	\includegraphics[width=\textwidth]{images/gitlab_issues}
+\end{frame}
+\begin{frame}{Gitlab Issues}
+	\includegraphics[width=\textwidth]{images/gitlab_new_issue}
 \end{frame}
 
 \subsection{Gitlab Merge Requests}
 \begin{frame}{Gitlab Merge Requests}
 
-	Gitlab Merge Requests
+	\begin{itemize}
+		\item Work on branches \pause
+		\item never push to master directly \pause
+		\item code review \pause
+		\item better quality \pause
+		\item people know about changes
+	\end{itemize}
+\end{frame}
+\begin{frame}{Gitlab Merge Requests}
+	\includegraphics[width=\textwidth]{images/gitlab_pr}
+\end{frame}
 
+\begin{frame}{Gitlab Merge Requests}
+	\includegraphics[width=\textwidth]{images/gitlab_pr_comment}
+\end{frame}
+
+\begin{frame}{Gitlab Merge Requests}
+	\includegraphics[width=\textwidth]{images/gitlab_pr_merge}
 \end{frame}
 
 
@@ -221,29 +243,26 @@ Marcus Zepp
 \begin{frame}{Requirements}
 
 	\begin{itemize}
-		\item Plattform independent with linux as primary target
-		\item GUI and Command-line mode
-		\item Graph based workflow design
-		\item No realtime needed
-		\item plugin model
-		\item logging
-		\item arbitrary data sources and sinks
+		\item Plattform independent with linux as primary target \pause
+		\item GUI and Command-line mode \pause
+		\item Graph based workflow design \pause
+		\item No realtime needed \pause
+		\item Module/Plugin model \pause
+		\item Logging \pause
+		\item Arbitrary data sources and sinks
 	\end{itemize}
 
-	TODO
 \end{frame}
 
 \begin{frame}{System Overview}
 
-	TODO: hübsch machen
-
 	\begin{tikzpicture}
 		\tikzstyle{mybox}=[draw,minimum width=2cm,minimum height=1cm,rounded corners]
-		\node[mybox] (gui)  at (-4,0) {GUI Interface};
-		\node[mybox] (console) at (4,0) {Console Interface};
+		\node[mybox] (gui)  at (-2.5,0) {GUI Interface};
+		\node[mybox] (console) at (2.5,0) {Console Interface};
 		\node[mybox,minimum width=10cm] (framework) at (0,-2) {Processing Framework};
 
-		\node[mybox] (config) at (-4,-4) {Configuration Storage};
+		\node[mybox] (config) at (-3,-4) {Configuration Storage};
 		\node[mybox] (module1) at (1,-4) {Module $1$};
 		\node at (2.5,-4) {\dots};
 		\node[mybox] (modulen) at (4,-4) {Module $n$};
@@ -281,6 +300,7 @@ Marcus Zepp
  		\item link/unlink modules
   		\item run chain
 	 	\item sanity check of chain before run
+	 	\item display logging information
 	\end{itemize}
 
 \end{frame}
@@ -306,8 +326,8 @@ Marcus Zepp
 
 	Consists of
 	\begin{itemize}
+		\item a meta information file
 		\item a library file
-		\item a module configuration
 	\end{itemize}
 
 \end{frame}
