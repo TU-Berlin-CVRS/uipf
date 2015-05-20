@@ -2,13 +2,13 @@
 
 using namespace cv;
 
-class ModelConfig{
+class ModuleConfig{
 
 	public:
 		// constructor
-		ModelConfig(void){};
+		ModuleConfig(void){};
 		// destructor
-		~ModelConfig(void){};
+		~ModuleConfig(void){};
 
 	private:
 		//~ TODO input
