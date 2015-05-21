@@ -5,7 +5,7 @@
 /* 
 conf	Configuration file, which has to be executed
 */
-void ModuleManager::load(Configuration& conf){
+ModuleManager::ModuleManager(Configuration conf){
 	config = conf;
 }
 

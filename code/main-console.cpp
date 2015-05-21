@@ -19,11 +19,11 @@ int main(int argc, char** argv){
 	string configFileName = argv[1];
 	conf.load(configFileName);
 
+	// only for debug, print the loaded config
 	conf.store("test.yaml");
 	
 	// loads the Configuration and runs it
-	ModuleManager mm;
-	mm.load(conf);
+	ModuleManager mm(conf);
 	mm.run();	
 
 	return 0;

@@ -7,13 +7,11 @@ class ModuleManager{
 
 	public:
 		// constructor
-		ModuleManager(void){};
+		// loads the module chain with the params from the configuration object
+		ModuleManager(Configuration);
 		// destructor
 		~ModuleManager(void){};
 
-		// loads the module chain with the params from the configuration object
-		void load(Configuration&);
-		
 		// runs the module chain with the params
 		void run();
 
