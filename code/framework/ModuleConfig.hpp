@@ -1,37 +1,23 @@
 #ifndef MODULECONFIG_H
 #define MODULECONFIG_H
 
-#include <opencv2/opencv.hpp>
-#include "Elem.hpp"
+#include <map>
 
-using namespace cv;
+struct ModuleConfig{
 
-class ModuleConfig{
+		// name of this processing step in this configuration e.g. output
+		string name;
 
-	public:
-		// constructor
-		ModuleConfig(void){};
-		// destructor
-		~ModuleConfig(void){};
+		// name of the module that is used in this step e.g. storeImage
+		string module;
 
-	private:
-		// task of the module	e.g. storeImage					
-		string task;
-		
-		// name of the module in this configuration		e.g. output 
-		string name;			
-		
-		// input	e.g. <nameOfOtherModule.propertieOfOtherModule>
-		vector<Elem> inputVector;
-		
-		// output	e.g. <fileName>
-		vector<Elem> outputVector;		
-		
+		// a map of parameters configured for this module
+		map<string, string> params;
+
+		// input	e.g. <nameOfOtherModule.outputOfOtherModule>
+		map<string, string> inputs;
 
 };
 
 #endif
-
-
-
 
