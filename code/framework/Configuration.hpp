@@ -2,6 +2,7 @@
 #define CONFIGURATION_H
 
 #include <opencv2/opencv.hpp>
+#include "ModuleConfig.hpp"
 
 using namespace cv;
 
@@ -19,9 +20,11 @@ class Configuration{
 		// stores the module chain with the params in the config file
 		void store(string);
 	
-	//~ private:
-		// TODO properties
+	private:
+		// chain of ModuleConfigs
+		vector<ModuleConfig> chain;		
 
+		
 };
 
 #endif

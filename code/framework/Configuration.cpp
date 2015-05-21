@@ -1,10 +1,16 @@
 #include "Configuration.hpp"
+#include "ModuleConfig.hpp"
 
 // 
 /*
 */
 void Configuration::load(string filename){
-	// TODO update properties
+
+	//~ while(no end of yaml result){
+		ModuleConfig modConfig;
+		// use yaml to create the modConfig
+		chain.push_back(modConfig); 
+	//~ }
 }
 
 // 
