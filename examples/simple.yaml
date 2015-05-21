@@ -1,0 +1,26 @@
+# first module with name "sourceImage"
+# using the module "loadImage" which is able to read an image file and provides one output
+# it has the parameter filename which refers to the file that it should read
+sourceImage:
+	- module: loadImage
+	- filename: myImage.png
+
+# second module's name is "process", module names are unique btw.
+# here the module "gaussian" is used, which has a paramter kernelSize
+# the gaussian module has an input named "image" which is of type Image
+# and is configured to take the value of the "image" output of the
+# sourceImage module configured above.
+process:
+	- module: gaussian
+	- kernelSize: 5
+	- input:
+		- image: sourceImage.image
+
+# the last module in the chain is named "output" and uses the storeImage module
+# which saves the input into a file
+output:
+	- module: storeImage
+	- input:
+		- image: process.image
+	- filename: output.png
+
