@@ -1,11 +1,6 @@
 #ifndef ELEM_H
 #define ELEM_H
 
-#include <string.h>
-
-using namespace std;
-
-struct Elem {
 	// TODO make this an interface for all possible types:
 	// string
 	// integer
@@ -15,8 +10,19 @@ struct Elem {
 	// vec<Elem>
 	// float 
 	// map
-	string str;
+
+// Elem which represents an arbitrary element
+class Elem {
+	public:
+		// constructor (can't be virtual!)
+		Elem(void){};
+		// destructor
+		virtual ~Elem(void){};
 };
 
+
 #endif
+
+
+
 

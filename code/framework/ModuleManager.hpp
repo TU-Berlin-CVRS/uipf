@@ -17,5 +17,9 @@ class ModuleManager{
 		// runs the module chain with the params
 		void run();
 
+	private:
+		// module chain
+		Configuration config;
+
 };
 
