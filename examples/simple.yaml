@@ -14,13 +14,13 @@
     module: gaussian
     kernelSize: 5
     input:
-      - image: sourceImage.image
+      image: sourceImage.image
 
 # the last module in the chain is named "output" and uses the storeImage module
 # which saves the input into a file
 - output:
     module: storeImage
     input:
-      - image: process.image
+      image: process.image
     filename: output.png
 

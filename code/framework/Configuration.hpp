@@ -3,8 +3,10 @@
 
 #include <opencv2/opencv.hpp>
 #include "ModuleConfig.hpp"
+#include <string.h>
 
 using namespace cv;
+using namespace std;
 
 class Configuration{
 
@@ -19,6 +21,9 @@ class Configuration{
 		
 		// stores the module chain with the params in the config file
 		void store(string);
+
+		// validates the config by checking for logical errors
+		bool validate();
 	
 	private:
 		// chain of ModuleConfigs

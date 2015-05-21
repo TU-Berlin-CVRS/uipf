@@ -1,7 +1,10 @@
 #ifndef MODULECONFIG_H
 #define MODULECONFIG_H
 
+#include <string.h>
 #include <map>
+
+using namespace std;
 
 struct ModuleConfig{
 

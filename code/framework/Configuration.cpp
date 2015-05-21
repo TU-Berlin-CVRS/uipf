@@ -39,7 +39,7 @@ void Configuration::load(string filename){
 		for(YAML::const_iterator confIt = it->second.begin(); confIt != it->second.end(); ++confIt) {
 			string key = confIt->first.as<string>();
 			if (key == "module") {
-				mod.task = confIt->second.as<string>();
+				mod.module = confIt->second.as<string>();
 			} else if (key == "input") {
 				// input is a map of input dependencies
 				assert(confIt->second.IsMap());
@@ -86,7 +86,7 @@ void Configuration::store(string filename){
 			out << YAML::Value << YAML::BeginMap;
 				// first parameter is the module to be used
 				out << YAML::Key << "module";
-				out << YAML::Value << chain[i].task;
+				out << YAML::Value << chain[i].module;
 
 				// TODO add inputs / dependencies
 
