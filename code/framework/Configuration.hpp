@@ -2,8 +2,9 @@
 #define CONFIGURATION_H
 
 #include <opencv2/opencv.hpp>
-#include "ModuleConfig.hpp"
+#include "ProcessingStep.hpp"
 #include <string.h>
+#include <map>
 
 using namespace cv;
 using namespace std;
@@ -26,8 +27,8 @@ class Configuration{
 		bool validate();
 	
 	private:
-		// chain of ModuleConfigs
-		vector<ModuleConfig> chain;		
+		// chain of ProcessingSteps
+		map<string, ProcessingStep> chain;		
 
 		
 };

@@ -18,6 +18,8 @@ int main(int argc, char** argv){
 	Configuration conf;
 	string configFileName = argv[1];
 	conf.load(configFileName);
+
+	conf.store("test.yaml");
 	
 	// loads the Configuration and runs it
 	ModuleManager mm;

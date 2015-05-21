@@ -1,5 +1,5 @@
 #include "Configuration.hpp"
-#include "ModuleConfig.hpp"
+#include "ProcessingStep.hpp"
 #include "yaml-cpp/yaml.h"
 #include <fstream>
 
@@ -16,30 +16,24 @@ void Configuration::load(string filename){
 	// load yaml file
 	YAML::Node config = YAML::LoadFile(filename);
 
-	// yaml file must be a sequence of modules
-	assert(config.IsSequence());
+	// yaml file must be a map of step-name => configuration
+	assert(config.IsMap());
 
-	// create a ModuleConfig object from each config element
-	for (std::size_t i = 0; i < config.size(); i++) {
+	// create a ProcessingStep object from each config element
+	YAML::const_iterator it = config.begin();
+	for ( ; it != config.end(); ++it) {
 
-		ModuleConfig mod;
+		ProcessingStep step;
 
-		// each module is a map with one element, modulename => moduleconfig
-		assert(config[i].IsMap());
-		YAML::const_iterator it = config[i].begin();
-		if (it == config[i].end()) {
-			// TODO error
-			return;
-		}
+		step.name = it->first.as<string>();
 
-		mod.name = it->first.as<string>();
-
-		// iterate over module config
+		// iterate over step config, which is a map too
 		assert(it->second.IsMap());
-		for(YAML::const_iterator confIt = it->second.begin(); confIt != it->second.end(); ++confIt) {
+		YAML::const_iterator confIt = it->second.begin();
+		for( ; confIt != it->second.end(); ++confIt) {
 			string key = confIt->first.as<string>();
 			if (key == "module") {
-				mod.module = confIt->second.as<string>();
+				step.module = confIt->second.as<string>();
 			} else if (key == "input") {
 				// input is a map of input dependencies
 				assert(confIt->second.IsMap());
@@ -47,14 +41,15 @@ void Configuration::load(string filename){
 				for(; inputIt != confIt->second.end(); ++inputIt) {
 					string inputName = inputIt->first.as<string>();
 					string dependsOn = inputIt->second.as<string>();
-					mod.inputs.insert( pair<string,string>(inputName, dependsOn) );
+					step.inputs.insert( pair<string,string>(inputName, dependsOn) );
 				}
 			} else {
-				mod.params.insert( pair<string,string>(key, confIt->second.as<string>()) );
+				// otherwise it is a parameter of the module
+				step.params.insert( pair<string,string>(key, confIt->second.as<string>()) );
 			}
 		}
 
-		chain.push_back(mod);
+		chain.insert( pair<string, ProcessingStep>(step.name, step) );
 	}
 
 }
@@ -71,37 +66,46 @@ bool Configuration::validate(){
 	see also https://github.com/jbeder/yaml-cpp/wiki/How-To-Emit-YAML
 */
 void Configuration::store(string filename){
-	// TODO
 
 	// create YAML emitter
 	YAML::Emitter out;
 
-	// the YAML document consists of a sequence of modules
-	out << YAML::BeginSeq;
-	for(int i = 0; i < chain.size(); i++) {
-		// each module is a map which contains the module name as a key
-		// the module config is the value
-		out << YAML::BeginMap;
-			out << YAML::Key << chain[i].name;
-			out << YAML::Value << YAML::BeginMap;
-				// first parameter is the module to be used
-				out << YAML::Key << "module";
-				out << YAML::Value << chain[i].module;
+	// the YAML document consists of a map of processing steps
+	out << YAML::BeginMap;
+	map<string, ProcessingStep>::iterator it = chain.begin();
+	for (; it!=chain.end(); ++it) {
+		// each processing step has a name as the key and its config map as the value
+		out << YAML::Key << it->first;
+		out << YAML::Value << YAML::BeginMap;
+			// first parameter is the module to be used
+			out << YAML::Key << "module";
+			out << YAML::Value << it->second.module;
 
-				// TODO add inputs / dependencies
-
-				// add parameters to the list
-				map<string,string>::iterator it = chain[i].params.begin();
-				for (; it!=chain[i].params.end(); ++it) {
-					out << YAML::Key << it->first;
-					out << YAML::Value << it->second;
+			// second parameter are the inputs
+			if (! it->second.inputs.empty()) {
+				out << YAML::Key << "inputs";
+				out << YAML::Value << YAML::BeginMap;
+				map<string, string>::iterator inputIt = it->second.inputs.begin();
+				for (; inputIt!=it->second.inputs.end(); ++inputIt) {
+					out << YAML::Key << inputIt->first;
+					out << YAML::Value << inputIt->second;
 				}
-			out << YAML::EndMap;
+				out << YAML::EndMap;
+			}
+
+			// add parameters to the list
+			map<string, string>::iterator paramIt = it->second.params.begin();
+			for (; paramIt!=it->second.params.end(); ++paramIt) {
+				out << YAML::Key << paramIt->first;
+				out << YAML::Value << paramIt->second;
+			}
 		out << YAML::EndMap;
 	}
-	out << YAML::EndSeq;
+	out << YAML::EndMap;
 
 	std::cout << "Here's the output YAML:\n" << out.c_str();
 	std::cout << std::endl;
+	
+	// TODO write into real file instead of stdout
 }
 
