@@ -32,4 +32,9 @@ cmake ..
 make
 ```
 
+If something goes wrong you may run `make VERBOSE=1` for more detailed output.
+
 ### Building with CMake on Windows
+
+TDB.
+
