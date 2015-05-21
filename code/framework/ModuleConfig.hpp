@@ -1,4 +1,8 @@
+#ifndef MODULECONFIG_H
+#define MODULECONFIG_H
+
 #include <opencv2/opencv.hpp>
+#include "Elem.hpp"
 
 using namespace cv;
 
@@ -11,13 +15,23 @@ class ModuleConfig{
 		~ModuleConfig(void){};
 
 	private:
-		//~ TODO input
-		//~ TODO output
+		// task of the module	e.g. storeImage					
+		string task;
 		
-		// name of the module
-		string name;
+		// name of the module in this configuration		e.g. output 
+		string name;			
+		
+		// input	e.g. <nameOfOtherModule.propertieOfOtherModule>
+		vector<Elem> inputVector;
+		
+		// output	e.g. <fileName>
+		vector<Elem> outputVector;		
+		
 
 };
+
+#endif
+
 
 
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string.h>
-#include <framework/ModuleManager.hpp>
-#include <framework/Configuration.hpp>
+#include "framework/ModuleManager.hpp"
+#include "framework/Configuration.hpp"
 
 using namespace std;
 
