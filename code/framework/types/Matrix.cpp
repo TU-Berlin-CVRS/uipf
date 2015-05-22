@@ -10,9 +10,9 @@ Mat Matrix::getContent(){
 	return matrix;
 }
 
-// sets the string
+// sets the matrix
 /*
-s	string content
+m	matrix content
 */
 void Matrix::setContent(Mat& m){
 	matrix = m;
