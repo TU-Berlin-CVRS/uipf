@@ -1,11 +1,12 @@
-#include "MyString.hpp"
+#include "String.hpp"
 
 using namespace std;
+using namespace uipf;
 
 // gives the string 
 /*
 */
-string MyString::getContent(){
+string String::getContent(){
 	return str;
 }
 
@@ -13,6 +14,6 @@ string MyString::getContent(){
 /*
 s	string content
 */
-void MyString::setContent(string s){
+void String::setContent(std::string s){
 	str = s;
 }

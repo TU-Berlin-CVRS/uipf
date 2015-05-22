@@ -1,29 +1,32 @@
-#ifndef MYSTRING_H
-#define MYSTRING_H
+#ifndef STRING_H
+#define STRING_H
 
 #include <string>
 #include "Data.hpp"
 
+namespace uipf{
+
 using namespace std;
 
 // String which is a specification of Elem
-class MyString : Data {
+class String : Data {
 	public:
 		// constructor (can't be virtual!)
-		MyString(void){};
+		String(void){};
 		// destructor
-		~MyString(void){};
-
+		~String(void){};
+		
 		// get content
 		string getContent();
-
+		
 		// set content
 		void setContent(string);
-
+		
 	private:
 		// content
 		string str;
 };
 
+}
 
 #endif

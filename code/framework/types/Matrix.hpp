@@ -1,20 +1,22 @@
-#ifndef MYMATRIX_H
-#define MYMATRIX_H
+#ifndef MATRIX_H
+#define MATRIX_H
 
 
-#include "MyMatrix.hpp"
+#include "Matrix.hpp"
 #include "Data.hpp"
 #include <opencv2/opencv.hpp>
+
+namespace uipf{
 
 using namespace cv;
 
 // Matrix which is a specification of Elem
-class MyMatrix : Data {
+class Matrix : Data {
 	public:
 		// constructor (can't be virtual!)
-		MyMatrix(void){};
+		Matrix(void){};
 		// destructor
-		~MyMatrix(void){};
+		~Matrix(void){};
 
 		// get content
 		Mat getContent();
@@ -27,5 +29,6 @@ class MyMatrix : Data {
 		Mat matrix;
 };
 
+}
 
 #endif

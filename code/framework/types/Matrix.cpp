@@ -1,11 +1,12 @@
-#include "MyMatrix.hpp"
+#include "Matrix.hpp"
 
 using namespace cv;
+using namespace uipf;
 
 // gives the matrix 
 /*
 */
-Mat MyMatrix::getContent(){
+Mat Matrix::getContent(){
 	return matrix;
 }
 
@@ -13,6 +14,6 @@ Mat MyMatrix::getContent(){
 /*
 s	string content
 */
-void MyMatrix::setContent(Mat& m){
+void Matrix::setContent(Mat& m){
 	matrix = m;
 }

@@ -28,8 +28,8 @@ add_executable(uipf
 	framework/Context.cpp
 	framework/ModuleManager.cpp
 
-	framework/types/MyMatrix.cpp
-	framework/types/MyString.cpp
+	framework/types/Matrix.cpp
+	framework/types/String.cpp
 
 	modules/DummyModule.cpp
 )
