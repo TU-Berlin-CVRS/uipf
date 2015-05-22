@@ -30,6 +30,8 @@ add_executable(uipf
 
 	framework/types/Matrix.cpp
 	framework/types/String.cpp
+	framework/types/Float.cpp
+	framework/types/Integer.cpp
 
 	modules/DummyModule.cpp
 )

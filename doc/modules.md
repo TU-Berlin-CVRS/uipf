@@ -5,7 +5,7 @@ A module consists at least of a library file and a meta information file.
 
 A library has to implement a defined interface
 
-	virtual void run(map<string, Elem>& input, map<string, string> params, map<string, Elem>& output, Context context) = 0;
+	virtual void run(map<string, Data*>& input, map<string, string> params, map<string, Data*>& output, Context context) = 0;
 
 - `input` is a std::map of input resources, the names are described in the module meta description
 - `params` is a std::map of input paramaeters, the names are described in the module meta description
