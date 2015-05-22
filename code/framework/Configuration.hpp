@@ -8,7 +8,6 @@
 
 namespace uipf{
 
-
 class Configuration{
 
 	public:
@@ -19,18 +18,21 @@ class Configuration{
 
 		// loads the module chain with the params from the config file
 		void load(std::string);
-		
+
 		// stores the module chain with the params in the config file
 		void store(std::string);
 
 		// validates the config by checking for logical errors
 		bool validate();
-	
+
+		// return processing chain  name => step
+		std::map<std::string, ProcessingStep> getProcessingChain();
+
+
 	private:
 		// chain of ProcessingSteps
-		std::map<std::string, uipf::ProcessingStep> chain;		
+		std::map<std::string, ProcessingStep> chain;
 
-		
 };
 
 }

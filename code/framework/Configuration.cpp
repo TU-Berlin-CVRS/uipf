@@ -105,7 +105,10 @@ void Configuration::store(string filename){
 
 	std::cout << "Here's the output YAML:\n" << out.c_str();
 	std::cout << std::endl;
-	
+
 	// TODO write into real file instead of stdout
 }
 
+map<string, ProcessingStep> Configuration::getProcessingChain(){
+	return chain;
+}

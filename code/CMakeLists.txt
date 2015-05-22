@@ -26,7 +26,7 @@ add_executable(uipf
 	framework/ModuleManager.cpp
 	framework/Configuration.cpp
 	framework/Context.cpp
-	framework/ModuleManager.cpp
+	framework/MetaData.cpp
 
 	framework/types/Matrix.cpp
 	framework/types/String.cpp
