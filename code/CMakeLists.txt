@@ -20,9 +20,19 @@ set(CMAKE_AUTOUIC ON)
 
 # define how the executable is built
 #~ add_executable(uipf-gui main-gui.cpp) # gui
-add_executable(uipf main-console.cpp 	framework/ModuleManager.cpp framework/Configuration.cpp framework/Context.cpp framework/Configuration.cpp 
-										framework/ModuleManager.cpp framework/MyMatrix.cpp
-										framework/MyString.cpp modules/DummyModule) # console
+add_executable(uipf
+	main-console.cpp
+
+	framework/ModuleManager.cpp
+	framework/Configuration.cpp
+	framework/Context.cpp
+	framework/ModuleManager.cpp
+
+	framework/types/MyMatrix.cpp
+	framework/types/MyString.cpp
+
+	modules/DummyModule.cpp
+)
 
 # link the uipf program to opencv
 #~ target_link_libraries(uipf-gui opencv_core opencv_imgproc opencv_highgui mainwindow) # gui

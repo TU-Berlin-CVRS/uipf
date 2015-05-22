@@ -1,3 +1,4 @@
+#include <iostream>
 #include "DummyModule.hpp"
 
 using namespace std;
@@ -10,7 +11,7 @@ ouput 		is a std::map of output resources, the names are described in the module
 context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 */
 void DummyModule::run(map<string, Elem>& input, map<string, string> params, map<string, Elem>& output, Context context){
-	std::cout << "Dummy Module has been executed";
-	std::cout << std::endl;
+	cout << "Dummy Module has been executed";
+	cout << endl;
 		
 }
