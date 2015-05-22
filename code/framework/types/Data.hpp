@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+namespace uipf{
+	
 	// TODO make this an interface for all possible types:
 	// string
 	// integer
@@ -33,7 +35,7 @@ class Data {
 		virtual Type getType() = 0;
 };
 
-
+}
 #endif
 
 

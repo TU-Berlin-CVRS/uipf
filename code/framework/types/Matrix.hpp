@@ -8,8 +8,6 @@
 
 namespace uipf{
 
-using namespace cv;
-
 // Matrix which is a specification of Elem
 class Matrix : Data {
 	public:
@@ -19,14 +17,14 @@ class Matrix : Data {
 		~Matrix(void){};
 
 		// get content
-		Mat getContent();
+		cv::Mat getContent();
 
 		// set content
-		void setContent(Mat&);
+		void setContent(cv::Mat&);
 
 	private:
 		// content
-		Mat matrix;
+		cv::Mat matrix;
 };
 
 }

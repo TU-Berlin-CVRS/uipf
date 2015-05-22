@@ -4,23 +4,25 @@
 #include <string>
 #include <map>
 
-using namespace std;
-
+namespace uipf{
+	
 struct ProcessingStep{
 
 		// name of this processing step in this configuration e.g. output
-		string name;
+		std::string name;
 
 		// name of the module that is used in this step e.g. storeImage
-		string module;
+		std::string module;
 
 		// a map of parameters configured for this module e.g. filename => image.png
-		map<string, string> params;
+		std::map<std::string, std::string> params;
 
 		// inputs from other modules <inputName> => <nameOfOtherModule.outputOfOtherModule>
-		map<string, string> inputs;
+		std::map<std::string, std::string> inputs;
 
 };
+
+}
 
 #endif
 

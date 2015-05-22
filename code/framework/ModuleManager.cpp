@@ -1,5 +1,7 @@
 #include "ModuleManager.hpp"
 
+using namespace uipf;
+
 // loads the configuration and stores in the ModuleManager
 /* 
 conf	Configuration file, which has to be executed

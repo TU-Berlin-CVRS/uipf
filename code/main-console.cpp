@@ -4,6 +4,7 @@
 #include "framework/Configuration.hpp"
 
 using namespace std;
+using namespace uipf;
 
 // argument is a configFile
 int main(int argc, char** argv){

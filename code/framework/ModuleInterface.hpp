@@ -6,7 +6,8 @@
 #include "types/Data.hpp"
 #include "Context.hpp"
 
-using namespace std;
+namespace uipf{
+
 
 // describes the m
 class ModuleInterface {
@@ -21,10 +22,11 @@ class ModuleInterface {
 		// params 	is a std::map of input paramaeters, the names are described in the module meta description
 		// ouput 	is a std::map of output resources, the names are described in the module meta description
 		// context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
-		virtual void run(map<string, Data>& input, map<string, string> params, map<string, Data>& output, Context context) = 0;
+		virtual void run(std::map<std::string, uipf::Data>& input, std::map<std::string, std::string> params, std::map<std::string, uipf::Data>& output, uipf::Context context) = 0;
 
 };
 
+}
 
 #endif
 

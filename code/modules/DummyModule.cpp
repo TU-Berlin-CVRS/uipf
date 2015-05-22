@@ -2,6 +2,7 @@
 #include "DummyModule.hpp"
 
 using namespace std;
+using namespace uipf;
 
 // executes the Module
 /*

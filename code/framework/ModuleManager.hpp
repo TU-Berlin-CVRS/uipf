@@ -1,14 +1,15 @@
 #include <opencv2/opencv.hpp>
 #include "Configuration.hpp"
 
-using namespace cv;
 
+namespace uipf{
+	
 class ModuleManager{
 
 	public:
 		// constructor
 		// loads the module chain with the params from the configuration object
-		ModuleManager(Configuration);
+		ModuleManager(uipf::Configuration);
 		// destructor
 		~ModuleManager(void){};
 
@@ -17,7 +18,9 @@ class ModuleManager{
 
 	private:
 		// module chain
-		Configuration config;
+		uipf::Configuration config;
 
 };
+
+}
 

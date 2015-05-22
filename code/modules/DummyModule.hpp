@@ -1,6 +1,7 @@
 #include "../framework/ModuleInterface.hpp"
 
-using namespace std;
+namespace uipf{
+
 
 class DummyModule : ModuleInterface{
 
@@ -11,8 +12,9 @@ class DummyModule : ModuleInterface{
 		~DummyModule(void){};
 
 		// runs the module chain with the params
-		void run(map<string, Data>& input, map<string, string> params, map<string, Data>& output, Context context);
+		void run(std::map<std::string, uipf::Data>& input, std::map<std::string, std::string> params, std::map<std::string, uipf::Data>& output, uipf::Context context);
 
 
 };
 
+}

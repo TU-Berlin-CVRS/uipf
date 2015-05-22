@@ -6,7 +6,6 @@
 
 namespace uipf{
 
-using namespace std;
 
 // String which is a specification of Elem
 class String : Data {
@@ -17,14 +16,14 @@ class String : Data {
 		~String(void){};
 		
 		// get content
-		string getContent();
+		std::string getContent();
 		
 		// set content
-		void setContent(string);
+		void setContent(std::string);
 		
 	private:
 		// content
-		string str;
+		std::string str;
 };
 
 }
