@@ -1,5 +1,4 @@
 #include "ModuleManager.hpp"
-#include "Configuration.hpp"
 
 // loads the configuration and stores in the ModuleManager
 /* 
@@ -13,5 +12,10 @@ ModuleManager::ModuleManager(Configuration conf){
 /*
 */
 void ModuleManager::run(){
-	// TODO
+	// TODO 
+	// - sort processing steps
+	// - load modules
+	// - run each module
+	// - finished
+	
 }

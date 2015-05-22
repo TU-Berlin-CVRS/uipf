@@ -1,7 +1,7 @@
 #ifndef PROCESSINGSTEP_H
 #define PROCESSINGSTEP_H
 
-#include <string.h>
+#include <string>
 #include <map>
 
 using namespace std;

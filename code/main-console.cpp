@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string.h>
+#include <string>
 #include "framework/ModuleManager.hpp"
 #include "framework/Configuration.hpp"
 

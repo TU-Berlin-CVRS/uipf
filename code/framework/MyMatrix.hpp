@@ -3,6 +3,10 @@
 
 
 #include "MyMatrix.hpp"
+#include "Elem.hpp"
+#include <opencv2/opencv.hpp>
+
+using namespace cv;
 
 // Matrix which is a specification of Elem
 class MyMatrix : Elem {

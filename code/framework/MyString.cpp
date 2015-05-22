@@ -1,4 +1,3 @@
-#include <string.h>
 #include "MyString.hpp"
 
 using namespace std;

@@ -1,7 +1,6 @@
-#include "Configuration.hpp"
-#include "ProcessingStep.hpp"
-#include "yaml-cpp/yaml.h"
 #include <fstream>
+#include "Configuration.hpp"
+#include "yaml-cpp/yaml.h"
 
 using namespace std;
 

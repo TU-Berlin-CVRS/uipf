@@ -1,10 +1,11 @@
 #include "MyMatrix.hpp"
 
+using namespace cv;
 
 // gives the matrix 
 /*
 */
-string MyMatrix::getContent(){
+Mat MyMatrix::getContent(){
 	return matrix;
 }
 

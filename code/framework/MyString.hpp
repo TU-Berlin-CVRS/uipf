@@ -1,7 +1,7 @@
 #ifndef MYSTRING_H
 #define MYSTRING_H
 
-#include <string.h>
+#include <string>
 #include "Elem.hpp"
 
 using namespace std;

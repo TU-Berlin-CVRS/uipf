@@ -1,10 +1,10 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+#include <string>
+#include <map>
 #include <opencv2/opencv.hpp>
 #include "ProcessingStep.hpp"
-#include <string.h>
-#include <map>
 
 using namespace cv;
 using namespace std;
