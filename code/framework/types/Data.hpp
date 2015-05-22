@@ -11,6 +11,16 @@
 	// float
 	// map
 
+enum Type
+{
+	STRING,
+	INTEGER,
+	FLOAT,
+//	LIST, // TODO
+//	MAP, // TODO
+	MATRIX,
+};
+
 // Elem which represents an arbitrary element
 class Data {
 	public:
@@ -18,6 +28,9 @@ class Data {
 		Data(void){};
 		// destructor
 		virtual ~Data(void){};
+
+		// returns the data type of this data object
+		virtual Type getType() = 0;
 };
 
 
