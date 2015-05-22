@@ -11,7 +11,7 @@ class DummyModule : ModuleInterface{
 		~DummyModule(void){};
 
 		// runs the module chain with the params
-		void run(map<string, Elem>& input, map<string, string> params, map<string, Elem>& output, Context context);
+		void run(map<string, Data>& input, map<string, string> params, map<string, Data>& output, Context context);
 
 
 };

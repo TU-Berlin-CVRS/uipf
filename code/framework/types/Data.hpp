@@ -1,5 +1,5 @@
-#ifndef ELEM_H
-#define ELEM_H
+#ifndef DATA_H
+#define DATA_H
 
 	// TODO make this an interface for all possible types:
 	// string
@@ -8,16 +8,16 @@
 	// uchar
 	// Mat with arbitrary number of channels
 	// vec<Elem>
-	// float 
+	// float
 	// map
 
 // Elem which represents an arbitrary element
-class Elem {
+class Data {
 	public:
 		// constructor (can't be virtual!)
-		Elem(void){};
+		Data(void){};
 		// destructor
-		virtual ~Elem(void){};
+		virtual ~Data(void){};
 };
 
 
