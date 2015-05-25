@@ -1,5 +1,5 @@
 #include <iostream>
-#include "DummyModule.hpp"
+#include "StoreImageModule.hpp"
 
 using namespace std;
 using namespace uipf;
@@ -11,9 +11,9 @@ params 		is a std::map of input paramaeters, the names are described in the modu
 ouput 		is a std::map of output resources, the names are described in the module meta description
 context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 */
-void DummyModule::run(map<string, Data*>& input, map<string, string> params, map<string, Data*>& output, Context context) const
+void StoreImageModule::run(map<string, Data*>& input, map<string, string> params, map<string, Data*>& output, Context context) const
 {
-	cout << "Dummy Module has been executed with the following params:";
+	cout << "StoreImageModule has been executed with the following params:";
 	cout << endl;
 
 	map<string, string>::iterator it = params.begin();
@@ -23,7 +23,7 @@ void DummyModule::run(map<string, Data*>& input, map<string, string> params, map
 
 }
 
-std::string DummyModule::name() const
+std::string StoreImageModule::name() const
 {
-	return "DummyModule";
+	return "storeImage";
 }
