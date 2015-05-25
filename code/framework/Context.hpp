@@ -1,6 +1,7 @@
 #ifndef Context_H
 #define Context_H
 
+
 namespace uipf{
 
 
@@ -13,6 +14,7 @@ class Context {
 		~Context(void){};
 		
 		// TODO finalize the environment
+
 };
 
 }

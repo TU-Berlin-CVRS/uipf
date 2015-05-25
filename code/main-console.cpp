@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <QApplication>
 #include "framework/ModuleManager.hpp"
 #include "framework/Configuration.hpp"
 
@@ -14,6 +15,8 @@ int main(int argc, char** argv){
 		std::cerr << "Usage: " << argv[0] << " <configFile>"<< std::endl;
 		return 1;
 	}
+
+	QApplication app (argc,argv);
 
 	// loads the configFile and create a Configuration
 	Configuration conf;

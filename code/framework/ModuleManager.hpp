@@ -2,9 +2,8 @@
 #include "Configuration.hpp"
 #include "ModuleInterface.hpp"
 #include "MetaData.hpp"
-
-// TODO remove this include when dynamic loading works
-#include "../modules/DummyModule.hpp"
+#include <QObjectList>
+#include <map>
 
 namespace uipf{
 
@@ -23,11 +22,17 @@ class ModuleManager{
 
 	private:
 		// module chain
-		Configuration config;
+		
+		ModuleInterface* loadModule(const std::string& name);
 
-		ModuleInterface* loadModule(std::string name);
+		MetaData getModuleMetaData(const std::string& name);
+		
+		void initModules();
 
-		MetaData getModuleMetaData(std::string name);
+		
+		Configuration config_; //Member Variables need to be declared with some kind of underscore notation...
+
+		std::map<std::string,ModuleInterface*> plugins_;
 
 };
 
