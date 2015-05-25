@@ -1,5 +1,5 @@
-#ifndef _DUMMYMODULE_
-#define _DUMMYMODULE_
+#ifndef _GAUSSIANMODULE_
+#define _GAUSSIANMODULE_
 
 #include "../framework/ModuleInterface.hpp"
 #include <QObject>
@@ -8,7 +8,7 @@
 namespace uipf{
 
 
-class DummyModule :  public QObject, ModuleInterface
+class GaussianModule :  public QObject, ModuleInterface
 {
 Q_OBJECT
 Q_PLUGIN_METADATA(IID "org.tu-berlin.uipf.ModuleInterface" )
@@ -16,9 +16,9 @@ Q_INTERFACES(uipf::ModuleInterface)
 
 	public:
 		// constructor
-		DummyModule(void){};
+		GaussianModule(void){};
 		// destructor
-		~DummyModule(void){};
+		~GaussianModule(void){};
 
 		// runs the module chain with the params
 		void run( std::map<std::string, uipf::Data*>& input, 
@@ -31,4 +31,4 @@ Q_INTERFACES(uipf::ModuleInterface)
 
 }
 
-#endif //DUMMYMODULE
+#endif //GAUSSIANMODULE
