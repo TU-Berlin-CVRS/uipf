@@ -57,6 +57,7 @@ void Configuration::load(string filename){
 bool Configuration::validate(){
 	// TODO validate if inputs and outputs correspond
 	// TODO think of further validation needs
+	return true;
 }
 
 //

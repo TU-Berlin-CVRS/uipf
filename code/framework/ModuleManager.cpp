@@ -1,6 +1,14 @@
 #include "ModuleManager.hpp"
 
+
+#include <QPluginLoader>
+#include <QApplication>
+#include <QObject>
+#include <QDir>
+#include <QObjectList>
+#include <QStringList>
 #include <string>
+#include "Logger.hpp"
 
 using namespace uipf;
 using namespace std;
@@ -9,8 +17,10 @@ using namespace std;
 /*
 conf	Configuration file, which has to be executed
 */
-ModuleManager::ModuleManager(Configuration conf){
-	config = conf;
+ModuleManager::ModuleManager(Configuration conf)
+ : config_(conf)
+{
+	initModules();
 }
 
 // executes the Configuration file
@@ -21,7 +31,7 @@ void ModuleManager::run(){
 	// TODO sort processing steps
 
 	// get processing chain
-	map<string, ProcessingStep> chain = config.getProcessingChain();
+	map<string, ProcessingStep> chain = config_.getProcessingChain();
 
 	Context context;
 
@@ -45,11 +55,37 @@ void ModuleManager::run(){
 
 }
 
-ModuleInterface* ModuleManager::loadModule(string name){
-	return new DummyModule;
+void ModuleManager::initModules()
+{
+   QDir pluginsDir = QDir(qApp->applicationDirPath());
+
+    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) 
+    {
+        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+        QObject *plugin = loader.instance();
+        if (plugin) {
+		Logger::instance()->Info("found: " + fileName.toStdString());
+		ModuleInterface* iModule =
+		    qobject_cast<ModuleInterface* >(plugin);
+
+		//2DO: use metadata as key
+		plugins_.insert( std::pair<std::string, ModuleInterface* >(iModule->name(), iModule) );
+         	
+        }
+
+    }
+
 }
 
-MetaData ModuleManager::getModuleMetaData(string name){
+ModuleInterface* ModuleManager::loadModule(const std::string& name){
+
+Logger::instance()->Info("loadModule: " + name);
+
+return plugins_[name]; //2DO: safety, uppercase lowercase etc.
+
+}
+
+MetaData ModuleManager::getModuleMetaData(const std::string& name){
 
 	// TODO this is dummy
 
