@@ -13,7 +13,7 @@ context 	is a container providing access to the current environment, allowing to
 */
 void LoadImageModule::run(map<string, Data*>& input, map<string, string> params, map<string, Data*>& output, Context context) const
 {
-	cout << "Dummy Module has been executed with the following params:";
+	cout << "LoadImage Module has been executed with the following params:";
 	cout << endl;
 
 	map<string, string>::iterator it = params.begin();
