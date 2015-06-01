@@ -1,0 +1,49 @@
+# this is an artificial example that combines two images
+# and does two different things with the outputs to show
+# how to work with multiple inputs and outputs.
+
+#
+#  +------------+                         +----------+    +-----------------+
+#  | image1.png |---+                +--->| gaussian |--->| mix.blurred.png |
+#  +------------+   |    +-------+   |    +----------+    +-----------------+
+#                   +--->| merge |---+
+#  +------------+   |    +-------+   |    +---------+
+#  | image2.png |---+                +--->| mix.png |
+#  +------------+                         +---------+
+#
+# made with http://asciiflow.com/
+
+source1:
+  module: loadImage
+  filename: image1.png
+
+source2:
+  module: loadImage
+  filename: image2.png
+
+# a module that merges two images
+# the name of the output is "result"
+mixThem:
+  module: mergeImages
+  input:
+    image1: source1.image
+    image2: source2.image
+
+blur:
+  module: gaussian
+  kernelSize: 5
+  input:
+    image: mixThem.result
+
+storeMix:
+  module: storeImage
+  filename: mix.png
+  input:
+    image: mixThem.result
+
+storeBlur:
+  module: storeImage
+  filename: mix-blurred.png
+  input:
+    image: blur.image
+
