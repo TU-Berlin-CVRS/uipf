@@ -1,0 +1,57 @@
+#include "ModuleBase.hpp"
+
+using namespace std;
+
+namespace uipf
+{
+
+ModuleBase::ModuleBase()
+:context_(nullptr)
+{
+}
+
+ModuleBase::~ModuleBase()
+{
+}
+
+void ModuleBase::setContext(Context* context)
+{
+	context_ = context;
+}
+
+void ModuleBase::listParams( map < string, string >& params) const
+{
+ Logger::instance()->Info("Module has been executed with the following params:");
+  
+  map < string, string >::iterator it = params.begin ();
+  for (; it != params.end (); ++it)
+    {
+	Logger::instance()->Info("    " + it->first + " - " + it->second );
+    }
+}
+
+//2DO other types
+template <>
+std::string ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::string& strName, std::string defaultValue) const
+{
+	if (mParams.find(strName) != mParams.end())
+	{
+		return mParams[strName];
+	}
+	else
+		return defaultValue; 
+}
+
+
+template <>
+int ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::string& strName, int defaultValue) const
+{
+	if (mParams.find(strName) != mParams.end())
+	{
+		return atoi(mParams[strName].c_str());
+	}
+	else
+		return defaultValue; 
+}
+}
+
