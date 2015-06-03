@@ -7,12 +7,12 @@
 namespace uipf
 {
 
-Logger* Logger::instance_ = 0;
+Logger* Logger::instance_ = nullptr;
 
 Logger* Logger::instance()
 {
   static Guard w;
-  if( instance_ == 0 )
+  if( instance_ == nullptr )
     instance_ = new Logger();
   return instance_;
 }
@@ -27,7 +27,9 @@ void Logger::Warn(const std::string& strMessage)
 void Logger::Error(const std::string& strMessage)
 {
 	std::stringstream output;
-	output << "[ERROR] " << strMessage << std::endl;
+
+	output << "\033[1;31m[ERROR] " << strMessage << "\033[0m" << std::endl;//output in red using ANSI codes (linux only): 
+									       //http://en.wikipedia.org/wiki/ANSI_escape_code
 	print(output);
 }
 

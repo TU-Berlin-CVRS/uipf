@@ -1,6 +1,12 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+//shortcuts to log
+//can be used like LOG_E("something bad happened!")
+#define LOG_E(message) Logger::instance()->Error(message)
+#define LOG_I(message) Logger::instance()->Info(message)
+#define LOG_W(message) Logger::instance()->Warn(message)
+
 #include <sstream>
 
 namespace uipf

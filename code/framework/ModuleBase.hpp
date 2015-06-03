@@ -67,8 +67,9 @@ T ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::
 		return static_cast<T>(mParams[strName]);
 	}
 	else
-		return defaultValue; 
-
+	{
+	        return defaultValue; 
+	}
 }
 
 

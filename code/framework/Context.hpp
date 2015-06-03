@@ -1,6 +1,8 @@
 #ifndef Context_H
 #define Context_H
 
+#include "StdIncl.hpp"
+#include "types/Matrix.hpp"
 
 namespace uipf{
 
@@ -13,7 +15,8 @@ class Context {
 		// destructor
 		~Context(void){};
 		
-		// TODO finalize the environment
+		
+		void displayImage(const std::string strTitle, Matrix& oMat) const;
 
 };
 

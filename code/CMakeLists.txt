@@ -27,6 +27,7 @@ add_executable(uipf
 	main-console.cpp
 
 	framework/ModuleManager.cpp
+	
 	framework/Configuration.cpp
 	framework/Context.cpp
 	framework/Logger.cpp
@@ -47,7 +48,7 @@ add_executable(uipf
 
 # link the uipf program to opencv
 #~ target_link_libraries(uipf-gui opencv_core opencv_imgproc opencv_highgui mainwindow) # gui
-target_link_libraries(uipf opencv_core opencv_imgproc opencv_highgui ${YAML_CPP_LIBRARY}) # console
+target_link_libraries(uipf opencv_core opencv_imgproc opencv_highgui ModuleBase ${YAML_CPP_LIBRARY}) # console
 
 # find Qt library for building the GUI
 find_package(Qt5Widgets REQUIRED)
@@ -71,6 +72,8 @@ QT5_WRAP_UI(UI_HS
 add_library(mainwindow gui/mainwindow.cpp ${UI_HS})
 qt5_use_modules(mainwindow Widgets)
 
+add_library(ModuleBase SHARED framework/ModuleBase.cpp )
+
 #Dynamic Modules
 add_library(DummyModule SHARED modules/DummyModule.cpp)
 qt5_use_modules(DummyModule Core Gui Widgets)
@@ -80,9 +83,12 @@ add_library(LoadImageModule SHARED modules/LoadImageModule.cpp)
 qt5_use_modules(LoadImageModule Core Gui Widgets)
 add_library(StoreImageModule SHARED modules/StoreImageModule.cpp)
 qt5_use_modules(StoreImageModule Core Gui Widgets)
+add_library(ShowImageModule SHARED modules/ShowImageModule.cpp)
+qt5_use_modules(ShowImageModule Core Gui Widgets)
 
-
-
+#link dependencies of dynamic modules
+target_link_libraries(LoadImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
+target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 
 
 

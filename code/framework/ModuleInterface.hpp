@@ -23,10 +23,9 @@ class ModuleInterface {
 		// params 	is a std::map of input paramaeters, the names are described in the module meta description
 		// ouput 	is a std::map of output resources, the names are described in the module meta description
 		// context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
-		virtual void run( std::map<std::string, uipf::Data*>& input, 
-				  std::map<std::string, std::string> params, 
-		   		  std::map<std::string, uipf::Data*>& output, 
-				  uipf::Context context ) const = 0;
+		virtual void run( std::map<std::string, uipf::Data::ptr >& input, 
+				  std::map<std::string, std::string >& params, 
+		   		  std::map<std::string, uipf::Data::ptr >& output ) const = 0;
 
 		//name used as key in yaml configuration
 		virtual std::string name() const = 0;

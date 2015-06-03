@@ -9,6 +9,7 @@
 #include <QStringList>
 #include <string>
 #include "Logger.hpp"
+#include "ModuleBase.hpp"
 
 using namespace uipf;
 using namespace std;
@@ -41,14 +42,18 @@ void ModuleManager::run(){
 
 		// load the module
 		ModuleInterface* mod = loadModule(it->second.module);
-
+		ModuleBase* modbase = dynamic_cast<ModuleBase*>(mod);
+		if (modbase)
+			modbase->setContext(&context);
+		
+		
 		// TODO fill outputs with inputs from other modules
-		map<string, Data*> inputs;
-		map<string, Data*> outputs;
+		map<string, Data::ptr > inputs;
+		map<string, Data::ptr > outputs;
 
-		cout << "Running step '" << it->first << "'..." << endl;
-		mod->run(inputs, it->second.params, outputs, context);
-		cout << "Done with step '" << it->first << "'." << endl << endl;
+		LOG_I( "Running step '" + it->first + "'..." );
+		mod->run(inputs, it->second.params, outputs);
+		LOG_I( "Done with step '" + it->first + "'." );
 
 		// TODO store outputs somewhere
 	}

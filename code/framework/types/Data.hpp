@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include "../StdIncl.hpp"
+
 namespace uipf{
 	
 	// TODO make this an interface for all possible types:
@@ -26,6 +28,9 @@ enum Type
 // Elem which represents an arbitrary element
 class Data {
 	public:
+		typedef SMARTPOINTER<Data> ptr;
+
+	public:
 		// constructor (can't be virtual!)
 		Data(void){};
 		// destructor
@@ -33,6 +38,7 @@ class Data {
 
 		// returns the data type of this data object
 		virtual Type getType() = 0;
+
 };
 
 }
