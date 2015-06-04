@@ -5,7 +5,7 @@
 #include <map>
 
 namespace uipf{
-	
+
 struct ProcessingStep{
 
 		// name of this processing step in this configuration e.g. output
@@ -17,8 +17,8 @@ struct ProcessingStep{
 		// a map of parameters configured for this module e.g. filename => image.png
 		std::map<std::string, std::string> params;
 
-		// inputs from other modules <inputName> => <nameOfOtherModule.outputOfOtherModule>
-		std::map<std::string, std::string> inputs;
+		// inputs from other modules <inputName> => <nameOfOtherModule, outputOfOtherModule>
+		std::map<std::string, std::pair<std::string, std::string> > inputs;
 
 };
 
