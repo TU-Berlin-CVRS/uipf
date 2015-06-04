@@ -40,8 +40,13 @@ void Configuration::load(string filename){
 				YAML::const_iterator inputIt = confIt->second.begin();
 				for(; inputIt != confIt->second.end(); ++inputIt) {
 					string inputName = inputIt->first.as<string>();
-					string dependsOn = inputIt->second.as<string>();
-					step.inputs.insert( pair<string,string>(inputName, dependsOn) );
+					string dependsOnS = inputIt->second.as<string>();
+
+					// split dependsOn by first . to separate step name and output name
+					size_t dotPos = dependsOnS.find(".");
+					pair<string, string> dependsOn( dependsOnS.substr( 0, dotPos ), dependsOnS.substr( dotPos + 1 ));
+
+					step.inputs.insert( pair<string, pair<string, string> >(inputName, dependsOn) );
 				}
 			} else {
 				// otherwise it is a parameter of the module
@@ -55,7 +60,8 @@ void Configuration::load(string filename){
 }
 
 bool Configuration::validate(){
-	// TODO validate if inputs and outputs correspond
+	// TODO validate if inputs and outputs correspond and are not empty
+	// TODO detect circular dependencies
 	// TODO think of further validation needs
 	return true;
 }
@@ -86,10 +92,10 @@ void Configuration::store(string filename){
 			if (! it->second.inputs.empty()) {
 				out << YAML::Key << "inputs";
 				out << YAML::Value << YAML::BeginMap;
-				map<string, string>::iterator inputIt = it->second.inputs.begin();
+				map<string, pair<string, string> >::iterator inputIt = it->second.inputs.begin();
 				for (; inputIt!=it->second.inputs.end(); ++inputIt) {
 					out << YAML::Key << inputIt->first;
-					out << YAML::Value << inputIt->second;
+					out << YAML::Value << (inputIt->second.first + string(".") + inputIt->second.second);
 				}
 				out << YAML::EndMap;
 			}
