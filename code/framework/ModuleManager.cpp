@@ -29,33 +29,79 @@ ModuleManager::ModuleManager(Configuration conf)
 */
 void ModuleManager::run(){
 
-	// TODO sort processing steps
-
 	// get processing chain
 	map<string, ProcessingStep> chain = config_.getProcessingChain();
+	
+	map<string, ProcessingStep> chainTmp;
+	chainTmp.insert(chain.begin(), chain.end());
+	
+	// contains the names of the processing steps in the correct order
+	vector<string> sortedChain;
+	
+	
 
+	// iterate over all processing steps and order them
+	while(!chainTmp.empty()){
+		map<string, ProcessingStep>::iterator itProSt = chainTmp.begin();
+
+		for (; itProSt!=chainTmp.end(); ++itProSt) {	
+
+			// add all modules without any dependencies
+			if(itProSt->second.inputs.size() == 0){
+				sortedChain.push_back(itProSt->first);
+				chainTmp.erase(itProSt);
+			} else {
+				// go through dependencies, and add only the modules, where module 
+				// on which they depend have already been added
+				map<string, pair<string,string> >::iterator it = itProSt->second.inputs.begin();
+				int i = 1;
+				for (; it!=itProSt->second.inputs.end(); ++it) {	
+					if (sortedChain.count(it->second.first)){
+						i *=1;
+					} else{
+						i *=0;
+					}
+				}
+				if (i == 1){
+					sortedChain.push_back(itProSt->first);
+					chainTmp.erase(itProSt);
+				}
+			}
+		}
+	}
+	
 	Context context;
 
-	// iterate over all modules and run them
-	map<string, ProcessingStep>::iterator it = chain.begin();
-	for (; it!=chain.end(); ++it) {
+	// contains the outputs of the processing steps
+	map<string, map<string, Data::ptr> > stepsOutputs;
+	
+	// run over the sortedChain and run the modules in the order given by the chain
+	for (int i=0; i<sortedChain.size(); i++){
+
+		ProcessingStep proSt = chain[sortedChain[i]];
 
 		// load the module
-		ModuleInterface* mod = loadModule(it->second.module);
+		ModuleInterface* mod = loadModule(proSt.module);
 		ModuleBase* modbase = dynamic_cast<ModuleBase*>(mod);
-		if (modbase)
+		if (modbase){
 			modbase->setContext(&context);
+		}
 		
-		
-		// TODO fill outputs with inputs from other modules
 		map<string, Data::ptr > inputs;
 		map<string, Data::ptr > outputs;
 
-		LOG_I( "Running step '" + it->first + "'..." );
-		mod->run(inputs, it->second.params, outputs);
-		LOG_I( "Done with step '" + it->first + "'." );
+		// fill the inputs of the current processing step
+		map<string, pair<string, string> >::iterator it = proSt.inputs.begin();
+		for (; it!=proSt.inputs.end(); ++it) {
+			inputs.insert(pair<string, Data::ptr> (it->first, stepOutputs[it->second.first][it->second.second]));
+		}	
+		
+		LOG_I( "Running step '" + proSt.name + "'..." );
+		mod->run(inputs, proSt.params, outputs);
+		LOG_I( "Done with step '" + proSt.name + "'." );
 
-		// TODO store outputs somewhere
+		// fill the outputs of the current processing step
+		stepOutputs.insert(pair<string, map<string, Data::ptr> > (proSt.name, outputs));
 	}
 
 }
