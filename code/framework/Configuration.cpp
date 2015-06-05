@@ -119,3 +119,20 @@ void Configuration::store(string filename){
 map<string, ProcessingStep> Configuration::getProcessingChain(){
 	return chain;
 }
+
+// adds a ProcessingStep to the chain
+/*
+ ProSt 		processing step, which is added to the chain
+*/
+void Configuration::addProcessingStep(ProcessingStep ProSt){
+	chain.insert(pair<std::string, ProcessingStep> (ProSt.name, ProSt));
+}
+
+// removes a ProcessingStep from the chain
+/*
+stepName	name of processingStep, which has to been deleted from the chain
+*/
+void Configuration::removeProcessingStep(string stepName){
+	chain.erase(stepName);
+}
+		

@@ -28,7 +28,12 @@ class Configuration{
 		// return processing chain  name => step
 		std::map<std::string, ProcessingStep> getProcessingChain();
 
+		// adds a ProcessingStep to the chain
+		void addProcessingStep(ProcessingStep);
 
+		// removes a ProcessingStep from the chain
+		void removeProcessingStep(std::string);
+		
 	private:
 		// chain of ProcessingSteps
 		std::map<std::string, ProcessingStep> chain;
