@@ -23,7 +23,7 @@ class ModuleBase {
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>
-		typename T::ptr getData(std::map<std::string, Data::ptr >& mData, const std::string& strName) const;
+		T* getData(std::map<std::string, Data::ptr& >& mData, const std::string& strName) const;
 		
 		//returns a typesafe parameter by name if it is available. otherwise a defaultValue is used
 		template <typename T>
@@ -39,23 +39,19 @@ class ModuleBase {
 
 
 template <typename T>
-typename T::ptr ModuleBase::getData(std::map<std::string, Data::ptr >& mData, const std::string& strName) const
+T* ModuleBase::getData(std::map<std::string, Data::ptr& >& mData, const std::string& strName) const
 {
 	if (mData.find(strName) != mData.end())
 	{
 		//do downcasting..
-		T *tmp = dynamic_cast<T*>(mData[strName].get());
-		std::unique_ptr<T> derivedPointer;
-		if(tmp != nullptr)
-		{
-		    mData[strName].release();//2DO check sideeffects
-		    derivedPointer.reset(tmp);
-		}
-		
-		return derivedPointer;
+		Data::ptr& ptr = mData.find(strName)->second;
+		return dynamic_cast<T*>(ptr.get());
 	}
 	else
-		return nullptr; //2DO Exception
+	{
+		std::cout << "input " << strName << " not found!" << std::endl; // TODO convert this into an exception
+		return nullptr;
+	}
 }
 
 //2DO other type specialisations e.g. float with atof() etc.

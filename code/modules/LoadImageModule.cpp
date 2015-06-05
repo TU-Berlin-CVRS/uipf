@@ -14,7 +14,7 @@ ouput 		is a std::map of output resources, the names are described in the module
 context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 */
 void
-LoadImageModule::run (map < string, Data::ptr >&input, map < string, string >& params, map < string, Data::ptr >&output ) const 
+LoadImageModule::run (map < string, Data::ptr& >&input, map < string, string >& params, map < string, Data::ptr >&output ) const 
 {
 
   using namespace cv;
@@ -29,7 +29,7 @@ LoadImageModule::run (map < string, Data::ptr >&input, map < string, string >& p
     }
 
 	
-  output.insert (pair < string, Data::ptr >("sourceImage.image", Matrix::ptr(new Matrix(image))));
+  output.insert (pair < string, Data::ptr >("image", Matrix::ptr(new Matrix(image))));
 
   listParams(params);
 }

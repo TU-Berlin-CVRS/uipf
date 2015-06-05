@@ -22,7 +22,7 @@ Q_INTERFACES(uipf::ModuleInterface)
 		~StoreImageModule(void){};
 
 		// runs the module chain with the params
-		void run( std::map<std::string, uipf::Data::ptr >& input, 
+		void run( std::map<std::string, uipf::Data::ptr& >& input,
 			  std::map<std::string, std::string>& params, 
 		   	  std::map<std::string, uipf::Data::ptr >& output ) const Q_DECL_OVERRIDE;
 
