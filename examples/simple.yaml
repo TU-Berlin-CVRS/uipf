@@ -22,7 +22,6 @@ sourceImage:
 # which saves the input into a file
 output:
   module: storeImage
-  infilename: ../../testdata/Vintage-Tree-Nature-Background-HD-Wallpaper.jpg
   input:
     image: process.image
   filename: output.png
@@ -30,7 +29,6 @@ output:
 #shows an image in a window
 show:
   module: showImage
-  filename: ../../testdata/Vintage-Tree-Nature-Background-HD-Wallpaper.jpg
   title: "nice image"
   input:
     image: sourceImage.image
