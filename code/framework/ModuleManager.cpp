@@ -24,6 +24,15 @@ ModuleManager::ModuleManager(Configuration conf)
 	initModules();
 }
 
+ModuleManager::~ModuleManager()
+{
+	// delete all the pluginloaders
+	map<string, QPluginLoader*>::iterator it = plugins_.begin();
+	for (; it!=plugins_.end(); ++it) {
+		delete it->second;
+	}
+}
+
 // executes the Configuration file
 /*
 */
@@ -88,7 +97,7 @@ void ModuleManager::run(){
 		ModuleInterface* mod = loadModule(proSt.module);
 		ModuleBase* modbase = dynamic_cast<ModuleBase*>(mod);
 		if (modbase){
-			modbase->setContext(&context);
+			modbase->setContext(&context); // TODO consider making this method part of the interface
 		}
 
 		// prepare an empty map of outputs that will be filled by the module
@@ -120,50 +129,53 @@ void ModuleManager::run(){
 
 }
 
+// initialize all modules by creating a map of module names and the plugin loader instance
+// that can be used later to instantiate the module
 void ModuleManager::initModules()
 {
 	QDir pluginsDir = QDir(qApp->applicationDirPath());
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files))
 	{
-		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-		QObject *plugin = loader.instance();
+		QPluginLoader* loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
+		QObject *plugin = loader->instance();
 		if (plugin) {
-			Logger::instance()->Info("found: " + fileName.toStdString());
+			Logger::instance()->Info("found module: " + fileName.toStdString());
 			ModuleInterface* iModule = qobject_cast<ModuleInterface* >(plugin);
 
-			//2DO: use metadata as key
-			plugins_.insert( std::pair<std::string, ModuleInterface* >(iModule->name(), iModule) );
-
+			plugins_.insert( std::pair<std::string, QPluginLoader*>(iModule->name(), loader) );
+			delete iModule;
 		}
 
 	}
 
 }
 
+// check whether a module exists
+bool ModuleManager::hasModule(const std::string& name){
+	return (plugins_.count(name) > 0);
+}
+
+// creates an instance of a module and returns it
 ModuleInterface* ModuleManager::loadModule(const std::string& name){
 
-	Logger::instance()->Info("loadModule: " + name);
+	if (plugins_.count(name) > 0) {
 
-	return plugins_[name]; //2DO: safety, uppercase lowercase etc.
+		QPluginLoader* loader = plugins_[name];
+		QObject *plugin = loader->instance();
+		if (plugin) {
+			Logger::instance()->Info("load module: " + name);
+			return qobject_cast<ModuleInterface* >(plugin);
+		}
+	}
+	return nullptr;
 
 }
 
+// returns the meta data of a module
 MetaData ModuleManager::getModuleMetaData(const std::string& name){
-
-	// TODO this is dummy
-
-	map<string, Type> in;
-	in.insert( pair<string, Type>("image", MATRIX) );
-
-	map<string, Type> out;
-	out.insert( pair<string, Type>("image", MATRIX) );
-
-	MetaData meta("Dummy module description for " + name, in, out);
-
-	return meta;
-
+	ModuleInterface* module = loadModule(name);
+	return module->getMetaData();
 }
-
 
 

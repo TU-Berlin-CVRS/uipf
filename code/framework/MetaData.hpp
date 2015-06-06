@@ -7,28 +7,72 @@
 
 namespace uipf {
 
+// holds meta data for input and output
+class DataDescription {
+	public:
+
+		// constructor
+		DataDescription(Type t, std::string d) : type_(t), description_(d) {};
+		// destructor
+		~DataDescription(void){};
+
+		Type getType() { return type_; };
+		std::string getDescription() { return description_; };
+
+	private:
+		// the type of the input/output data
+		Type type_;
+		// a textual description
+		std::string description_;
+};
+
+// holds meta data for module parameters
+class ParamDescription {
+	public:
+
+		// constructor
+		ParamDescription(std::string d) : description_(d) {};
+		// destructor
+		~ParamDescription(void){};
+
+		std::string getDescription() { return description_; };
+
+	private:
+		// a textual description
+		std::string description_;
+};
+
 // describes the module meta data
 class MetaData {
 	public:
 		// constructor
-		MetaData(std::string, std::map<std::string, Type>, std::map<std::string, Type>);
+		MetaData(
+			std::string, // description
+			std::map<std::string, DataDescription>, // input
+			std::map<std::string, DataDescription>, // output
+			std::map<std::string, ParamDescription> // params
+		);
 		// destructor
 		~MetaData(void){};
 
 		// textual description of the module
 		std::string getDescription();
 
-		// list of inputs  name => type
-		std::map<std::string, Type> getInputs();
+		// list of inputs  name => description details
+		std::map<std::string, DataDescription> getInputs();
 
-		// list of outputs  name => type
-		std::map<std::string, Type> getOutputs();
+		// list of outputs  name => description details
+		std::map<std::string, DataDescription> getOutputs();
+
+		// list of parameters  name => description details
+		std::map<std::string, ParamDescription> getParams();
 
 	private:
-		std::string description;
+		std::string description_;
 
-		std::map<std::string, Type> inputs;
-		std::map<std::string, Type> outputs;
+		std::map<std::string, DataDescription> inputs_;
+		std::map<std::string, DataDescription> outputs_;
+		std::map<std::string, ParamDescription> params_;
 
 };
 

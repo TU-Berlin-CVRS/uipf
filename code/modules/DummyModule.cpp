@@ -16,7 +16,18 @@ void DummyModule::run(map<string, Data::ptr& >& input, map<string, string>& para
 	listParams(params);
 }
 
-std::string DummyModule::name() const
+string DummyModule::name() const
 {
 	return "DummyModule";
 }
+
+MetaData DummyModule::getMetaData() const
+{
+	return MetaData(
+		"A dummy module for testing purposes. It does nothing but printing the parameters.",
+		map<string, DataDescription>(),
+		map<string, DataDescription>(),
+		map<string, ParamDescription>()
+	);
+}
+

@@ -15,13 +15,13 @@ ouput 		is a std::map of output resources, the names are described in the module
 context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 */
 void
-ShowImageModule::run (map < string, Data::ptr& >&input, map < string,string >& params, map < string, Data::ptr >&output) const 
+ShowImageModule::run (map < string, Data::ptr& >&input, map < string,string >& params, map < string, Data::ptr >&output) const
 {
 	using namespace cv;
 
 	Matrix* oMatrix = getData<Matrix>(input,"image");
 	if (oMatrix) {
-		context_->displayImage(getParam<std::string>(params,"title","no title"), *oMatrix);
+		context_->displayImage(getParam<std::string>(params,"title","view image"), *oMatrix);
 	}
 }
 
@@ -29,3 +29,21 @@ std::string ShowImageModule::name () const
 {
 	return "showImage";
 }
+
+MetaData ShowImageModule::getMetaData() const
+{
+	map<string, DataDescription> input = {
+		{"image", DataDescription(MATRIX, "the image to show.") }
+	};
+	map<string, ParamDescription> params = {
+		{"title", ParamDescription("the title of the window.") }
+	};
+
+	return MetaData(
+		"Show an image by opening a window.",
+		input,
+		map<string, DataDescription>(), // no outputs
+		params
+	);
+}
+

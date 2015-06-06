@@ -20,3 +20,25 @@ std::string GaussianModule::name() const
 {
 	return "gaussian";
 }
+
+MetaData GaussianModule::getMetaData() const
+{
+	map<string, DataDescription> input = {
+		{"image", DataDescription(MATRIX, "the image to apply the filter on.") }
+	};
+	map<string, DataDescription> output = {
+		{"image", DataDescription(MATRIX, "the result image.") }
+	};
+	map<string, ParamDescription> params = {
+		{"windowSize", ParamDescription("window size of the kernel.") },
+		{"sigma", ParamDescription("variance of the gaussian kernel.") }
+	};
+
+	return MetaData(
+		"Applies Gaussian blurring to an image.",
+		input,
+		output,
+		params
+	);
+}
+
