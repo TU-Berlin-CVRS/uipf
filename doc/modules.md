@@ -7,10 +7,10 @@ A module consists of a library file that contains a C++ class which extends a de
 
 A module class has to extend from `ModuleInterface` and implement the following methods:
 
-	virtual void run(map<string, Data*>& input, map<string, string> params, map<string, Data*>& output) = 0;
+	virtual void run( std::map<std::string, uipf::Data::ptr& >& input, std::map<std::string, std::string >& params, std::map<std::string, uipf::Data::ptr >& output) const = 0;
 
 - `input` is a std::map of input resources, the names are described in the module meta description
-- `params` is a std::map of input paramaeters, the names are described in the module meta description
+- `params` is a std::map of input parameters, the names are described in the module meta description
 - `ouput` is a std::map of output resources, the names are described in the module meta description
 
 TODO: describe meta data methods
