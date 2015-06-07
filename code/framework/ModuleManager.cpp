@@ -18,26 +18,23 @@ using namespace std;
 /*
 conf	Configuration file, which has to be executed
 */
-ModuleManager::ModuleManager(Configuration conf)
- : config_(conf)
-{
+ModuleManager::ModuleManager() {
 	initModules();
 }
 
 // executes the Configuration file
 /*
 */
-void ModuleManager::run(){
+void ModuleManager::run(Configuration config){
 
 	// get processing chain
-	map<string, ProcessingStep> chain = config_.getProcessingChain();
+	map<string, ProcessingStep> chain = config.getProcessingChain();
 
 	map<string, ProcessingStep> chainTmp;
 	chainTmp.insert(chain.begin(), chain.end());
 
 	// contains the names of the processing steps in the correct order
 	vector<string> sortedChain;
-
 
 
 	// iterate over all processing steps and order them
