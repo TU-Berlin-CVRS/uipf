@@ -5,6 +5,7 @@
 #include "StdIncl.hpp"
 #include "types/Data.hpp"
 #include "Logger.hpp"
+#include "InvalidConfigException.hpp"
 
 namespace uipf{
 
@@ -49,8 +50,7 @@ T* ModuleBase::getData(std::map<std::string, Data::ptr& >& mData, const std::str
 	}
 	else
 	{
-		std::cout << "input " << strName << " not found!" << std::endl; // TODO convert this into an exception
-		return nullptr;
+		throw InvalidConfigException(std::string("input data '") + strName + std::string("' not found!"));
 	}
 }
 

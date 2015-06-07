@@ -16,8 +16,8 @@ context 	is a container providing access to the current environment, allowing to
 void
 LoadImageModule::run (map < string, Data::ptr& >&input, map < string, string >& params, map < string, Data::ptr >&output ) const
 {
-
   using namespace cv;
+
   Mat image;
   std::string strFilename = params["filename"];
   // check whether to load the image in grayscale mode, defaults to color
@@ -29,14 +29,11 @@ LoadImageModule::run (map < string, Data::ptr& >&input, map < string, string >& 
 
   if (!image.data)// Check for invalid input
   {
-    LOG_E("Could not open or find the image");
-    return; //2DO Exception
+    throw new ErrorException(string("Could not open or find the image: ") + strFilename);
   }
-
 
   output.insert (pair < string, Data::ptr >("image", Matrix::ptr(new Matrix(image))));
 
-  listParams(params);
 }
 
 std::string LoadImageModule::name () const
