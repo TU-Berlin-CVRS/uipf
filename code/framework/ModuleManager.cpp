@@ -10,6 +10,8 @@
 #include <string>
 #include "Logger.hpp"
 #include "ModuleBase.hpp"
+#include "ErrorException.hpp"
+#include "InvalidConfigException.hpp"
 
 using namespace uipf;
 using namespace std;
@@ -88,16 +90,25 @@ void ModuleManager::run(){
 	// contains the outputs of the processing steps
 	map<string, map<string, Data::ptr>* > stepsOutputs;
 
+	LOG_I( "Starting processing chain." );
+
 	// run over the sortedChain and run the modules in the order given by the chain
 	for (int i=0; i<sortedChain.size(); i++){
 
 		ProcessingStep proSt = chain[sortedChain[i]];
 
 		// load the module
-		ModuleInterface* mod = loadModule(proSt.module);
-		ModuleBase* modbase = dynamic_cast<ModuleBase*>(mod);
-		if (modbase){
-			modbase->setContext(&context); // TODO consider making this method part of the interface
+		ModuleInterface* module;
+		string moduleName = proSt.module;
+		if (hasModule(moduleName)) {
+			module = loadModule(moduleName);
+			ModuleBase* modbase = dynamic_cast<ModuleBase*>(module);
+			if (modbase){
+				modbase->setContext(&context); // TODO consider making this method part of the interface
+			}
+		} else {
+			LOG_E( "Module '" + moduleName + "' could not be found." );
+			break;
 		}
 
 		// prepare an empty map of outputs that will be filled by the module
@@ -114,7 +125,22 @@ void ModuleManager::run(){
 		}
 
 		LOG_I( "Running step '" + proSt.name + "'..." );
-		mod->run(inputs, proSt.params, *outputs);
+
+		try {
+
+			module->run(inputs, proSt.params, *outputs);
+
+		} catch (ErrorException e) {
+			LOG_E( string("Error: ") + e.what() );
+			break;
+		} catch (InvalidConfigException e) {
+			LOG_E( string("Invalid config: ") + e.what() );
+			break;
+		} catch (std::exception e) {
+			LOG_E( string("Error: module threw exception: ") + e.what() );
+			break;
+		}
+
 		LOG_I( "Done with step '" + proSt.name + "'." );
 
 		// fill the outputs of the current processing step
@@ -127,6 +153,7 @@ void ModuleManager::run(){
 		delete it->second;
 	}
 
+	LOG_I( "Finished processing chain." );
 }
 
 // initialize all modules by creating a map of module names and the plugin loader instance

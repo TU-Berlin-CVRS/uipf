@@ -7,6 +7,8 @@
 #include "types/Data.hpp"
 #include "Context.hpp"
 #include "MetaData.hpp"
+#include "InvalidConfigException.hpp"
+#include "ErrorException.hpp"
 
 namespace uipf{
 

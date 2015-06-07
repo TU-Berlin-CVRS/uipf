@@ -14,11 +14,12 @@ context 	is a container providing access to the current environment, allowing to
 void DummyModule::run(map<string, Data::ptr& >& input, map<string, string>& params, map<string, Data::ptr>& output) const
 {
 	listParams(params);
+	throw InvalidConfigException("test");
 }
 
 string DummyModule::name() const
 {
-	return "DummyModule";
+	return "dummyModule";
 }
 
 MetaData DummyModule::getMetaData() const
