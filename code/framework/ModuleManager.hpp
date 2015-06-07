@@ -3,6 +3,7 @@
 #include "ModuleInterface.hpp"
 #include "MetaData.hpp"
 #include <QObjectList>
+#include <QPluginLoader>
 #include <map>
 
 namespace uipf{
@@ -13,7 +14,7 @@ class ModuleManager{
 		// constructor
 		ModuleManager();
 		// destructor
-		~ModuleManager(void){};
+		~ModuleManager(void);
 
 		// runs the module chain with the params
 		void run(Configuration);
@@ -22,12 +23,13 @@ class ModuleManager{
 
 	private:
 		// module chain
-		
+
 		ModuleInterface* loadModule(const std::string& name);
 
-		void initModules();
-		
-		std::map<std::string,ModuleInterface*> plugins_;
+		bool hasModule(const std::string& name);
+
+		// map: module name -> plugin loader instance which can instantiate a module
+		std::map<std::string, QPluginLoader*> plugins_;
 
 };
 

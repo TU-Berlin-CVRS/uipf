@@ -1,5 +1,14 @@
 
-# second module's name is "process", module names are unique btw.
+# first processing step with name "sourceImage"
+# using the module "loadImage" which is able to read an image file and provides one output
+# it has the parameter filename which refers to the file that it should read
+sourceImage:
+  module: loadImage
+  filename: ../../testdata/Vintage-Tree-Nature-Background-HD-Wallpaper.jpg
+# uncomment the following to load the image as grayscale
+#  mode: grayscale
+
+# second step's name is "process", step names are unique btw.
 # here the module "gaussian" is used, which has a paramter kernelSize
 # the gaussian module has an input named "image" which is of type Image
 # and is configured to take the value of the "image" output of the
@@ -10,15 +19,7 @@ process:
   input:
     image: sourceImage.image
 
-# first module with name "sourceImage"
-# using the module "loadImage" which is able to read an image file and provides one output
-# it has the parameter filename which refers to the file that it should read
-sourceImage:
-  module: loadImage
-  filename: ../../testdata/Vintage-Tree-Nature-Background-HD-Wallpaper.jpg
-
-
-# the last module in the chain is named "output" and uses the storeImage module
+# the last step in the chain is named "output" and uses the storeImage module
 # which saves the input into a file
 output:
   module: storeImage

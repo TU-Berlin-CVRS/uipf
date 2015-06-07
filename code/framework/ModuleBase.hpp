@@ -5,6 +5,7 @@
 #include "StdIncl.hpp"
 #include "types/Data.hpp"
 #include "Logger.hpp"
+#include "InvalidConfigException.hpp"
 
 namespace uipf{
 
@@ -19,16 +20,16 @@ class ModuleBase {
 		void setContext(Context*);
 
 	protected:
-		Context* context_;	
+		Context* context_;
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>
 		T* getData(std::map<std::string, Data::ptr& >& mData, const std::string& strName) const;
-		
+
 		//returns a typesafe parameter by name if it is available. otherwise a defaultValue is used
 		template <typename T>
 		T getParam(std::map<std::string, std::string >& mParams, const std::string& strName, T defaultValue) const;
-		
+
 		//print given parameters
 		void listParams( std::map < std::string, std::string >& params) const;
 };
@@ -49,8 +50,7 @@ T* ModuleBase::getData(std::map<std::string, Data::ptr& >& mData, const std::str
 	}
 	else
 	{
-		std::cout << "input " << strName << " not found!" << std::endl; // TODO convert this into an exception
-		return nullptr;
+		throw InvalidConfigException(std::string("input data '") + strName + std::string("' not found!"));
 	}
 }
 
@@ -64,15 +64,13 @@ T ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::
 	}
 	else
 	{
-	        return defaultValue; 
+		return defaultValue;
 	}
 }
 
 
 
-} //namespace 
-
-
+} //namespace
 
 
 #endif // MODULEBASE_H
