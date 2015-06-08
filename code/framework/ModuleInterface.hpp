@@ -1,6 +1,7 @@
 #ifndef MODULEINTERFACE_H
 #define MODULEINTERFACE_H
 
+#include <QObject>
 #include <QtPlugin>
 #include <string>
 #include <map>
