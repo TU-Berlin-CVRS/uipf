@@ -32,6 +32,7 @@ add_executable(uipf
 	framework/Context.cpp
 	framework/Logger.cpp
 	framework/MetaData.cpp
+        framework/Utils.cpp
 
 	framework/types/Matrix.cpp
 	framework/types/String.cpp
@@ -89,7 +90,7 @@ qt5_use_modules(ShowImageModule Core Gui Widgets)
 #link dependencies of dynamic modules
 target_link_libraries(LoadImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
-
+target_link_libraries(GaussianModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 
 
 #
