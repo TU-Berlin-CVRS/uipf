@@ -16,6 +16,7 @@ sourceImage:
 process:
   module: gaussian
   kernelSize: 5
+  sigma: 10.5
   input:
     image: sourceImage.image
 
@@ -25,7 +26,8 @@ output:
   module: storeImage
   input:
     image: process.image
-  filename: output.png
+  filename: output.jPeg
+  quality: 30
 
 #shows an image in a window
 show:
