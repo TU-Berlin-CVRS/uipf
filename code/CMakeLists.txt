@@ -48,7 +48,7 @@ add_executable(uipf
 
 # link the uipf program to opencv
 #~ target_link_libraries(uipf-gui opencv_core opencv_imgproc opencv_highgui mainwindow) # gui
-target_link_libraries(uipf opencv_core opencv_imgproc opencv_highgui ModuleBase ${YAML_CPP_LIBRARY}) # console
+target_link_libraries(uipf opencv_core opencv_imgproc opencv_highgui boost_program_options ModuleBase ${YAML_CPP_LIBRARY}) # console
 
 # find Qt library for building the GUI
 find_package(Qt5Widgets REQUIRED)

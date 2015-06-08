@@ -27,6 +27,8 @@ class ModuleManager{
 		ModuleInterface* loadModule(const std::string& name);
 
 		bool hasModule(const std::string& name);
+		
+		void initModules();
 
 		// map: module name -> plugin loader instance which can instantiate a module
 		std::map<std::string, QPluginLoader*> plugins_;
