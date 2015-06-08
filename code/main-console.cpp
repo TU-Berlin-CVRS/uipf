@@ -41,8 +41,6 @@ int main(int argc, char** argv){
 		string configFileName = argv[2];
 		conf.load(configFileName);
 
-		// only for debug, print the loaded config
-		conf.store("test.yaml");
 
 	} else{
 	// run a single module.
@@ -224,10 +222,21 @@ int main(int argc, char** argv){
 
 	}
 
+	// only for debug, print the loaded config
 	conf.store("test.yaml");
-	// loads the Configuration and runs it
-	mm.run(conf);
 
+	// validate configuration and show errors
+	vector<string> errors = conf.validate(mm.getAllModuleMetaData());
+	if (!errors.empty()) {
+		cout << endl << "There are configuration errors!" << endl << endl;
+		for(unsigned int i = 0; i < errors.size(); ++i) {
+			cout << errors[i] << endl;
+		}
+		return 1;
+	}
+
+	// run the current configuration
+	mm.run(conf);
 
 	return 0;
 }
