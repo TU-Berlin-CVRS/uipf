@@ -4,6 +4,7 @@
 #include "Context.hpp"
 #include "StdIncl.hpp"
 #include "types/Data.hpp"
+#include "Utils.hpp"
 #include "Logger.hpp"
 #include "InvalidConfigException.hpp"
 
@@ -68,6 +69,44 @@ T ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::
 	}
 }
 
+template <>
+inline int ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::string& strName, int defaultValue) const
+{
+	if (mParams.find(strName) != mParams.end())
+	{
+		return atoi(mParams[strName].c_str());
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
+
+template <>
+inline float ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::string& strName, float defaultValue) const
+{
+	if (mParams.find(strName) != mParams.end())
+	{
+		return atof(mParams[strName].c_str());
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
+
+template <>
+inline double ModuleBase::getParam(std::map<std::string, std::string >& mParams, const std::string& strName, double defaultValue) const
+{
+	if (mParams.find(strName) != mParams.end())
+	{
+		return atof(mParams[strName].c_str());
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
 
 
 } //namespace
