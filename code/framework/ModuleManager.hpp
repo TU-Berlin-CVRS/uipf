@@ -12,16 +12,18 @@ class ModuleManager{
 
 	public:
 		// constructor
-		// loads the module chain with the params from the configuration object
-		ModuleManager(Configuration);
+		ModuleManager();
 		// destructor
 		~ModuleManager(void);
 
 		// runs the module chain with the params
-		void run();
+		void run(Configuration);
 
+		// returns meta data information for a named module
+		MetaData getModuleMetaData(const std::string& name);
+
+		// returns a map of module name => meta data
 		std::map<std::string, MetaData> getAllModuleMetaData();
-
 
 	private:
 		// module chain
@@ -30,12 +32,7 @@ class ModuleManager{
 
 		bool hasModule(const std::string& name);
 
-		MetaData getModuleMetaData(const std::string& name);
-
 		void initModules();
-
-
-		Configuration config_; //Member Variables need to be declared with some kind of underscore notation...
 
 		// map: module name -> plugin loader instance which can instantiate a module
 		std::map<std::string, QPluginLoader*> plugins_;

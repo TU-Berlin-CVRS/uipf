@@ -6,19 +6,21 @@ Usage:
 
 Parameter:
 
-	-c	--config	run a specified config file
+	-c	--config			run a specified config file
 
-	-i	--input		defines an input, can be used multiple times
-								format: inputName:fileName
-								inputName is optional if there is only one input
+	-mn --moduleName  defines the name of the module
 
-	-o	--output	defines an output, can be used multiple times
-								format: outputName:fileName
-								outputName is optional if there is only one output
-								output itself is optional, if there is only one input and one output,
-								the output filename will be choosen from the input name in this case.
+	-i	--input				defines an input, can be used multiple times
+										format: inputName:fileName
+										inputName is optional if there is only one input
 
-	-p	--param		defines a parameter, format:  name:value
+	-o	--output			defines an output, can be used multiple times
+										format: outputName:fileName
+										outputName is optional if there is only one output
+										output itself is optional, if there is only one input and one output,
+										the output filename will be choosen from the input name in this case.
+
+	-p	--param				defines a parameter, format:  name:value
 
 
 Concrete example:
