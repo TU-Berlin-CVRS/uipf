@@ -23,7 +23,7 @@ int main(int argc, char** argv){
 
 	if (argc < 2) {
 		std::cerr << "Usage Error, at least one argument is required!\n\n";
-		std::cerr << "Usage: " << argv[0] << " <configFile>"<< std::endl;
+		std::cerr << "Usage: " << argv[0] << " -c <configFile>"<< std::endl;
 		return 1;
 	}
 
