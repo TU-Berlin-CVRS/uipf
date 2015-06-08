@@ -5,6 +5,7 @@
 #include <map>
 #include <opencv2/opencv.hpp>
 #include "ProcessingStep.hpp"
+#include "MetaData.hpp"
 
 namespace uipf{
 
@@ -23,7 +24,8 @@ class Configuration{
 		void store(std::string);
 
 		// validates the config by checking for logical errors
-		bool validate();
+		// returns a set of error messages, config is valid if messages are empty
+		std::vector<std::string> validate(std::map<std::string, MetaData>);
 
 		// return processing chain  name => step
 		std::map<std::string, ProcessingStep> getProcessingChain();
@@ -33,9 +35,9 @@ class Configuration{
 
 		// removes a ProcessingStep from the chain
 		void removeProcessingStep(std::string);
-		
+
 	private:
-		// chain of ProcessingSteps
+		// chain of ProcessingSteps name => step
 		std::map<std::string, ProcessingStep> chain;
 
 };

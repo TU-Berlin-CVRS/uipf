@@ -13,6 +13,8 @@ class DataDescription {
 
 		// constructor
 		DataDescription(Type t, std::string d) : type_(t), description_(d) {};
+		// constuctor to allow copying
+		DataDescription() {};
 		// destructor
 		~DataDescription(void){};
 
@@ -32,6 +34,8 @@ class ParamDescription {
 
 		// constructor
 		ParamDescription(std::string d) : description_(d) {};
+		// constuctor to allow copying
+		ParamDescription() {};
 		// destructor
 		~ParamDescription(void){};
 
@@ -52,6 +56,8 @@ class MetaData {
 			std::map<std::string, DataDescription>, // output
 			std::map<std::string, ParamDescription> // params
 		);
+		// constuctor to allow copying
+		MetaData(){};
 		// destructor
 		~MetaData(void){};
 

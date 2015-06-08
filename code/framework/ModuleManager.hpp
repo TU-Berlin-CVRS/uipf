@@ -20,6 +20,8 @@ class ModuleManager{
 		// runs the module chain with the params
 		void run();
 
+		std::map<std::string, MetaData> getAllModuleMetaData();
+
 
 	private:
 		// module chain

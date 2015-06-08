@@ -59,11 +59,61 @@ void Configuration::load(string filename){
 
 }
 
-bool Configuration::validate(){
-	// TODO validate if inputs and outputs correspond and are not empty
+// validate this config against a set of available modules
+vector<string> Configuration::validate(map<string, MetaData> modules){
+
+	vector<string> errors;
+
+	for(auto it = chain.cbegin(); it != chain.end(); ++it) {
+
+		string inStep = string("In step '") + it->first + string("': ");
+		ProcessingStep step = it->second;
+
+		// check if module exists
+		if (modules.count(step.module) == 0) {
+			errors.push_back( inStep + string("Module '") + step.module + string("' could not be found.") );
+			// can not do any further chechks on the step if module does not exist, so continue
+			continue;
+		}
+
+		for(auto inputIt = step.inputs.cbegin(); inputIt != step.inputs.end(); ++inputIt) {
+			// check if input exists for a module
+			MetaData module = modules[step.module];
+			if (module.getInputs().count(inputIt->first) == 0) {
+				errors.push_back( inStep + string("Module '") + step.module + string("' has no input named '") + inputIt->first + string("'.") );
+			}
+			// check if dependencies refer to existing steps
+			if (chain.count(inputIt->second.first) == 0) {
+				errors.push_back( inStep + string("Input '") + inputIt->first + string("' refers to non-existing step '") + inputIt->second.first + string("'.") );
+			} else if (modules.count(chain[inputIt->second.first].module) > 0) {
+				// check if the referenced output exists
+				MetaData refModule = modules[chain[inputIt->second.first].module];
+				if (refModule.getOutputs().count(inputIt->second.second) == 0) {
+					errors.push_back( inStep + string("Input '") + inputIt->first
+						+ string("' refers to non-existing output '") + inputIt->second.second
+						+ string("' on module '") + chain[inputIt->second.first].module + string("'.")
+					);
+				} else {
+					// check if the type of output and input matches
+					DataDescription output = refModule.getOutputs()[inputIt->second.second];
+					if (output.getType() != module.getInputs()[inputIt->first].getType()) {
+						errors.push_back( inStep + string("Type of input '") + inputIt->first
+							+ string("' does not match the type of the referenced output.")
+						);
+					}
+				}
+			}
+		}
+
+		for(auto paramIt = step.params.cbegin(); paramIt != step.params.end(); ++paramIt) {
+			// TODO check for mandatory params
+		}
+
+	}
+
 	// TODO detect circular dependencies
-	// TODO think of further validation needs
-	return true;
+
+	return errors;
 }
 
 //
@@ -135,4 +185,4 @@ stepName	name of processingStep, which has to been deleted from the chain
 void Configuration::removeProcessingStep(string stepName){
 	chain.erase(stepName);
 }
-		
+

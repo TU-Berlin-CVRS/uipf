@@ -93,7 +93,7 @@ void ModuleManager::run(){
 	LOG_I( "Starting processing chain." );
 
 	// run over the sortedChain and run the modules in the order given by the chain
-	for (int i=0; i<sortedChain.size(); i++){
+	for (unsigned int i=0; i<sortedChain.size(); i++){
 
 		ProcessingStep proSt = chain[sortedChain[i]];
 
@@ -145,6 +145,8 @@ void ModuleManager::run(){
 
 		// fill the outputs of the current processing step
 		stepsOutputs.insert(pair<string, map<string, Data::ptr>* > (proSt.name, outputs));
+
+		// TODO delete module, check for side effects with the data pointers first
 	}
 
 	// delete the ouput map
@@ -184,8 +186,8 @@ bool ModuleManager::hasModule(const std::string& name){
 }
 
 // creates an instance of a module and returns it
-ModuleInterface* ModuleManager::loadModule(const std::string& name){
-
+ModuleInterface* ModuleManager::loadModule(const std::string& name)
+{
 	if (plugins_.count(name) > 0) {
 
 		QPluginLoader* loader = plugins_[name];
@@ -200,9 +202,20 @@ ModuleInterface* ModuleManager::loadModule(const std::string& name){
 }
 
 // returns the meta data of a module
-MetaData ModuleManager::getModuleMetaData(const std::string& name){
+MetaData ModuleManager::getModuleMetaData(const std::string& name)
+{
 	ModuleInterface* module = loadModule(name);
-	return module->getMetaData();
+	MetaData metaData = module->getMetaData();
+	delete module;
+	return metaData;
 }
 
-
+// returns the meta data for all modules indexed by module name
+map<string, MetaData> ModuleManager::getAllModuleMetaData()
+{
+	map<string, MetaData> result;
+	for(auto it = plugins_.cbegin(); it != plugins_.end(); ++it) {
+		result.insert( pair<string, MetaData>( it->first, getModuleMetaData(it->first) ) );
+	}
+	return result;
+}
