@@ -3,8 +3,6 @@
 
 #include "../framework/ModuleInterface.hpp"
 #include "../framework/ModuleBase.hpp"
-#include <QObject>
-#include <QtPlugin>
 
 namespace uipf{
 
