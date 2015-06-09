@@ -1,6 +1,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include <stdexcept>
 #include "StoreImageModule.hpp"
 
 using namespace std;
