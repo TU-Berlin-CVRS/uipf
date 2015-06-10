@@ -3,6 +3,7 @@
 #include <QApplication>
 #include "framework/ModuleManager.hpp"
 #include "framework/Configuration.hpp"
+#include "framework/Utils.hpp"
 
 // foor Boost:
 #include <boost/program_options/options_description.hpp>
@@ -14,9 +15,6 @@ namespace po = boost::program_options;
 using namespace std;
 using namespace uipf;
 
-string firstPart(string s);
-string secondPart(string s);
-string rename(string s);
 
 // argument is a configFile
 int main(int argc, char** argv){
@@ -116,7 +114,7 @@ int main(int argc, char** argv){
 					loadModule.name = "loadModule" + to_string(i);
 					loadModule.module = "loadImage";
 
-					string source = secondPart(inputs[i]);
+					string source = utils::secondPart(inputs[i]);
 
 					loadModule.params.insert (pair<string,string>("filename",source) );
 
@@ -130,7 +128,7 @@ int main(int argc, char** argv){
 						auto it = in.cbegin();
 						name = it->first;
 					} else {
-						name = firstPart(inputs[i]);
+						name = utils::firstPart(inputs[i]);
 					}
 					pair<string,string> loadWithValue(loadModule.name, "image");
 
@@ -156,7 +154,7 @@ int main(int argc, char** argv){
 						storeModule.inputs.insert (pair<string, pair<string, string> >("image", storeSource));
 
 						// where should it be stored
-						string newName = rename(secondPart(inputs[0]));
+						string newName = utils::rename(utils::secondPart(inputs[0]));
 						storeModule.params.insert (pair<string,string>("filename", newName));
 
 						conf.addProcessingStep(storeModule);
@@ -180,7 +178,7 @@ int main(int argc, char** argv){
 						auto it = out.cbegin();
 						outName = it->first;
 					} else {
-						outName = firstPart(outputs[i]);
+						outName = utils::firstPart(outputs[i]);
 					}
 
 					pair<string, string> storeSource(processModule.name, outName);
@@ -192,7 +190,7 @@ int main(int argc, char** argv){
 					// where does the image come from
 					storeModule.inputs.insert (pair<string, pair<string, string> >("image",storeSource) );
 					// where should it be stored
-					string storeName = secondPart(outputs[i]);
+					string storeName = utils::secondPart(outputs[i]);
 					storeModule.params.insert (pair<string,string>("filename",storeName) );
 
 					conf.addProcessingStep(storeModule);
@@ -207,7 +205,7 @@ int main(int argc, char** argv){
 				// this step is repeated as often, as the number of params is inserted
 				for (unsigned int i=0; i<params.size(); i++){
 
-					processModule.params.insert (pair<string,string>(firstPart(params[i]), secondPart(params[i])));
+					processModule.params.insert (pair<string,string>(utils::firstPart(params[i]), utils::secondPart(params[i])));
 
 				}
 			}
@@ -239,78 +237,4 @@ int main(int argc, char** argv){
 	mm.run(conf);
 
 	return 0;
-}
-
-// renames a filename by adding _result before the end, eg. ball.png -> ball_result.png
-/*
-s	old name, which has to be renamed
-*/
-string rename(string s){
-
-	istringstream iss(s);
-
-	vector<std::string> tokens;
-	string token;
-
-	while (getline(iss, token, '.')) {
-		tokens.push_back(token);
-	}
-
-	string end = tokens[tokens.size()-1];
-	tokens.pop_back();
-	string beforeEnd = tokens[tokens.size()-1];
-	tokens.pop_back();
-	beforeEnd = beforeEnd +"_result";
-	tokens.push_back(beforeEnd);
-	tokens.push_back(end);
-
-	string newName;
-
-	newName = tokens[0];
-	for (unsigned int i=1; i<tokens.size(); i++){
-		newName = newName +"." + tokens[i];
-	}
-
-	return newName;
-}
-
-// gets the second part of the string, which is divided by : , e.g. source:../ball.png -> ../ball.png
-/*
-s	complete string, or only the second part
-*/
-string secondPart(string s){
-
-	istringstream iss(s);
-
-	vector<std::string> tokens;
-	string token;
-
-	while (getline(iss, token, ':')) {
-		if (!token.empty())
-			tokens.push_back(token);
-	}
-
-	if(tokens.size() == 1){
-		return tokens[0];
-	} else{
-		return tokens[1];
-	}
-}
-
-// gets the first part of the string, which is divided by : , e.g. source:../ball.png -> source
-/*
-s	complete string
-*/
-string firstPart(string s){
-
-	istringstream iss(s);
-
-	vector<std::string> tokens;
-	string token;
-
-	while (getline(iss, token, ':')) {
-		if (!token.empty())
-			tokens.push_back(token);
-	}
-	return tokens[0];
 }
