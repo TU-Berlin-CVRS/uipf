@@ -8,7 +8,7 @@ Parameter:
 
 	-c	--config			run a specified config file
 
-	-mn --moduleName  defines the name of the module
+	-m --moduleName  defines the name of the module
 
 	-i	--input				defines an input, can be used multiple times
 										format: inputName:fileName

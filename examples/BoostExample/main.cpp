@@ -52,10 +52,8 @@ int main(int ac, char* av[])
         po::options_description visible("Allowed options");
         visible.add(generic).add(config);
 		
-
-
 		po::variables_map vm;
-        store(parse_command_line(ac, av, all), vm);
+        store(po::command_line_parser(ac, av).options(all).positional(p).run(), vm);
 		// no idea why, but this line let optimisation value be set to 10 and not to any random value
 		po::notify(vm);
     
@@ -65,7 +63,8 @@ int main(int ac, char* av[])
         }
               
         if (vm.count("help")) {
-            cout << visible;
+            //~ cout << visible;
+            cout << all;
             return 0;
         }
               
