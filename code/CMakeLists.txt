@@ -56,7 +56,14 @@ find_package(Qt5Widgets REQUIRED)
 
 
 #create gui-executable
-add_executable(uipf-gui main-gui.cpp)
+add_executable(	uipf-gui 
+	main-gui.cpp
+	gui/processingstepsettings.cpp
+	gui/mainwindow.cpp
+)
+
+
+
 target_link_libraries (uipf-gui mainwindow)
 
 # add qt modules to the gui
