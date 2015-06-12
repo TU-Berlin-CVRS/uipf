@@ -10,9 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Create model
     model = new QStringListModel(this);
+    modelModule = new QStringListModel(this);
 
     // Glue model and view together
     ui->ProcessingSteps->setModel(model);
+
 
     // Add additional feature so that
     // we can manually modify the data in ListView
@@ -33,6 +35,12 @@ MainWindow::~MainWindow()
 // sets a processing step list
 void MainWindow::setStepList(QStringList list){
 	model->setStringList(list);
+}
+
+// sets a Module list
+void MainWindow::setModuleList(QStringList list){
+	modelModule->setStringList(list);
+	ui->comboBox->setModel(modelModule);
 }
 
 

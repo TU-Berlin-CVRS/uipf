@@ -25,6 +25,9 @@ public:
 
 	// sets a processing step list
 	void setStepList(QStringList);
+	
+	// sets a Module name list
+	void setModuleList(QStringList);
 
 private slots:
     void on_addButton_clicked();
@@ -34,7 +37,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+	// all the configuration steps
     QStringListModel *model;
+    
+	// all the modules
+    QStringListModel *modelModule;
 
     ProcessingStepSettings *modelTable;
 

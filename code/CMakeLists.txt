@@ -61,15 +61,24 @@ add_executable(	uipf-gui
 	gui/processingstepsettings.cpp
 	gui/mainwindow.cpp
 	
+	framework/ModuleManager.cpp
+	
 	framework/Configuration.cpp
+	framework/Context.cpp
+	framework/Logger.cpp
 	framework/MetaData.cpp
     framework/Utils.cpp
+
+	framework/types/Matrix.cpp
+	framework/types/String.cpp
+	framework/types/Float.cpp
+	framework/types/Integer.cpp
 
 )
 
 
 
-target_link_libraries (uipf-gui mainwindow  ${YAML_CPP_LIBRARY})
+target_link_libraries (uipf-gui mainwindow opencv_core opencv_imgproc opencv_highgui boost_program_options ModuleBase ${YAML_CPP_LIBRARY})
 
 # add qt modules to the gui
 qt5_use_modules(uipf-gui Core Gui Widgets)
