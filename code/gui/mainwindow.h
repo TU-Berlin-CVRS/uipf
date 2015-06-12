@@ -23,6 +23,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	// sets a processing step list
+	void setStepList(QStringList);
 
 private slots:
     void on_addButton_clicked();

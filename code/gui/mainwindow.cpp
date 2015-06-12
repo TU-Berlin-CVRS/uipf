@@ -11,13 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create model
     model = new QStringListModel(this);
 
-    // Make data
-    QStringList List;
-    List << "Example Processing Step 1" << "Example Processing Step 2" << "Example Processing Step 3";
-
-    // Populate our model
-    model->setStringList(List);
-
     // Glue model and view together
     ui->ProcessingSteps->setModel(model);
 
@@ -36,6 +29,12 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+// sets a processing step list
+void MainWindow::setStepList(QStringList list){
+	model->setStringList(list);
+}
+
 
 void MainWindow::on_addButton_clicked()
 {

@@ -32,7 +32,7 @@ add_executable(uipf
 	framework/Context.cpp
 	framework/Logger.cpp
 	framework/MetaData.cpp
-        framework/Utils.cpp
+    framework/Utils.cpp
 
 	framework/types/Matrix.cpp
 	framework/types/String.cpp
@@ -60,11 +60,16 @@ add_executable(	uipf-gui
 	main-gui.cpp
 	gui/processingstepsettings.cpp
 	gui/mainwindow.cpp
+	
+	framework/Configuration.cpp
+	framework/MetaData.cpp
+    framework/Utils.cpp
+
 )
 
 
 
-target_link_libraries (uipf-gui mainwindow)
+target_link_libraries (uipf-gui mainwindow  ${YAML_CPP_LIBRARY})
 
 # add qt modules to the gui
 qt5_use_modules(uipf-gui Core Gui Widgets)
