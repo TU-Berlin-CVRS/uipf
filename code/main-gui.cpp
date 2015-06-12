@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
 	// loads the configFile and create a Configuration
 	string configFileName = argv[1];
 	conf.load(configFileName);
-    
+
     // only for debug, print the loaded config
-	conf.store("test.yaml");
+	conf.print();
 // up to here
 
 	// set the names of the processing steps:

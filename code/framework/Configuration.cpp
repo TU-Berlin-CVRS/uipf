@@ -5,13 +5,14 @@
 using namespace std;
 using namespace uipf;
 
-//
+// loads a configuration from a given .yaml file
 /*
+filename	the path to the .yaml file
 */
 void Configuration::load(string filename){
 
 	// clear current config
-	chain.clear();
+	chain_.clear();
 
 	// load yaml file
 	YAML::Node config = YAML::LoadFile(filename);
@@ -54,17 +55,20 @@ void Configuration::load(string filename){
 			}
 		}
 
-		chain.insert( pair<string, ProcessingStep>(step.name, step) );
+		chain_.insert( pair<string, ProcessingStep>(step.name, step) );
 	}
 
 }
 
 // validate this config against a set of available modules
+/*
+modules		the path to the .yaml file
+*/
 vector<string> Configuration::validate(map<string, MetaData> modules){
 
 	vector<string> errors;
 
-	for(auto it = chain.cbegin(); it != chain.end(); ++it) {
+	for(auto it = chain_.cbegin(); it != chain_.end(); ++it) {
 
 		string inStep = string("In step '") + it->first + string("': ");
 		ProcessingStep step = it->second;
@@ -83,15 +87,15 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 				errors.push_back( inStep + string("Module '") + step.module + string("' has no input named '") + inputIt->first + string("'.") );
 			}
 			// check if dependencies refer to existing steps
-			if (chain.count(inputIt->second.first) == 0) {
+			if (chain_.count(inputIt->second.first) == 0) {
 				errors.push_back( inStep + string("Input '") + inputIt->first + string("' refers to non-existing step '") + inputIt->second.first + string("'.") );
-			} else if (modules.count(chain[inputIt->second.first].module) > 0) {
+			} else if (modules.count(chain_[inputIt->second.first].module) > 0) {
 				// check if the referenced output exists
-				MetaData refModule = modules[chain[inputIt->second.first].module];
+				MetaData refModule = modules[chain_[inputIt->second.first].module];
 				if (refModule.getOutputs().count(inputIt->second.second) == 0) {
 					errors.push_back( inStep + string("Input '") + inputIt->first
 						+ string("' refers to non-existing output '") + inputIt->second.second
-						+ string("' on module '") + chain[inputIt->second.first].module + string("'.")
+						+ string("' on module '") + chain_[inputIt->second.first].module + string("'.")
 					);
 				} else {
 					// check if the type of output and input matches
@@ -116,21 +120,43 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 	return errors;
 }
 
-//
+// prints the current configurations yaml structure
 /*
-	stores the current module configuration in a yaml file
+see also https://github.com/jbeder/yaml-cpp/wiki/How-To-Emit-YAML
+*/
+void Configuration::print(){
 
-	see also https://github.com/jbeder/yaml-cpp/wiki/How-To-Emit-YAML
+	string out = getYAML();
+
+	std::cout << out;
+	std::cout << std::endl;
+
+}
+// stores the current module configuration in a yaml file
+/*
+filename	the path to the .yaml file
+
+see also https://github.com/jbeder/yaml-cpp/wiki/How-To-Emit-YAML
 */
 void Configuration::store(string filename){
+
+	string out = getYAML();
+
+	std::ofstream fout(filename);
+	fout << out;
+}
+
+// returns a the YAML representation of this configuration
+// it can be used to print or store the YAML structure
+string Configuration::getYAML(){
 
 	// create YAML emitter
 	YAML::Emitter out;
 
 	// the YAML document consists of a map of processing steps
 	out << YAML::BeginMap;
-	map<string, ProcessingStep>::iterator it = chain.begin();
-	for (; it!=chain.end(); ++it) {
+	map<string, ProcessingStep>::iterator it = chain_.begin();
+	for (; it!=chain_.end(); ++it) {
 		// each processing step has a name as the key and its config map as the value
 		out << YAML::Key << it->first;
 		out << YAML::Value << YAML::BeginMap;
@@ -160,14 +186,11 @@ void Configuration::store(string filename){
 	}
 	out << YAML::EndMap;
 
-	std::cout << "Here's the output YAML:\n" << out.c_str();
-	std::cout << std::endl;
-
-	// TODO write into real file instead of stdout
+	return string(out.c_str());
 }
 
 map<string, ProcessingStep> Configuration::getProcessingChain(){
-	return chain;
+	return chain_;
 }
 
 // adds a ProcessingStep to the chain
@@ -175,7 +198,7 @@ map<string, ProcessingStep> Configuration::getProcessingChain(){
  ProSt 		processing step, which is added to the chain
 */
 void Configuration::addProcessingStep(ProcessingStep ProSt){
-	chain.insert(pair<std::string, ProcessingStep> (ProSt.name, ProSt));
+	chain_.insert(pair<std::string, ProcessingStep> (ProSt.name, ProSt));
 }
 
 // removes a ProcessingStep from the chain
@@ -183,6 +206,6 @@ void Configuration::addProcessingStep(ProcessingStep ProSt){
 stepName	name of processingStep, which has to been deleted from the chain
 */
 void Configuration::removeProcessingStep(string stepName){
-	chain.erase(stepName);
+	chain_.erase(stepName);
 }
 
