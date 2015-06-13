@@ -117,8 +117,8 @@ int main(int argc, char** argv){
 			// show help
 			cout << visible;
 			return 1;
-		} 
-		
+		}
+
 		string modName = vm["modulename"].as<string>();
 		MetaData md = mm.getModuleMetaData(modName);
 
@@ -233,8 +233,9 @@ int main(int argc, char** argv){
 		conf.addProcessingStep(processModule);
 	}
 
-	// only for debug, print the loaded config
-	conf.store("test.yaml");
+	// print the loaded config
+	cout << "Here is the loaded configuration:" << endl;
+	conf.print();
 
 	// validate configuration and show errors
 	vector<string> errors = conf.validate(mm.getAllModuleMetaData());

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <opencv2/opencv.hpp>
 #include "ProcessingStep.hpp"
 #include "MetaData.hpp"
 
@@ -17,11 +16,14 @@ class Configuration{
 		// destructor
 		~Configuration(void){};
 
-		// loads the module chain with the params from the config file
+		// loads the processing chain from the config file
 		void load(std::string);
 
-		// stores the module chain with the params in the config file
+		// stores the processing chain into a config file
 		void store(std::string);
+
+		// prints the yaml representation of the config
+		void print();
 
 		// validates the config by checking for logical errors
 		// returns a set of error messages, config is valid if messages are empty
@@ -38,7 +40,10 @@ class Configuration{
 
 	private:
 		// chain of ProcessingSteps name => step
-		std::map<std::string, ProcessingStep> chain;
+		std::map<std::string, ProcessingStep> chain_;
+
+		// returns the YAML representation of the config, used for storing and printing
+		std::string getYAML();
 
 };
 
