@@ -70,7 +70,14 @@
        <widget class="QComboBox" name="comboBox"/>
       </item>
       <item>
-       <widget class="QTableView" name="tableParams"/>
+       <widget class="QTableView" name="tableParams">
+        <property name="minimumSize">
+         <size>
+          <width>407</width>
+          <height>147</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QTableView" name="tableInputs"/>

@@ -2,19 +2,19 @@
 #include "ui_mainwindow.h"
 #include "processingstepsettings.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
+ 
     ui->setupUi(this);
 
     // Create model
-    model = new QStringListModel(this);
+    modelStep = new QStringListModel(this);
     modelModule = new QStringListModel(this);
-
+    modelTable = new ProcessingStepSettings(this);
+    
     // Glue model and view together
-    ui->ProcessingSteps->setModel(model);
-
+    ui->ProcessingSteps->setModel(modelStep);
+    ui->tableParams->setModel(modelTable);
+	ui->comboBox->setModel(modelModule);
 
     // Add additional feature so that
     // we can manually modify the data in ListView
@@ -23,40 +23,44 @@ MainWindow::MainWindow(QWidget *parent) :
             setEditTriggers(QAbstractItemView::AnyKeyPressed |
                             QAbstractItemView::DoubleClicked);
 
-    modelTable = new ProcessingStepSettings(this);
-    ui->tableParams->setModel(modelTable);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete modelStep;
+    delete modelModule;
+    delete modelTable;
 }
 
 // sets a processing step list
 void MainWindow::setStepList(QStringList list){
-	model->setStringList(list);
+	modelStep->setStringList(list);
 }
 
 // sets a Module list
 void MainWindow::setModuleList(QStringList list){
 	modelModule->setStringList(list);
-	ui->comboBox->setModel(modelModule);
+}
+
+// sets the table
+void MainWindow::setStepParams(uipf::ProcessingStep proStep){
+	modelTable->setProcessingStep(proStep);	
 }
 
 
-void MainWindow::on_addButton_clicked()
-{
+void MainWindow::on_addButton_clicked() {
     // Add button clicked
     // Adding at the end
 
-    // Get the position
-    int row = model->rowCount();
+    // Get the position of the selected item
+    int row = modelStep->rowCount();
 
     // Enable add one or more rows
-    model->insertRows(row,1);
+    modelStep->insertRows(row,1);
 
     // Get the row for Edit mode
-    QModelIndex index = model->index(row);
+    QModelIndex index = modelStep->index(row);
 
     // Enable item selection and put it edit mode
     ui->ProcessingSteps->setCurrentIndex(index);
@@ -64,12 +68,11 @@ void MainWindow::on_addButton_clicked()
 }
 
 
-void MainWindow::on_deleteButton_clicked()
-{
+void MainWindow::on_deleteButton_clicked() {
     // Delete button clicked
     // For delete operation,
     // we're dealing with a Model not a View
     // Get the position
-    model->removeRows(ui->ProcessingSteps->currentIndex().row(),1);
+    modelStep->removeRows(ui->ProcessingSteps->currentIndex().row(),1);
 }
 

@@ -28,17 +28,19 @@ public:
 	
 	// sets a Module name list
 	void setModuleList(QStringList);
+	
+	// sets the table
+	void setStepParams(uipf::ProcessingStep);
 
 private slots:
     void on_addButton_clicked();
-
     void on_deleteButton_clicked();
 
 private:
     Ui::MainWindow *ui;
 
 	// all the configuration steps
-    QStringListModel *model;
+    QStringListModel *modelStep;
     
 	// all the modules
     QStringListModel *modelModule;

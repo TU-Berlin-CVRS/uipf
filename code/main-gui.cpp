@@ -24,13 +24,16 @@ int main(int argc, char *argv[])
 	conf.store("test.yaml");
 // up to here
 
+	MainWindow w;
+
 	// set the names of the processing steps:
 	QStringList list;
 	map<string, ProcessingStep> chain = conf.getProcessingChain();
 	for (auto it = chain.begin(); it!=chain.end(); ++it) {
 		list << it->first.c_str();
 	}
-
+	w.setStepList(list);
+	
 	// set the possible models
 	ModuleManager mm;
 	QStringList list_modules;
@@ -38,12 +41,13 @@ int main(int argc, char *argv[])
 	for (auto it = modules.begin(); it!=modules.end(); ++it) {
 		list_modules << it->first.c_str();
 	}
-
-	MainWindow w;
-	
-	// set the configuration steps
-	w.setStepList(list);
 	w.setModuleList(list_modules);
+	
+
+	// the following line is only for testing, this step should be done by clicking on a processing step
+	ProcessingStep prst = chain["process"]; 
+	w.setStepParams(prst);
+
 	
     w.show();
 
