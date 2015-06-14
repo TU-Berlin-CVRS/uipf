@@ -25,11 +25,6 @@ ShowImageModule::run (map < string, Data::ptr& >&input, map < string,string >& p
 	}
 }
 
-std::string ShowImageModule::name () const
-{
-	return "showImage";
-}
-
 MetaData ShowImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {

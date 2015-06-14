@@ -29,11 +29,6 @@ void GaussianModule::run(map<string, Data::ptr& >& input, map<string, string>& p
 	output.insert (pair < string, Data::ptr >("image", Matrix::ptr(new Matrix(m))));
 }
 
-std::string GaussianModule::name() const
-{
-	return "gaussian";
-}
-
 MetaData GaussianModule::getMetaData() const
 {
 	map<string, DataDescription> input = {

@@ -17,11 +17,6 @@ void DummyModule::run(map<string, Data::ptr& >& input, map<string, string>& para
 	throw InvalidConfigException("test");
 }
 
-string DummyModule::name() const
-{
-	return "dummyModule";
-}
-
 MetaData DummyModule::getMetaData() const
 {
 	return MetaData(

@@ -50,11 +50,6 @@ void StoreImageModule::run(map<string, Data::ptr& >& input, map<string, string>&
 	}
 }
 
-std::string StoreImageModule::name() const
-{
-	return "storeImage";
-}
-
 MetaData StoreImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {

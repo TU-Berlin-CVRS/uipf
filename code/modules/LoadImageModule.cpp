@@ -36,11 +36,6 @@ LoadImageModule::run (map < string, Data::ptr& >&input, map < string, string >& 
 
 }
 
-std::string LoadImageModule::name () const
-{
-  return "loadImage";
-}
-
 MetaData LoadImageModule::getMetaData() const
 {
 	map<string, DataDescription> output = {
