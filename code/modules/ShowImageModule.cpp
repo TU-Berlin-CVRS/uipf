@@ -25,6 +25,15 @@ ShowImageModule::run (map < string, Data::ptr& >&input, map < string,string >& p
 	}
 }
 
+/*
+
+*/
+void ShowImageModule::run( DataManager& data) const
+{
+	data.listParams();
+	throw InvalidConfigException("test");
+}
+
 MetaData ShowImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {

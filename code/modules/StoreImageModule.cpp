@@ -50,6 +50,15 @@ void StoreImageModule::run(map<string, Data::ptr& >& input, map<string, string>&
 	}
 }
 
+/*
+
+*/
+void StoreImageModule::run( DataManager& data) const
+{
+	data.listParams();
+	throw InvalidConfigException("test");
+}
+
 MetaData StoreImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {

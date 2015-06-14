@@ -27,6 +27,8 @@ Q_INTERFACES(uipf::ModuleInterface)
 			  std::map<std::string, std::string>& params,
 		   	  std::map<std::string, uipf::Data::ptr >& output ) const Q_DECL_OVERRIDE;
 
+		void run( DataManager& data ) const Q_DECL_OVERRIDE;
+
 		uipf::MetaData getMetaData() const Q_DECL_OVERRIDE;
 
 };

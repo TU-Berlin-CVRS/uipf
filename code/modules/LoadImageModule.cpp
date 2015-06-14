@@ -36,6 +36,15 @@ LoadImageModule::run (map < string, Data::ptr& >&input, map < string, string >& 
 
 }
 
+/*
+
+*/
+void LoadImageModule::run( DataManager& data) const
+{
+	data.listParams();
+	throw InvalidConfigException("test");
+}
+
 MetaData LoadImageModule::getMetaData() const
 {
 	map<string, DataDescription> output = {

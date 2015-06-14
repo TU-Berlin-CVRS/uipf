@@ -17,6 +17,16 @@ void DummyModule::run(map<string, Data::ptr& >& input, map<string, string>& para
 	throw InvalidConfigException("test");
 }
 
+
+/*
+
+*/
+void DummyModule::run( DataManager& data) const
+{
+	data.listParams();
+	throw InvalidConfigException("test");
+}
+
 MetaData DummyModule::getMetaData() const
 {
 	return MetaData(

@@ -28,6 +28,14 @@ void GaussianModule::run(map<string, Data::ptr& >& input, map<string, string>& p
 	//2DO naming unclear: is it just "image" or "process.image"??? What wins: Metadata or yaml-config-file?
 	output.insert (pair < string, Data::ptr >("image", Matrix::ptr(new Matrix(m))));
 }
+/*
+
+*/
+void GaussianModule::run( DataManager& data) const
+{
+	data.listParams();
+	throw InvalidConfigException("test");
+}
 
 MetaData GaussianModule::getMetaData() const
 {
