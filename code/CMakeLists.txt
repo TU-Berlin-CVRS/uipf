@@ -29,6 +29,7 @@ add_executable(uipf
 	framework/ModuleManager.cpp
 
 	framework/Configuration.cpp
+	framework/DataManager.cpp
 	framework/Context.cpp
 	framework/Logger.cpp
 	framework/MetaData.cpp
