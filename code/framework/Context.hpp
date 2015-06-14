@@ -16,7 +16,7 @@ class Context {
 		~Context(void){};
 		
 		
-		void displayImage(const std::string strTitle, const Matrix& oMat) const;
+		void displayImage(const std::string strTitle, const Matrix& oMat, bool bBlocking) const;
 
 };
 

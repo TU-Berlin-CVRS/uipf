@@ -6,11 +6,13 @@ using namespace uipf;
 // TODO implement window opener
 // ...
 
-void Context::displayImage(const std::string strTitle, const Matrix& oMat) const
+void Context::displayImage(const std::string strTitle, const Matrix& oMat, bool bBlocking) const
 {
 	//2DO:Use QT
 	using namespace cv;
 	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
-	imshow( strTitle.c_str(), oMat.getContent() );   
-	waitKey(-1);
+	imshow( strTitle.c_str(), oMat.getContent() );
+
+	if (bBlocking)
+		waitKey(-1);
 }
