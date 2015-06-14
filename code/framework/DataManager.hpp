@@ -5,6 +5,7 @@
 #include "StdIncl.hpp"
 #include "types/Data.hpp"
 #include "InvalidConfigException.hpp"
+#include "Utils.hpp"
 
 namespace uipf{
 using namespace std;
@@ -135,6 +136,19 @@ inline double DataManager::getParam( const std::string& strName, double defaultV
 	if (params_.find(strName) != params_.end())
 	{
 		return atof(params_[strName].c_str());
+	}
+	else
+	{
+		return defaultValue;
+	}
+}
+
+template <>
+inline bool DataManager::getParam( const std::string& strName, bool defaultValue) const
+{
+	if (params_.find(strName) != params_.end())
+	{
+		return (utils::toLower(params_[strName]).compare("true")==0);
 	}
 	else
 	{
