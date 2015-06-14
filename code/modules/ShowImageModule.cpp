@@ -14,16 +14,17 @@ void ShowImageModule::run( DataManager& data) const
 {
 	using namespace cv;
 
-	const Matrix* oMatrix = data.getInputData<Matrix>("image");
+	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
 	if (oMatrix) {
-		context_->displayImage(data.getParam<std::string>("title","view image"), *oMatrix);
+		context_->displayImage(data.getParam<std::string>("title","view image"), *oMatrix,data.getParam<bool>("blocking",true));
 	}
 }
 
 MetaData ShowImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"image", DataDescription(MATRIX, "the image to show.") }
+		{"image", DataDescription(MATRIX, "the image to show.") },
+		{"blocking", DataDescription(BOOL, "'true' or 'false' determines if the processing chain has to wait for this window to close or not.") },
 	};
 	map<string, ParamDescription> params = {
 		{"title", ParamDescription("the title of the window.") }
