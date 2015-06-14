@@ -6,7 +6,7 @@ using namespace uipf;
 // TODO implement window opener
 // ...
 
-void Context::displayImage(const std::string strTitle, Matrix& oMat) const
+void Context::displayImage(const std::string strTitle, const Matrix& oMat) const
 {
 	//2DO:Use QT
 	using namespace cv;

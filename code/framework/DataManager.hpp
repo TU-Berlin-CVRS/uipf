@@ -4,7 +4,7 @@
 
 #include "StdIncl.hpp"
 #include "types/Data.hpp"
-
+#include "InvalidConfigException.hpp"
 
 namespace uipf{
 using namespace std;
@@ -22,7 +22,7 @@ class DataManager
 
 		//returns a typesafe readonly smartpointer to input/output data by name if it is available
 		template <typename T>
-		T* const getInputData( const std::string& strName) const;
+		const T* getInputData( const std::string& strName) const;
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>
@@ -30,7 +30,7 @@ class DataManager
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>
-		void setOutputData( const std::string& strName, const T*) ;
+		void setOutputData( const std::string& strName, T*) ;
 
 		//returns a typesafe parameter by name if it is available. otherwise a defaultValue is used
 		template <typename T>
@@ -53,7 +53,7 @@ class DataManager
 
 
 template <typename T>
-T* const DataManager::getInputData( const std::string& strName) const
+const T* DataManager::getInputData( const std::string& strName) const
 {
 	if (input_.find(strName) != input_.end())
 	{
@@ -84,9 +84,9 @@ T* DataManager::getOutputData( const std::string& strName) const
 }
 
 template <typename T>
-void DataManager::setOutputData( const std::string& strName, const T* outputData)
+void DataManager::setOutputData( const std::string& strName, T* outputData)
 {
-	output_.insert (pair < string, Data::ptr >(strName, T::ptr(outputData)));
+	output_.insert (pair < string, Data::ptr >(strName, typename T::ptr(outputData)));
 }
 
 //2DO other type specialisations e.g. float with atof() etc.

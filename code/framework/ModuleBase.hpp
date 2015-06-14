@@ -32,14 +32,6 @@ class ModuleBase : public ModuleInterface
 
 	public: //interface methods that still must be implemented by subclasses
 
-		// method has to be implemented in the Module
-			// input 	is a std::map of input resources, the names are described in the module meta description
-			// params 	is a std::map of input parameters, the names are described in the module meta description
-			// ouput 	is a std::map of output resources, the names are described in the module meta description
-		virtual void run( std::map<std::string, uipf::Data::ptr& >& input,
-						std::map<std::string, std::string >& params,
-						std::map<std::string, uipf::Data::ptr >& output ) const = 0;
-
 		virtual void run( DataManager& data ) const = 0;
 
 		// meta data that contains description of modules inputs, outputs and parameters

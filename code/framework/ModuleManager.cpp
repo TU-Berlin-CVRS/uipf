@@ -13,6 +13,7 @@
 #include "ModuleInterface.hpp"
 #include "ErrorException.hpp"
 #include "InvalidConfigException.hpp"
+#include "DataManager.hpp"
 
 using namespace uipf;
 using namespace std;
@@ -101,10 +102,7 @@ void ModuleManager::run(Configuration config){
 		if (hasModule(moduleName)) {
 			module = loadModule(moduleName);
 			module->setContext(&context);
-			/*ModuleBase* modbase = dynamic_cast<ModuleBase*>(module);
-			if (modbase){
-				//modbase->setContext(&context); // TODO consider making this method part of the interface
-			}*/
+
 		} else {
 			LOG_E( "Module '" + moduleName + "' could not be found." );
 			break;
@@ -126,8 +124,8 @@ void ModuleManager::run(Configuration config){
 		LOG_I( "Running step '" + proSt.name + "'..." );
 
 		try {
-
-			module->run(inputs, proSt.params, *outputs);
+			DataManager dataMnrg(inputs, proSt.params, *outputs);
+			module->run(dataMnrg);
 
 		} catch (ErrorException e) {
 			LOG_E( string("Error: ") + e.what() );

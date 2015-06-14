@@ -17,8 +17,11 @@ return MATRIX;
 // gives the matrix 
 /*
 */
-Mat& Matrix::getContent(){
-	return matrix_;
+Mat Matrix::getContent(bool bAutoClone /*= true*/) const{
+	if (bAutoClone)
+		return matrix_.clone();
+	else
+		return matrix_;
 }
 
 // sets the matrix

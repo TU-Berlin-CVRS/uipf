@@ -20,8 +20,9 @@ class Matrix : public Data {
 		// destructor
 		~Matrix(void){};
 
-		// get content
-		cv::Mat& getContent();
+		// get content (returns a cloned version of Mat by default)
+		// this is due to prevent overwriting accidentally
+		cv::Mat getContent(bool bAutoClone = true) const;
 
 		// set content
 		void setContent(cv::Mat&);
