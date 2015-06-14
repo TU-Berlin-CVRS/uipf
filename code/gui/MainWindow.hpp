@@ -18,6 +18,8 @@ namespace Ui {
 class MainWindow;
 }
 
+namespace uipf {
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -32,12 +34,12 @@ public:
 	void setModuleList(QStringList);
 
 	// sets the table
-	void setStepParams(uipf::ProcessingStep);
+	void setStepParams(ProcessingStep);
 
 private slots:
     void on_addButton_clicked();
     void on_deleteButton_clicked();
-    void on_ProcessingSteps_activated(const QModelIndex & index);
+    void on_listProcessingSteps_activated(const QModelIndex & index);
 
 private:
     Ui::MainWindow *ui;
@@ -51,7 +53,9 @@ private:
     ProcessingStepParams *modelTable;
 
 	// the currently loaded configuration represented in the window
-   	uipf::Configuration conf_;
+   	Configuration conf_;
 };
+
+}; // namespace
 
 #endif // MAINWINDOW_H

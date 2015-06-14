@@ -6,6 +6,8 @@
 
 #include "../framework/ProcessingStep.hpp"
 
+namespace uipf {
+
 class ProcessingStepParams : public QAbstractTableModel
 {
     Q_OBJECT
@@ -25,8 +27,10 @@ public:
 	QSize sizeHint( const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 
 private:
-	uipf::ProcessingStep step;
+	ProcessingStep step;
 	std::vector<std::string> paramNames;
 };
+
+}; // namespace
 
 #endif // PROCESSINGSTEPPARAMS_H

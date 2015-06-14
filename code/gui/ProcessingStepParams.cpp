@@ -2,6 +2,9 @@
 
 #include "ProcessingStepParams.hpp"
 
+using namespace std;
+using namespace uipf;
+
 ProcessingStepParams::ProcessingStepParams(QObject *parent)
     :QAbstractTableModel(parent)
 {
@@ -20,7 +23,7 @@ int ProcessingStepParams::columnCount(const QModelIndex & /*parent*/) const {
 
 QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const {
     if (role == Qt::DisplayRole) {
-		std::map<std::string, std::string> para = this->step.params;
+		map<string, string> para = this->step.params;
 		return QString::fromStdString(para[this->paramNames[index.row()]]);
     }
     return QVariant();
@@ -30,7 +33,7 @@ QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const {
 QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientation, int role) const {
 
 	if(role == Qt::DisplayRole) {
-		std::stringstream ss;
+		stringstream ss;
 		if(orientation == Qt::Horizontal) {
 			  ss << "Value";
 			  return QString(ss.str().c_str());
@@ -49,14 +52,14 @@ QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientati
 }
 
 
-void ProcessingStepParams::setProcessingStep(uipf::ProcessingStep proSt){
+void ProcessingStepParams::setProcessingStep(ProcessingStep proSt){
 
 	beginResetModel();
 
 	step = proSt;
 
 	paramNames.clear();
-	std::map<std::string, std::string> par = proSt.params;
+	map<string, string> par = proSt.params;
 	for (auto it = par.begin(); it!=par.end(); ++it) {
 		paramNames.push_back(it->first);
 	}
