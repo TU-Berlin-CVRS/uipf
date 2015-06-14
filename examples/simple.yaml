@@ -29,10 +29,20 @@ output:
   filename: output.jPeg
   quality: 30
 
+showProcessed:
+  module: showImage
+  title: "processed nice image"
+  blocking: false
+  input:
+    image: process.image
+
 #shows an image in a window
-show:
+showUnprocessed:
   module: showImage
   title: "nice image"
+  blocking: true
   input:
     image: sourceImage.image
+
+
 
