@@ -23,11 +23,11 @@ class DataManager
 
 		//returns a typesafe readonly smartpointer to input/output data by name if it is available
 		template <typename T>
-		const T* getInputData( const std::string& strName) const;
+		const typename T::ptr getInputData( const std::string& strName) const;
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>
-		T* getOutputData( const std::string& strName) const;
+		typename T::ptr getOutputData( const std::string& strName) const;
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>
@@ -54,13 +54,13 @@ class DataManager
 
 
 template <typename T>
-const T* DataManager::getInputData( const std::string& strName) const
+const typename T::ptr DataManager::getInputData( const std::string& strName) const
 {
 	if (input_.find(strName) != input_.end())
 	{
 		//do downcasting..
 		Data::ptr& ptr = input_.find(strName)->second;
-		return dynamic_cast<T*>(ptr.get());
+		return std::dynamic_pointer_cast<T>(ptr);
 	}
 	else
 	{
@@ -70,13 +70,13 @@ const T* DataManager::getInputData( const std::string& strName) const
 
 
 template <typename T>
-T* DataManager::getOutputData( const std::string& strName) const
+typename T::ptr DataManager::getOutputData( const std::string& strName) const
 {
 	if (output_.find(strName) != output_.end())
 	{
 		//do downcasting..
-		Data::ptr& ptr = output_.find(strName)->second;
-		return dynamic_cast<T*>(ptr.get());
+		Data::ptr& ptr = input_.find(strName)->second;
+		return std::dynamic_pointer_cast<T>(ptr);
 	}
 	else
 	{
