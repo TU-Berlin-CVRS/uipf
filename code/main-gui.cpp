@@ -3,7 +3,6 @@
 
 #include "framework/ModuleManager.hpp"
 #include "gui/MainWindow.hpp"
-#include "gui/ProcessingStepParams.hpp"
 
 using namespace std;
 using namespace uipf;

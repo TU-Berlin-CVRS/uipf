@@ -11,6 +11,7 @@
 #include <QDialog>
 
 #include "ProcessingStepParams.hpp"
+#include "ProcessingStepInputs.hpp"
 
 #include "../framework/Configuration.hpp"
 
@@ -36,6 +37,9 @@ public:
 	// sets the table
 	void setStepParams(ProcessingStep);
 
+	// sets the table
+	void setStepInputs(ProcessingStep);
+
 private slots:
     void on_addButton_clicked();
     void on_deleteButton_clicked();
@@ -50,7 +54,8 @@ private:
 	// all the modules
     QStringListModel *modelModule;
 
-    ProcessingStepParams *modelTable;
+    ProcessingStepParams *modelTableParams;
+    ProcessingStepInputs *modelTableInputs;
 
 	// the currently loaded configuration represented in the window
    	Configuration conf_;

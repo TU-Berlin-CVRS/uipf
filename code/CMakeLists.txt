@@ -58,6 +58,7 @@ find_package(Qt5Widgets REQUIRED)
 add_executable(	uipf-gui
 	main-gui.cpp
 	gui/ProcessingStepParams.cpp
+	gui/ProcessingStepInputs.cpp
 	gui/MainWindow.cpp
 
 	framework/ModuleManager.cpp

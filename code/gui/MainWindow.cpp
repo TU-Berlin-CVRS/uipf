@@ -13,11 +13,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Create model
     modelStep = new QStringListModel(this);
     modelModule = new QStringListModel(this);
-    modelTable = new ProcessingStepParams(this);
+    modelTableParams = new ProcessingStepParams(this);
+    modelTableInputs = new ProcessingStepInputs(this);
 
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);
-    ui->tableParams->setModel(modelTable);
+    ui->tableParams->setModel(modelTableParams);
+    ui->tableInputs->setModel(modelTableInputs);
 	ui->comboModule->setModel(modelModule);
 
     // Add additional feature so that
@@ -39,7 +41,8 @@ MainWindow::~MainWindow()
     delete ui;
     delete modelStep;
     delete modelModule;
-    delete modelTable;
+    delete modelTableParams;
+    delete modelTableInputs;
 }
 
 // TODO this should later be called from the File->Load Data Flow menu
@@ -103,6 +106,7 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 	cout << "selected " << selectedStep << endl;
 	ProcessingStep proStep = chain[selectedStep];
 
-	modelTable->setProcessingStep(proStep);
+	modelTableParams->setProcessingStep(proStep);
+	modelTableInputs->setProcessingStep(proStep);
 }
 

@@ -1,5 +1,5 @@
-#ifndef PROCESSINGSTEPPARAMS_H
-#define PROCESSINGSTEPPARAMS_H
+#ifndef PROCESSINGSTEPINPUTS_H
+#define PROCESSINGSTEPINPUTS_H
 
 #include <QAbstractTableModel>
 #include <QStyleOptionViewItem>
@@ -8,12 +8,12 @@
 
 namespace uipf {
 
-class ProcessingStepParams : public QAbstractTableModel
+class ProcessingStepInputs : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    ProcessingStepParams(QObject *parent);
+    ProcessingStepInputs(QObject *parent);
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -25,9 +25,9 @@ public:
 
 private:
 	ProcessingStep step;
-	std::vector<std::string> paramNames;
+	std::vector<std::string> inputNames;
 };
 
 }; // namespace
 
-#endif // PROCESSINGSTEPPARAMS_H
+#endif // PROCESSINGSTEPINPUTS_H
