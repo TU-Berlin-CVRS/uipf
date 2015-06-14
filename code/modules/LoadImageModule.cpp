@@ -6,43 +6,33 @@
 using namespace std;
 using namespace uipf;
 
-// executes the Module
-/*
-input 		is a std::map of input resources, the names are described in the module meta description
-params 		is a std::map of input paramaeters, the names are described in the module meta description
-ouput 		is a std::map of output resources, the names are described in the module meta description
-context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
-*/
-void
-LoadImageModule::run (map < string, Data::ptr& >&input, map < string, string >& params, map < string, Data::ptr >&output ) const
-{
-  using namespace cv;
-
-  Mat image;
-  std::string strFilename = params["filename"];
-  // check whether to load the image in grayscale mode, defaults to color
-  if (params.count("mode") > 0 && params["mode"].compare("grayscale") == 0) {
-    image = imread (strFilename.c_str (), CV_LOAD_IMAGE_GRAYSCALE);	// Read the file
-  } else {
-    image = imread (strFilename.c_str (), CV_LOAD_IMAGE_COLOR);	// Read the file
-  }
-
-  if (!image.data)// Check for invalid input
-  {
-    throw new ErrorException(string("Could not open or find the image: ") + strFilename);
-  }
-
-  output.insert (pair < string, Data::ptr >("image", Matrix::ptr(new Matrix(image))));
-
-}
 
 /*
 
 */
 void LoadImageModule::run( DataManager& data) const
 {
-	data.listParams();
-	throw InvalidConfigException("test");
+	 using namespace cv;
+
+	  Mat image;
+	  std::string strFilename = data.getParam<std::string>("filename","not found");
+	  // check whether to load the image in grayscale mode, defaults to color
+	  if (data.getParam<std::string>("mode","color").compare("grayscale") == 0)
+	  {
+	    image = imread (strFilename.c_str (), CV_LOAD_IMAGE_GRAYSCALE);	// Read the file
+	  }
+	  else
+	  {
+	    image = imread (strFilename.c_str (), CV_LOAD_IMAGE_COLOR);	// Read the file
+	  }
+
+	  if (!image.data)// Check for invalid input
+	  {
+	    throw new ErrorException(string("Could not open or find the image: ") + strFilename);
+	  }
+
+	  data.setOutputData("image",new Matrix(image));
+
 }
 
 MetaData LoadImageModule::getMetaData() const

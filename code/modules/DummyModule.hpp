@@ -22,11 +22,6 @@ Q_INTERFACES(uipf::ModuleInterface)
 		// destructor needs to be virtual otherwise it not called due polymorphism
 		virtual ~DummyModule(void){};
 
-		// runs the module chain with the params
-		void run( std::map<std::string, uipf::Data::ptr& >& input,
-			  std::map<std::string, std::string>& params,
-		   	  std::map<std::string, uipf::Data::ptr >& output ) const Q_DECL_OVERRIDE;
-
 		void run( DataManager& data ) const Q_DECL_OVERRIDE;
 
 		uipf::MetaData getMetaData() const Q_DECL_OVERRIDE;
