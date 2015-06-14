@@ -2,8 +2,8 @@
 #include <QTableView>
 
 #include "framework/ModuleManager.hpp"
-#include "gui/mainwindow.h"
-#include "gui/processingstepsettings.h"
+#include "gui/MainWindow.hpp"
+#include "gui/ProcessingStepParams.hpp"
 
 using namespace std;
 using namespace uipf;

@@ -10,7 +10,7 @@
 
 #include <QDialog>
 
-#include "processingstepsettings.h"
+#include "ProcessingStepParams.hpp"
 
 #include "../framework/Configuration.hpp"
 
@@ -48,7 +48,7 @@ private:
 	// all the modules
     QStringListModel *modelModule;
 
-    ProcessingStepSettings *modelTable;
+    ProcessingStepParams *modelTable;
 
 	// the currently loaded configuration represented in the window
    	uipf::Configuration conf_;

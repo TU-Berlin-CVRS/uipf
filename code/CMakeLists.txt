@@ -27,7 +27,7 @@ add_executable(uipf
 	main-console.cpp
 
 	framework/ModuleManager.cpp
-	
+
 	framework/Configuration.cpp
 	framework/Context.cpp
 	framework/Logger.cpp
@@ -39,7 +39,6 @@ add_executable(uipf
 	framework/types/Float.cpp
 	framework/types/Integer.cpp
 
-	
 )
 
 
@@ -56,13 +55,13 @@ find_package(Qt5Widgets REQUIRED)
 
 
 #create gui-executable
-add_executable(	uipf-gui 
+add_executable(	uipf-gui
 	main-gui.cpp
-	gui/processingstepsettings.cpp
-	gui/mainwindow.cpp
-	
+	gui/ProcessingStepParams.cpp
+	gui/MainWindow.cpp
+
 	framework/ModuleManager.cpp
-	
+
 	framework/Configuration.cpp
 	framework/Context.cpp
 	framework/Logger.cpp
@@ -91,7 +90,7 @@ QT5_WRAP_UI(UI_HS
    )
 
 # window library for the gui
-add_library(mainwindow gui/mainwindow.cpp ${UI_HS})
+add_library(mainwindow gui/MainWindow.cpp ${UI_HS})
 qt5_use_modules(mainwindow Widgets)
 
 add_library(ModuleBase SHARED framework/ModuleBase.cpp )

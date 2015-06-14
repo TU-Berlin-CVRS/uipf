@@ -1,6 +1,5 @@
-#include "mainwindow.h"
+#include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-#include "processingstepsettings.h"
 
 #include <iostream>
 
@@ -14,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Create model
     modelStep = new QStringListModel(this);
     modelModule = new QStringListModel(this);
-    modelTable = new ProcessingStepSettings(this);
+    modelTable = new ProcessingStepParams(this);
 
     // Glue model and view together
     ui->ProcessingSteps->setModel(modelStep);
