@@ -10,6 +10,7 @@
 #include "MetaData.hpp"
 #include "InvalidConfigException.hpp"
 #include "ErrorException.hpp"
+#include "DataManager.hpp"
 
 namespace uipf{
 
@@ -30,6 +31,8 @@ class ModuleInterface {
 				  std::map<std::string, std::string >& params,
 		   		  std::map<std::string, uipf::Data::ptr >& output ) const = 0;
 
+
+		virtual void run( DataManager& data ) const = 0;
 
 		// the name of the module, which can be referenced in the yaml configuration
 		virtual std::string name() const = 0;

@@ -9,6 +9,7 @@
 #include "InvalidConfigException.hpp"
 #include "MetaData.hpp"
 #include "ModuleInterface.hpp"
+#include "DataManager.hpp"
 
 namespace uipf{
 
@@ -38,6 +39,8 @@ class ModuleBase : public ModuleInterface
 		virtual void run( std::map<std::string, uipf::Data::ptr& >& input,
 						std::map<std::string, std::string >& params,
 						std::map<std::string, uipf::Data::ptr >& output ) const = 0;
+
+		virtual void run( DataManager& data ) const = 0;
 
 		// meta data that contains description of modules inputs, outputs and parameters
 		virtual uipf::MetaData getMetaData() const = 0 ;
