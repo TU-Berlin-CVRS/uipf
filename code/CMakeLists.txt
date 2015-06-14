@@ -95,6 +95,7 @@ add_library(mainwindow gui/MainWindow.cpp ${UI_HS})
 qt5_use_modules(mainwindow Widgets)
 
 add_library(ModuleBase SHARED framework/ModuleBase.cpp )
+qt5_use_modules(ModuleBase Core Gui Widgets)
 
 #Dynamic Modules
 add_library(DummyModule SHARED modules/DummyModule.cpp)
@@ -112,7 +113,7 @@ qt5_use_modules(ShowImageModule Core Gui Widgets)
 target_link_libraries(LoadImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 target_link_libraries(GaussianModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
-
+target_link_libraries(StoreImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 
 #
 # external dependencies
