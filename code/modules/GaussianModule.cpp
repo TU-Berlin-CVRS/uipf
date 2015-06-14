@@ -14,15 +14,15 @@ void GaussianModule::run( DataManager& data) const
 	using namespace cv;
 
 	data.listParams();
-	const Matrix* oMatrix = data.getInputData<Matrix>("image");
+	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
 
 	int nWindowSize = data.getParam<int>("windowSize",-1);
 	double dSigma = data.getParam<double>("sigma",0.0);
 
-	cv::Mat m = oMatrix->getContent(); //2DO cloning whith clear output naming
+	cv::Mat m = oMatrix->getContent();
 
 	GaussianBlur(m,m,Size( nWindowSize, nWindowSize ), dSigma, dSigma );
-	//2DO naming unclear: is it just "image" or "process.image"??? What wins: Metadata or yaml-config-file?
+
 	data.setOutputData("image",new Matrix(m));
 
 }
