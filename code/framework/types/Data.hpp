@@ -20,6 +20,7 @@ enum Type
 	STRING,
 	INTEGER,
 	FLOAT,
+	BOOL,
 //	LIST, // TODO
 //	MAP, // TODO
 	MATRIX,
