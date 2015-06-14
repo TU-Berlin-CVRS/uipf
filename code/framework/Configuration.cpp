@@ -209,3 +209,18 @@ void Configuration::removeProcessingStep(string stepName){
 	chain_.erase(stepName);
 }
 
+// sets the module name for a named processing step
+void Configuration::setProcessingStepModule(string name, string module){
+	chain_[name].module = module;
+}
+
+// sets the parameters for a named processing step
+void Configuration::setProcessingStepParams(string name, map<string, string> params){
+	chain_[name].params = params;
+}
+
+// sets the inputs for a named processing step
+void Configuration::setProcessingStepInputs(string name, map<string, pair<string, string> > inputs){
+	chain_[name].inputs = inputs;
+}
+
