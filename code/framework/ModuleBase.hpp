@@ -7,21 +7,44 @@
 #include "Utils.hpp"
 #include "Logger.hpp"
 #include "InvalidConfigException.hpp"
+#include "MetaData.hpp"
+#include "ModuleInterface.hpp"
 
 namespace uipf{
 
 
 // Methods and Data all Moduls share
-class ModuleBase {
+class ModuleBase : public ModuleInterface
+{
 
 	public:
 		ModuleBase();
+		ModuleBase(const std::string& name):name_(name){};
+
 		virtual ~ModuleBase();
 
-		void setContext(Context*);
+		// context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
+		virtual void setContext(Context*) Q_DECL_OVERRIDE;
+
+		// the name of the module, which can be referenced in the yaml configuration
+		virtual std::string name() const Q_DECL_OVERRIDE;
+
+	public: //interface methods that still must be implemented by subclasses
+
+		// method has to be implemented in the Module
+			// input 	is a std::map of input resources, the names are described in the module meta description
+			// params 	is a std::map of input parameters, the names are described in the module meta description
+			// ouput 	is a std::map of output resources, the names are described in the module meta description
+		virtual void run( std::map<std::string, uipf::Data::ptr& >& input,
+						std::map<std::string, std::string >& params,
+						std::map<std::string, uipf::Data::ptr >& output ) const = 0;
+
+		// meta data that contains description of modules inputs, outputs and parameters
+		virtual uipf::MetaData getMetaData() const = 0 ;
 
 	protected:
 		Context* context_;
+		std::string name_;
 
 		//returns a typesafe smartpointer to input/output data by name if it is available
 		template <typename T>

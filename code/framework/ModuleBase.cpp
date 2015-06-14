@@ -19,6 +19,11 @@ void ModuleBase::setContext(Context* context)
 	context_ = context;
 }
 
+std::string ModuleBase::name() const
+{
+	return name_;
+}
+
 void ModuleBase::listParams( map < string, string >& params) const
 {
  Logger::instance()->Info("Module has been executed with the following params:");

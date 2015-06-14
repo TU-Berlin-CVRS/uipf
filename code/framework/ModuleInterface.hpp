@@ -30,8 +30,6 @@ class ModuleInterface {
 				  std::map<std::string, std::string >& params,
 		   		  std::map<std::string, uipf::Data::ptr >& output ) const = 0;
 
-		// TODO make context part of the interface
-		// context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 
 		// the name of the module, which can be referenced in the yaml configuration
 		virtual std::string name() const = 0;
@@ -39,6 +37,8 @@ class ModuleInterface {
 		// meta data that contains description of modules inputs, outputs and parameters
 		virtual uipf::MetaData getMetaData() const = 0;
 
+		// context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
+		virtual void setContext(Context*) = 0;
 };
 
 } //namespace

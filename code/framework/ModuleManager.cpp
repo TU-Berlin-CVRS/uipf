@@ -10,6 +10,7 @@
 #include <string>
 #include "Logger.hpp"
 #include "ModuleBase.hpp"
+#include "ModuleInterface.hpp"
 #include "ErrorException.hpp"
 #include "InvalidConfigException.hpp"
 
@@ -99,10 +100,11 @@ void ModuleManager::run(Configuration config){
 		string moduleName = proSt.module;
 		if (hasModule(moduleName)) {
 			module = loadModule(moduleName);
-			ModuleBase* modbase = dynamic_cast<ModuleBase*>(module);
+			module->setContext(&context);
+			/*ModuleBase* modbase = dynamic_cast<ModuleBase*>(module);
 			if (modbase){
-				modbase->setContext(&context); // TODO consider making this method part of the interface
-			}
+				//modbase->setContext(&context); // TODO consider making this method part of the interface
+			}*/
 		} else {
 			LOG_E( "Module '" + moduleName + "' could not be found." );
 			break;
