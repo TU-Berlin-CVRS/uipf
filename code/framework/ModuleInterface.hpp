@@ -15,7 +15,7 @@
 namespace uipf{
 
 
-// describes the m
+// required interface for a module
 class ModuleInterface {
 	public:
 		// constructor (can't be virtual!)
