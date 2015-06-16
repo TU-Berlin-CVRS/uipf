@@ -8,6 +8,7 @@
 #define LOG_W(message) Logger::instance()->Warn(message)
 
 #include <sstream>
+#include <QObject>
 
 namespace uipf
 {
@@ -15,8 +16,15 @@ namespace uipf
 
 //This is a very simple Logger implemented as singleton, that writes to console
 //2DO: use a loggingframework e.g. Log4QT
-class Logger 
+class Logger : public QObject
 {
+Q_OBJECT
+
+	public:
+		enum LogType
+		{
+			INFO,WARNING,ERROR
+		};
 	public:
      		static Logger* instance();
 
@@ -40,6 +48,10 @@ class Logger
 		void Warn(const std::string& strMessage);
 		void Error(const std::string& strMessage);
 		void Info(const std::string& strMessage);
+
+	signals:
+		void logEvent(const Logger::LogType&, const std::string&);
+
 	private:
 		
 		void print(const std::stringstream& what);
