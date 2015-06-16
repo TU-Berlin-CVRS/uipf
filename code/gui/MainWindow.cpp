@@ -1,6 +1,6 @@
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-
+#include <QScrollBar>
 #include <iostream>
 
 using namespace std;
@@ -34,6 +34,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// TODO improve this to react on any selection change: http://stackoverflow.com/questions/2468514/how-to-get-the-selectionchange-event-in-qt
     connect(ui->listProcessingSteps, SIGNAL(clicked(const QModelIndex &)),
             this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
+
+    connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+}
+
+void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText)
+{
+	// For colored Messages we need html :-/
+	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
+	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
+	ui->tbLog->appendHtml(alertHtml);
+	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
+
 }
 
 MainWindow::~MainWindow()

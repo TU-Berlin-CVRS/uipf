@@ -14,6 +14,7 @@
 #include "ProcessingStepInputs.hpp"
 
 #include "../framework/Configuration.hpp"
+#include "../framework/Logger.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -40,10 +41,13 @@ public:
 	// sets the table
 	void setStepInputs(ProcessingStep);
 
+
+
 private slots:
     void on_addButton_clicked();
     void on_deleteButton_clicked();
     void on_listProcessingSteps_activated(const QModelIndex & index);
+    void on_appendToLog(const Logger::LogType&, const std::string& );
 
 private:
     Ui::MainWindow *ui;
