@@ -13,11 +13,6 @@ int main(int argc, char *argv[])
 
 	MainWindow w;
 
-	if (argc > 1) {
-		string configFile = argv[1];
-		w.loadDataFlow(configFile);
-	}
-
 	// set the possible modules
 	ModuleManager mm;
 	QStringList list_modules;
