@@ -10,6 +10,9 @@ namespace uipf{
 // Float which is a specification of Elem
 class Float : Data {
 	public:
+			typedef SMARTPOINTER<Float> ptr;
+			typedef const SMARTPOINTER<Float> c_ptr;
+	public:
 		// constructor (can't be virtual!)
 		Float(void){};
 		// destructor
