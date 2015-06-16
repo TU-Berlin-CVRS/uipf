@@ -6,27 +6,35 @@ using namespace std;
 using namespace uipf;
 
 
+// runs the module
 /*
-
+data	DataManager handles the input and ouput of this module
 */
 void GaussianModule::run( DataManager& data) const
 {
 	using namespace cv;
 
+	// print params for debugging
 	data.listParams();
-	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
 
+	// read the params (window size and sigma) given for this step
 	int nWindowSize = data.getParam<int>("windowSize",-1);
 	double dSigma = data.getParam<double>("sigma",0.0);
 
-	cv::Mat m = oMatrix->getContent();
+	// get a pointer to the "image" input data
+	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
+	// get the actual opencv matrix of the input data
+	Mat m = oMatrix->getContent();
 
+	// do gaussian blur using opencv
 	GaussianBlur(m,m,Size( nWindowSize, nWindowSize ), dSigma, dSigma );
 
+	// set the result (output) on the datamanager
 	data.setOutputData("image",new Matrix(m));
 
 }
 
+// returns the meta data of this module
 MetaData GaussianModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
