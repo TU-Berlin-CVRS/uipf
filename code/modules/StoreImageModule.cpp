@@ -16,7 +16,7 @@ void StoreImageModule::run( DataManager& data) const
 	using namespace cv;
 	using namespace utils;
 
-	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
+	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
 
 	if (oMatrix) {
 		std::string strFilename = data.getParam<std::string>("filename","noname.png");
