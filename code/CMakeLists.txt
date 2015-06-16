@@ -96,19 +96,19 @@ add_library(mainwindow gui/MainWindow.cpp ${UI_HS})
 qt5_use_modules(mainwindow Widgets)
 
 add_library(ModuleBase SHARED framework/ModuleBase.cpp )
-qt5_use_modules(ModuleBase Core Gui Widgets)
+qt5_use_modules(ModuleBase Core )
 
 #Dynamic Modules
 add_library(DummyModule SHARED modules/DummyModule.cpp)
-qt5_use_modules(DummyModule Core Gui Widgets)
+qt5_use_modules(DummyModule Core ) #QtCore is needed for <QPlugin>
 add_library(GaussianModule SHARED modules/GaussianModule.cpp)
-qt5_use_modules(GaussianModule Core Gui Widgets)
+qt5_use_modules(GaussianModule Core ) #QtCore is needed for <QPlugin>
 add_library(LoadImageModule SHARED modules/LoadImageModule.cpp)
-qt5_use_modules(LoadImageModule Core Gui Widgets)
+qt5_use_modules(LoadImageModule Core ) #QtCore is needed for <QPlugin>
 add_library(StoreImageModule SHARED modules/StoreImageModule.cpp)
-qt5_use_modules(StoreImageModule Core Gui Widgets)
+qt5_use_modules(StoreImageModule Core ) #QtCore is needed for <QPlugin>
 add_library(ShowImageModule SHARED modules/ShowImageModule.cpp)
-qt5_use_modules(ShowImageModule Core Gui Widgets)
+qt5_use_modules(ShowImageModule Core ) #QtCore is needed for <QPlugin>
 
 #link dependencies of dynamic modules
 target_link_libraries(LoadImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
