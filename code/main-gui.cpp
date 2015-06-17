@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	}
 	w.setModuleList(list_modules);
 
+
     w.show();
 
     return a.exec();

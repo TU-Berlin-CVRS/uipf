@@ -67,7 +67,10 @@ private slots:
 	// Edit
 	void undo();
 	void redo();
-
+	// Configuration
+	void run();
+	void stop();
+	
 private:
     Ui::MainWindow *ui;
 
@@ -93,6 +96,7 @@ private:
     QMenu *fileMenu;
     QMenu *helpMenu;
     QMenu *editMenu;
+    QMenu *configMenu;
     
     QAction *newAct;
     QAction *openAct;
@@ -105,6 +109,9 @@ private:
    	
    	QAction *undoAct;
     QAction *redoAct;
+   	
+   	QAction *runAct;
+    QAction *stopAct;
    	
 };
 

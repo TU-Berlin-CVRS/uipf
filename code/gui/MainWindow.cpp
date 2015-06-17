@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QScrollBar>
 #include <iostream>
+#include "../framework/ModuleManager.hpp"
 
 using namespace std;
 using namespace uipf;
@@ -138,6 +139,7 @@ void MainWindow::load_Data_Flow() {
 		list << it->first.c_str();
 	}
 	modelStep->setStringList(list);
+	
 }
 
 
@@ -168,6 +170,16 @@ void MainWindow::undo()
 void MainWindow::redo()
 {
     //~ infoLabel->setText(tr("Invoked <b>Edit|Redo</b>"));
+}
+
+// run the current configuration
+void MainWindow::run() {
+	ModuleManager mm;
+	mm.run(conf_);
+}
+
+void MainWindow::stop() {
+	// TODO
 }
 
 
@@ -211,6 +223,14 @@ void MainWindow::createActions() {
     redoAct->setShortcuts(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo the last operation"));
     connect(redoAct, SIGNAL(triggered()), this, SLOT(redo()));
+
+    runAct = new QAction(tr("&Run"), this);
+    runAct->setStatusTip(tr("Run the configuration"));
+    connect(runAct, SIGNAL(triggered()), this, SLOT(run()));
+
+    stopAct = new QAction(tr("&Stop"), this);
+    stopAct->setStatusTip(tr("Stop the execution of the configuration"));
+    connect(stopAct, SIGNAL(triggered()), this, SLOT(stop()));
 }
 
 void MainWindow::createMenus() {
@@ -225,6 +245,10 @@ void MainWindow::createMenus() {
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
     editMenu->addAction(redoAct);
+    
+    configMenu = menuBar()->addMenu(tr("&Configuration"));
+    configMenu->addAction(runAct);
+    configMenu->addAction(stopAct);
     
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
