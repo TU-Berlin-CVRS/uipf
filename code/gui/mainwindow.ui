@@ -28,6 +28,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPlainTextEdit" name="tbLog">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
          <number>24</number>
@@ -86,7 +93,7 @@
      <x>0</x>
      <y>0</y>
      <width>842</width>
-     <height>29</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

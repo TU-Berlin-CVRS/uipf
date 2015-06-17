@@ -29,7 +29,8 @@ enum Type
 // Elem which represents an arbitrary element
 class Data {
 	public:
-		typedef SMARTPOINTER<Data> ptr;
+			typedef SMARTPOINTER<Data> ptr;
+			typedef const SMARTPOINTER<Data> c_ptr;
 
 	public:
 		// constructor (can't be virtual!)

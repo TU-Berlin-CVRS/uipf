@@ -10,6 +10,10 @@ namespace uipf{
 // Integer which is a specification of Elem
 class Integer : Data {
 	public:
+		typedef SMARTPOINTER<Integer> ptr;
+		typedef const SMARTPOINTER<Integer> c_ptr;
+
+	public:
 		// constructor (can't be virtual!)
 		Integer(void){};
 		// destructor

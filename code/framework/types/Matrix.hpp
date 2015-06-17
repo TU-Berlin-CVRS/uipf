@@ -11,6 +11,7 @@ namespace uipf{
 class Matrix : public Data {
 	public:
 		typedef SMARTPOINTER<Matrix> ptr;
+		typedef const SMARTPOINTER<Matrix> c_ptr;
 
 	public:
 		// constructor (can't be virtual!)

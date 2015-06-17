@@ -10,6 +10,10 @@ namespace uipf{
 // String which is a specification of Elem
 class String : Data {
 	public:
+		typedef SMARTPOINTER<String> ptr;
+		typedef const SMARTPOINTER<String> c_ptr;
+
+	public:
 		// constructor (can't be virtual!)
 		String(void){};
 		// destructor

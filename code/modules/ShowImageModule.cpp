@@ -14,7 +14,7 @@ void ShowImageModule::run( DataManager& data) const
 {
 	using namespace cv;
 
-	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
+	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
 	if (oMatrix) {
 		context_->displayImage(data.getParam<std::string>("title","view image"), *oMatrix,data.getParam<bool>("blocking",true));
 	}

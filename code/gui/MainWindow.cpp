@@ -1,6 +1,6 @@
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-
+#include <QScrollBar>
 #include <iostream>
 
 using namespace std;
@@ -44,6 +44,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setMinimumSize(160, 160);
     resize(480, 320);
     
+
+    connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+}
+
+void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText)
+{
+	// For colored Messages we need html :-/
+	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
+	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
+	ui->tbLog->appendHtml(alertHtml);
+	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
 }
 
 MainWindow::~MainWindow()

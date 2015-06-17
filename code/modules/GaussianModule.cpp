@@ -22,7 +22,7 @@ void GaussianModule::run( DataManager& data) const
 	double dSigma = data.getParam<double>("sigma",0.0);
 
 	// get a pointer to the "image" input data
-	const Matrix::ptr oMatrix = data.getInputData<Matrix>("image");
+	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
 	// get the actual opencv matrix of the input data
 	Mat m = oMatrix->getContent();
 

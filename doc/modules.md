@@ -7,12 +7,19 @@ A module consists of a library file that contains a C++ class which extends a de
 
 A module class has to extend from `ModuleInterface` and implement the following methods:
 
-	virtual void run( std::map<std::string, uipf::Data::ptr& >& input, std::map<std::string, std::string >& params, std::map<std::string, uipf::Data::ptr >& output) const = 0;
+	virtual void run( DataManager& data) const = 0;
 
-- `input` is a std::map of input resources, the names are described in the module meta description
-- `params` is a std::map of input parameters, the names are described in the module meta description
-- `ouput` is a std::map of output resources, the names are described in the module meta description
-
+- `data` is a Reference to the DataManager, which holds all resources described in the module meta description.
+  It enables typed access to input-, outputdata and the parameters by three specific methods: 
+   - getInputData&lt;Type&gt;(name),
+   - setOutputData&lt;Type&gt;(name,val) and 
+   - getParameter&lt;Type&gt;(name,defaultVal).
+   
+   For example a readonly String resource can be retrieved as follows:
+   <pre><code>String::c_ptr myString = data.getInputData<String>("myStringName");</code></pre>
+    The String::c_ptr is a shortcut to 'const std::shared_ptr&lt;uipf::String&gt;' as resources are always handled by smartpointers to prevent memoryleaks.
+    
+    
 TODO: describe meta data methods
 
     virtual void setContext(Context* context) = 0;
