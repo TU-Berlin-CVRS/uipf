@@ -36,6 +36,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->listProcessingSteps, SIGNAL(clicked(const QModelIndex &)),
             this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
             
+
+    
+    connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
+            this, SLOT(stepNameChanged()));
             
     // commands for menu bar     
     createActions();
@@ -46,18 +50,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // sets run and stop to inactive
     runAct->setEnabled(false);
     stopAct->setEnabled(false);
-    
-    
+    // sets save to inactive 
+    saveAct->setEnabled(false);
     
     setWindowTitle(tr("uipf"));
-    setMinimumSize(160, 160);
+    setMinimumSize(400, 400);
     resize(480, 320);
-    
-    
-    
-    
 
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+    
+   	new_Data_Flow();
+
 }
 
 void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
@@ -68,8 +71,7 @@ void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& 
 	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
     delete modelStep;
     delete modelModule;
@@ -97,7 +99,42 @@ void MainWindow::on_addButton_clicked() {
 
     // Enable item selection and put it edit mode
     ui->listProcessingSteps->setCurrentIndex(index);
+
+	configChanged();
+
+    QString newName = QString::fromStdString("new step");
+    modelStep->setData(index, newName, Qt::EditRole);
+
+    ProcessingStep proSt;
+    proSt.name = newName.toStdString();
+    conf_.addProcessingStep(proSt);
+
     ui->listProcessingSteps->edit(index);
+
+}
+
+
+void MainWindow::stepNameChanged(){
+	string newName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+	int currentStepNumber = ui->listProcessingSteps->currentIndex().row();
+
+    string oldName = "new step";	
+	int i=0;
+	map<string, ProcessingStep> chain = conf_.getProcessingChain();
+	for (auto it = chain.begin(); it!=chain.end(); ++it) {
+		if (i == currentStepNumber) {
+			oldName = it->first;
+		}
+	}
+
+	if(oldName.compare(newName) != 0){
+		configChanged();
+		ProcessingStep proStOld = conf_.getProcessingChain()[oldName];
+		ProcessingStep proStNew = conf_.getProcessingChain()[oldName];
+		proStNew.name = newName;
+		conf_.removeProcessingStep(proStOld.name);
+		conf_.addProcessingStep(proStNew);
+	}
 }
 
 // Delete button clicked
@@ -145,6 +182,7 @@ void MainWindow::load_Data_Flow() {
 
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
   	currentFileName = fn.toStdString();
+  	saveAct->setEnabled(true);
 
 	conf_.load(currentFileName);
 
@@ -173,6 +211,8 @@ void MainWindow::save_Data_Flow_as() {
     if (! (fn.endsWith(".yaml", Qt::CaseInsensitive)) )
         fn += ".yaml"; // default
   	currentFileName = fn.toStdString();
+  	saveAct->setEnabled(true);    
+
 	conf_.store(fn.toStdString());
 }
 
@@ -188,7 +228,7 @@ void MainWindow::undo() {
 		redoStack.push(conf_);
 		// get the last config stored in undo stack
 		conf_ = undoStack.top();
-		// dele the last config from the undo stack
+		// delete the last config from the undo stack
 		undoStack.pop();
 
 		// set the names of the processing steps:
@@ -216,7 +256,7 @@ void MainWindow::redo() {
 		undoStack.push(conf_);
 		// get the last config stored in redo stack
 		conf_ = redoStack.top();
-		// dele the last config from the redo stack
+		// delete the last config from the redo stack
 		redoStack.pop();
 		
 		// set the names of the processing steps:
@@ -238,6 +278,7 @@ void MainWindow::redo() {
 }
 
 // feeds the undo and redo stacks with the current configs
+// has to be called BEFORE the config has changed!
 void MainWindow::configChanged(){
 	// configuration changed
 	undoStack.push(conf_);
@@ -246,8 +287,8 @@ void MainWindow::configChanged(){
 	}
 	
 	// set the undo to active and redo to inactive
-    undoAct->setEnabled(true);
-    redoAct->setEnabled(false);
+	undoAct->setEnabled(true);
+	redoAct->setEnabled(false);
 }
 
 // run the current configuration

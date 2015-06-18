@@ -21,6 +21,7 @@
 
 #include "../framework/Configuration.hpp"
 #include "../framework/Logger.hpp"
+#include "../framework/ProcessingStep.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -71,6 +72,9 @@ private slots:
 	// Configuration
 	void run();
 	void stop();
+	
+	//stepName changed
+	void stepNameChanged();
 	
 private:
     Ui::MainWindow *ui;
