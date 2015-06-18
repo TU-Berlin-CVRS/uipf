@@ -166,7 +166,7 @@ string Configuration::getYAML(){
 
 			// second parameter are the inputs
 			if (! it->second.inputs.empty()) {
-				out << YAML::Key << "inputs";
+				out << YAML::Key << "input";
 				out << YAML::Value << YAML::BeginMap;
 				map<string, pair<string, string> >::iterator inputIt = it->second.inputs.begin();
 				for (; inputIt!=it->second.inputs.end(); ++inputIt) {

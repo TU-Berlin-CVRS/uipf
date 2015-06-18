@@ -199,7 +199,7 @@ void MainWindow::createActions() {
     saveAct->setStatusTip(tr("Save the configuration to disk"));
     connect(saveAct, SIGNAL(triggered()), this, SLOT(save_Data_Flow()));
     
-    saveAsAct = new QAction(tr("&Save as..."), this);
+    saveAsAct = new QAction(tr("Save &as..."), this);
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save the configuration to disk"));
     connect(saveAsAct, SIGNAL(triggered()), this, SLOT(save_Data_Flow_as()));
