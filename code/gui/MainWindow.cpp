@@ -40,17 +40,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // commands for menu bar     
     createActions();
     createMenus();
-
+	// sets undo and redo to inactive
+    undoAct->setEnabled(false);
+    redoAct->setEnabled(false);
+    // sets run and stop to inactive
+    runAct->setEnabled(false);
+    stopAct->setEnabled(false);
+    
+    
+    
     setWindowTitle(tr("uipf"));
     setMinimumSize(160, 160);
     resize(480, 320);
+    
+    
+    
     
 
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
 }
 
-void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText)
-{
+void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
 	// For colored Messages we need html :-/
 	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
 	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
@@ -73,11 +83,9 @@ void MainWindow::setModuleList(QStringList list){
 	modelModule->setStringList(list);
 }
 
-
+// Add button clicked
+// Adding at the end
 void MainWindow::on_addButton_clicked() {
-    // Add button clicked
-    // Adding at the end
-
     // Get the position of the selected item
     int row = modelStep->rowCount();
 
@@ -92,11 +100,8 @@ void MainWindow::on_addButton_clicked() {
     ui->listProcessingSteps->edit(index);
 }
 
-
+// Delete button clicked
 void MainWindow::on_deleteButton_clicked() {
-    // Delete button clicked
-    // For delete operation,
-    // we're dealing with a Model not a View
     // Get the position
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
 }
@@ -115,6 +120,12 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 }
 
 void MainWindow::new_Data_Flow() {
+	// run is now activated
+	runAct->setEnabled(true);    
+	
+    // configuration changed
+	configChanged();
+
     Configuration conf;
     conf_ = conf;
     
@@ -122,8 +133,16 @@ void MainWindow::new_Data_Flow() {
 	modelStep->setStringList(list);
 }
 
+
+
+
 void MainWindow::load_Data_Flow() {
-	
+	// run is now activated
+	runAct->setEnabled(true);    
+
+    // configuration changed
+	configChanged();
+
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
   	currentFileName = fn.toStdString();
 
@@ -162,20 +181,84 @@ void MainWindow::about() {
             tr("This application allows the user by using given library of modules to create his own configuration and to execute it. Created by the project: 'A Unified Framework for Digital Image Processing in Computer Vision and Remote Sensing' at Technische Universitaet Berlin. Version 1.0"));
 }
 
-void MainWindow::undo()
-{
-    //~ infoLabel->setText(tr("Invoked <b>Edit|Undo</b>"));
+// sets the current configuration to the previous one
+void MainWindow::undo() {
+	if(!undoStack.empty()){
+		// move the current config to the redo stack
+		redoStack.push(conf_);
+		// get the last config stored in undo stack
+		conf_ = undoStack.top();
+		// dele the last config from the undo stack
+		undoStack.pop();
+
+		// set the names of the processing steps:
+		QStringList list;
+		map<string, ProcessingStep> chain = conf_.getProcessingChain();
+		for (auto it = chain.begin(); it!=chain.end(); ++it) {
+			list << it->first.c_str();
+		}
+		modelStep->setStringList(list);
+		
+		// set the undo/redo in the menu bar gray if inactive or black, if active	
+		redoAct->setEnabled(true);	
+		if(!undoStack.empty()){
+			undoAct->setEnabled(true);
+		} else{
+			undoAct->setEnabled(false);
+		}
+	}
 }
 
-void MainWindow::redo()
-{
-    //~ infoLabel->setText(tr("Invoked <b>Edit|Redo</b>"));
+// sets the current configuration back to the next one
+void MainWindow::redo() {
+	if(!redoStack.empty()){
+		// move the current config to the undo stack
+		undoStack.push(conf_);
+		// get the last config stored in redo stack
+		conf_ = redoStack.top();
+		// dele the last config from the redo stack
+		redoStack.pop();
+		
+		// set the names of the processing steps:
+		QStringList list;
+		map<string, ProcessingStep> chain = conf_.getProcessingChain();
+		for (auto it = chain.begin(); it!=chain.end(); ++it) {
+			list << it->first.c_str();
+		}
+		modelStep->setStringList(list);
+	
+		// set the undo/redo in the menu bar gray if inactive or black, if active
+		undoAct->setEnabled(true);	
+		if(!redoStack.empty()){
+			redoAct->setEnabled(true);
+		} else{
+			redoAct->setEnabled(false);
+		}
+	}
+}
+
+// feeds the undo and redo stacks with the current configs
+void MainWindow::configChanged(){
+	// configuration changed
+	undoStack.push(conf_);
+	while(! redoStack.empty()){
+		redoStack.pop();
+	}
+	
+	// set the undo to active and redo to inactive
+    undoAct->setEnabled(true);
+    redoAct->setEnabled(false);
 }
 
 // run the current configuration
 void MainWindow::run() {
+	// stop is now activated
+	stopAct->setEnabled(true);    
+
 	ModuleManager mm;
 	mm.run(conf_);
+	
+	// TODO inactivate stop, when finished!
 }
 
 void MainWindow::stop() {

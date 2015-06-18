@@ -14,6 +14,7 @@
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <stack>
 
 #include "ProcessingStepParams.hpp"
 #include "ProcessingStepInputs.hpp"
@@ -88,6 +89,11 @@ private:
 
 	// the currently loaded configuration represented in the window
    	Configuration conf_;
+   	// Redo and Undo stacks, which store configurations
+   	std::stack<Configuration> undoStack;  
+   	std::stack<Configuration> redoStack;  
+	// fills the stacks
+	void configChanged();
    	
 	// menu bar
     void createActions();
