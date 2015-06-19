@@ -23,21 +23,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tableInputs->setModel(modelTableInputs);
 	ui->comboModule->setModel(modelModule);
 
-    // Add additional feature so that
-    // we can manually modify the data in ListView
+    // Add additional feature so that we can manually modify the data in ListView (List of Step Names)
     // It may be triggered by hitting any key or double-click etc.
-    ui->listProcessingSteps->
-            setEditTriggers(QAbstractItemView::AnyKeyPressed |
-                            QAbstractItemView::DoubleClicked);
-
+    ui->listProcessingSteps-> setEditTriggers(QAbstractItemView::AnyKeyPressed |QAbstractItemView::DoubleClicked);
 
 	// react to changes in the ListView
 	// TODO improve this to react on any selection change: http://stackoverflow.com/questions/2468514/how-to-get-the-selectionchange-event-in-qt
     connect(ui->listProcessingSteps, SIGNAL(clicked(const QModelIndex &)),
             this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
-            
-
-    
+    // react to changes in the entries of the ListView    
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(stepNameChanged()));
             
@@ -53,24 +47,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // sets save to inactive 
     saveAct->setEnabled(false);
     
+    
+    // window settings
     setWindowTitle(tr("uipf"));
     setMinimumSize(400, 400);
     resize(480, 320);
 
-    connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+	// logger
+    connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), 
+			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
     
+    // when starting the program, at first always start a new Data Flow
    	new_Data_Flow();
-
 }
 
-void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
-	// For colored Messages we need html :-/
-	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
-	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
-	ui->tbLog->appendHtml(alertHtml);
-	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
-}
-
+// destructor
 MainWindow::~MainWindow() {
     delete ui;
     delete modelStep;
@@ -81,12 +72,28 @@ MainWindow::~MainWindow() {
 
 
 // sets a Module list
+/*
+list	list of all availanle modules 
+*/
 void MainWindow::setModuleList(QStringList list){
 	modelModule->setStringList(list);
 }
 
-// Add button clicked
-// Adding at the end
+
+// From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
+
+// TODO: comment!
+void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
+	// For colored Messages we need html :-/
+	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
+	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
+	ui->tbLog->appendHtml(alertHtml);
+	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
+}
+
+
+// Add button clicked - allows to add a new Processing Step
+// Step is always added at the end of the list
 void MainWindow::on_addButton_clicked() {
     // Get the position of the selected item
     int row = modelStep->rowCount();
@@ -100,48 +107,79 @@ void MainWindow::on_addButton_clicked() {
     // Enable item selection and put it edit mode
     ui->listProcessingSteps->setCurrentIndex(index);
 
+	// before config changes, we need to update our redo/undo stacks
 	configChanged();
 
-    QString newName = QString::fromStdString("new step");
+	// set default name "new step i"
+	bool nameAlreadyExists = true;
+	int i=0;
+    string name = "new step " + std::to_string(i);	
+	map<string, ProcessingStep> chain = conf_.getProcessingChain();
+	while(nameAlreadyExists){
+		if (chain.count(name)){
+			i++;
+			name = "new step " + std::to_string(i);
+		} else {
+			nameAlreadyExists = false;
+		}	
+	}
+	
+    QString newName = QString::fromStdString(name);
     modelStep->setData(index, newName, Qt::EditRole);
 
+	// add new Processing Step to the configuration chain
     ProcessingStep proSt;
     proSt.name = newName.toStdString();
     conf_.addProcessingStep(proSt);
-
+	// the name can be changed
     ui->listProcessingSteps->edit(index);
 
 }
 
 
+// updates the name of a step, when changed
 void MainWindow::stepNameChanged(){
+	// get the new name
 	string newName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 	int currentStepNumber = ui->listProcessingSteps->currentIndex().row();
 
-    string oldName = "new step";	
+	// get the old name by looking at the index of the selected row
+    string oldName;	
 	int i=0;
 	map<string, ProcessingStep> chain = conf_.getProcessingChain();
 	for (auto it = chain.begin(); it!=chain.end(); ++it) {
 		if (i == currentStepNumber) {
 			oldName = it->first;
 		}
+		i++;
 	}
+	
+	// TODO check whether the new name does not already exist
 
+	// if the name was really changed
 	if(oldName.compare(newName) != 0){
 		configChanged();
+		cout << "map counts old name: " << conf_.getProcessingChain().count(oldName) << endl;
+
+		// create the processing step with the old name and the processing step with the new name
 		ProcessingStep proStOld = conf_.getProcessingChain()[oldName];
 		ProcessingStep proStNew = conf_.getProcessingChain()[oldName];
 		proStNew.name = newName;
+		cout << "old name: " << proStOld.name << endl;
+		cout << "new name: " << proStNew.name << endl;
+		// remove the processing step with the old name and add the processing step with the new name
 		conf_.removeProcessingStep(proStOld.name);
 		conf_.addProcessingStep(proStNew);
 	}
 }
+
 
 // Delete button clicked
 void MainWindow::on_deleteButton_clicked() {
     // Get the position
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
 }
+
 
 // gets called when a processing step is selected
 void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
@@ -156,9 +194,16 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 	modelTableInputs->setProcessingStep(proStep);
 }
 
+
 void MainWindow::new_Data_Flow() {
+	// save is not activated
+	saveAct->setEnabled(false);    
 	// run is now activated
 	runAct->setEnabled(true);    
+	
+	currentFileName = "newFile";
+    setWindowTitle(tr("newFile - uipf"));
+	
 	
     // configuration changed
 	configChanged();
@@ -182,6 +227,10 @@ void MainWindow::load_Data_Flow() {
 
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
   	currentFileName = fn.toStdString();
+  	string winTitle = currentFileName + " - uipf";
+    setWindowTitle(tr(winTitle.c_str()));
+
+  	
   	saveAct->setEnabled(true);
 
 	conf_.load(currentFileName);
@@ -199,18 +248,24 @@ void MainWindow::load_Data_Flow() {
 	
 }
 
-
+// only possible, if the configuration has already been stored in some file
 void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
 }
 
+// by default the name is the current name of the configuration file
+// the suffix of the file is always set to '.yaml'
+// the currently opened configuration switches to the stored file
 void MainWindow::save_Data_Flow_as() {
 	
 	QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("YAML files (*.yaml);;All Files (*)"));
+                                               QString::fromStdString(currentFileName), tr("YAML files (*.yaml);;All Files (*)"));                                          
+                                              
     if (! (fn.endsWith(".yaml", Qt::CaseInsensitive)) )
         fn += ".yaml"; // default
   	currentFileName = fn.toStdString();
+  	string winTitle = currentFileName + " - uipf";
+    setWindowTitle(tr(winTitle.c_str()));
   	saveAct->setEnabled(true);    
 
 	conf_.store(fn.toStdString());
@@ -305,6 +360,8 @@ void MainWindow::run() {
 void MainWindow::stop() {
 	// TODO
 }
+// Up to here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
+
 
 
 void MainWindow::createActions() {
