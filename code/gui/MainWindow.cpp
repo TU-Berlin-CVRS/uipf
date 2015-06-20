@@ -50,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     
     // window settings
     setWindowTitle(tr("uipf"));
-    setMinimumSize(400, 400);
-    resize(480, 320);
+    setMinimumSize(800, 600);
+    resize(1200, 800);
 
 	// logger
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)), 
@@ -124,6 +124,8 @@ void MainWindow::on_addButton_clicked() {
 		}	
 	}
 	
+	currentStepName = name;
+	
     QString newName = QString::fromStdString(name);
     modelStep->setData(index, newName, Qt::EditRole);
 
@@ -139,45 +141,47 @@ void MainWindow::on_addButton_clicked() {
 
 // updates the name of a step, when changed
 void MainWindow::stepNameChanged(){
+	
 	// get the new name
 	string newName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
-	int currentStepNumber = ui->listProcessingSteps->currentIndex().row();
 
-	// get the old name by looking at the index of the selected row
-    string oldName;	
-	int i=0;
-	map<string, ProcessingStep> chain = conf_.getProcessingChain();
-	for (auto it = chain.begin(); it!=chain.end(); ++it) {
-		if (i == currentStepNumber) {
-			oldName = it->first;
-		}
-		i++;
-	}
+	// get the old name from the variable currentStepName, which stores the activated step name
+	string oldName = currentStepName;
+
+	//~ cout << "old name: " << oldName << endl;
+	//~ cout << "new name: " << newName << endl;
 	
-	// TODO check whether the new name does not already exist
+	// checks whether the name has been changed
+	if (oldName.compare(newName) != 0){
+		// check whether the new name does not already exist
+		map<string, ProcessingStep> chain = conf_.getProcessingChain();
+		if (!chain.count(newName)){
+			configChanged();
+			//~ cout << "map counts old name: " << conf_.getProcessingChain().count(oldName) << endl;
+			//~ cout << "current step name: " << currentStepName << endl;
 
-	// if the name was really changed
-	if(oldName.compare(newName) != 0){
-		configChanged();
-		cout << "map counts old name: " << conf_.getProcessingChain().count(oldName) << endl;
-
-		// create the processing step with the old name and the processing step with the new name
-		ProcessingStep proStOld = conf_.getProcessingChain()[oldName];
-		ProcessingStep proStNew = conf_.getProcessingChain()[oldName];
-		proStNew.name = newName;
-		cout << "old name: " << proStOld.name << endl;
-		cout << "new name: " << proStNew.name << endl;
-		// remove the processing step with the old name and add the processing step with the new name
-		conf_.removeProcessingStep(proStOld.name);
-		conf_.addProcessingStep(proStNew);
+			// create the processing step with the old name and the processing step with the new name
+			ProcessingStep proStOld = conf_.getProcessingChain()[oldName];
+			ProcessingStep proStNew = conf_.getProcessingChain()[oldName];
+			proStNew.name = newName;
+			//~ cout << "old name: " << proStOld.name << endl;
+			//~ cout << "new name: " << proStNew.name << endl;
+			// remove the processing step with the old name and add the processing step with the new name
+			conf_.removeProcessingStep(proStOld.name);
+			conf_.addProcessingStep(proStNew);
+		} else{
+			modelStep->setData(ui->listProcessingSteps->currentIndex(), QString::fromStdString(oldName), Qt::EditRole);
+		}
 	}
 }
 
 
 // Delete button clicked
 void MainWindow::on_deleteButton_clicked() {
-    // Get the position
+    // Get the position and remove the row
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
+    // remove from the chain
+	conf_.removeProcessingStep(currentStepName);
 }
 
 
@@ -187,6 +191,7 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 	map<string, ProcessingStep> chain = conf_.getProcessingChain();
 
 	string selectedStep = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+	currentStepName = selectedStep;
 	cout << "selected " << selectedStep << endl;
 	ProcessingStep proStep = chain[selectedStep];
 

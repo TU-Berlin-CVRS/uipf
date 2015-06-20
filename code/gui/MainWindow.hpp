@@ -87,6 +87,9 @@ private:
 	
 	// current configuration
 	std::string currentFileName;
+	
+	// current name of a precessing step
+	std::string currentStepName;
 
     ProcessingStepParams *modelTableParams;
     ProcessingStepInputs *modelTableInputs;
