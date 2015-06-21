@@ -23,18 +23,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tableInputs->setModel(modelTableInputs);
 	ui->comboModule->setModel(modelModule);
 
-    // Add additional feature so that we can manually modify the data in ListView (List of Step Names)
-    // It may be triggered by hitting any key or double-click etc.
+	// Processing Step Names:
+    // allow to manually modify the data 
+    // -> It may be triggered by hitting any key or double-click etc.
     ui->listProcessingSteps-> setEditTriggers(QAbstractItemView::AnyKeyPressed |QAbstractItemView::DoubleClicked);
-
-	// react to changes in the ListView
-	// TODO improve this to react on any selection change: http://stackoverflow.com/questions/2468514/how-to-get-the-selectionchange-event-in-qt
+	// react to selection of the entries
+	// -> TODO improve this to react on any selection change: http://stackoverflow.com/questions/2468514/how-to-get-the-selectionchange-event-in-qt
     connect(ui->listProcessingSteps, SIGNAL(clicked(const QModelIndex &)),
             this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
-    // react to changes in the entries of the ListView    
+    // react to changes in the entries    
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(stepNameChanged()));
             
+                    
     // commands for menu bar     
     createActions();
     createMenus();
@@ -133,6 +134,7 @@ void MainWindow::on_addButton_clicked() {
     ProcessingStep proSt;
     proSt.name = newName.toStdString();
     conf_.addProcessingStep(proSt);
+    
 	// the name can be changed
     ui->listProcessingSteps->edit(index);
 
@@ -147,9 +149,6 @@ void MainWindow::stepNameChanged(){
 
 	// get the old name from the variable currentStepName, which stores the activated step name
 	string oldName = currentStepName;
-
-	//~ cout << "old name: " << oldName << endl;
-	//~ cout << "new name: " << newName << endl;
 	
 	// checks whether the name has been changed
 	if (oldName.compare(newName) != 0){
@@ -157,18 +156,16 @@ void MainWindow::stepNameChanged(){
 		map<string, ProcessingStep> chain = conf_.getProcessingChain();
 		if (!chain.count(newName)){
 			configChanged();
-			//~ cout << "map counts old name: " << conf_.getProcessingChain().count(oldName) << endl;
-			//~ cout << "current step name: " << currentStepName << endl;
-
+			
 			// create the processing step with the old name and the processing step with the new name
 			ProcessingStep proStOld = conf_.getProcessingChain()[oldName];
 			ProcessingStep proStNew = conf_.getProcessingChain()[oldName];
 			proStNew.name = newName;
-			//~ cout << "old name: " << proStOld.name << endl;
-			//~ cout << "new name: " << proStNew.name << endl;
+
 			// remove the processing step with the old name and add the processing step with the new name
 			conf_.removeProcessingStep(proStOld.name);
 			conf_.addProcessingStep(proStNew);
+		// name already exists - dont allow the change
 		} else{
 			modelStep->setData(ui->listProcessingSteps->currentIndex(), QString::fromStdString(oldName), Qt::EditRole);
 		}
@@ -192,13 +189,11 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 
 	string selectedStep = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 	currentStepName = selectedStep;
-	cout << "selected " << selectedStep << endl;
 	ProcessingStep proStep = chain[selectedStep];
 
 	modelTableParams->setProcessingStep(proStep);
 	modelTableInputs->setProcessingStep(proStep);
 }
-
 
 void MainWindow::new_Data_Flow() {
 	// save is not activated

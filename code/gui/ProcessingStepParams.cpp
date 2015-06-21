@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 
 #include "ProcessingStepParams.hpp"
 
@@ -20,12 +21,34 @@ int ProcessingStepParams::columnCount(const QModelIndex & /*parent*/) const {
 }
 
 
+bool ProcessingStepParams::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.isValid() && role == Qt::EditRole) {
+        if (value.toString().isEmpty()){
+			return false;
+		}
+		// only the values can be changed
+		if(index.column() == 0){
+			this->step.params[this->paramNames[index.row()]] = value.toString().toStdString();
+		}
+		
+		QModelIndex transposedIndex = createIndex(index.column(), index.row());
+		emit dataChanged(index, index);
+		emit dataChanged(transposedIndex, transposedIndex);
+		return true;
+    }
+    return false;
+}
 
 QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const {
+	map<string, string> para = this->step.params;
     if (role == Qt::DisplayRole) {
-		map<string, string> para = this->step.params;
 		return QString::fromStdString(para[this->paramNames[index.row()]]);
-    }
+	} else if (role == Qt::TextAlignmentRole) {
+        return int(Qt::AlignRight | Qt::AlignVCenter);
+    } else if(role == Qt::EditRole)	{
+		return QString::fromStdString(para[this->paramNames[index.row()]]);
+	}
     return QVariant();
 }
 
@@ -67,3 +90,7 @@ void ProcessingStepParams::setProcessingStep(ProcessingStep proSt){
 	endResetModel();
 }
 
+Qt::ItemFlags ProcessingStepParams::flags (const QModelIndex &index) const {
+
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
