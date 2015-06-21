@@ -41,25 +41,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	// loads a new configuration from file
 	void loadDataFlow(std::string);
-
-	// sets a Module name list
-	void setModuleList(QStringList);
-
-	// sets the table
-	void setStepParams(ProcessingStep);
-
-	// sets the table
-	void setStepInputs(ProcessingStep);
-	
-	void setModuleManager(ModuleManager);
-
 
 private slots:
 	// Buttons addStep/deleteStep
     void on_addButton_clicked();
     void on_deleteButton_clicked();
-    
+
     // Activation of Step (via clicking)
     void on_listProcessingSteps_activated(const QModelIndex & index);
     void on_appendToLog(const Logger::LogType&, const std::string& );
@@ -78,64 +67,73 @@ private slots:
 	// Configuration
 	void run();
 	void stop();
-	
+
 	//stepName changed
 	void stepNameChanged();
-	
+
 private:
+	// default window title that appears next to the file name
+	const std::string WINDOW_TITLE = "uipf";
+
     Ui::MainWindow *ui;
 
+	// the module manager instance
 	ModuleManager mm_;
 
-	// all the configuration steps
+	// model for the listView of processing steps
     QStringListModel *modelStep;
-
-	// all the modules
+	// model for the module selector
     QStringListModel *modelModule;
-	
-	// current configuration
+	// model for the params editor table
+    ProcessingStepParams *modelTableParams;
+	// model for the input editor table
+    ProcessingStepInputs *modelTableInputs;
+    QStandardItemModel  *model; // TODO replaces the above
+
+	// the file name of the currently loaded configuration
 	std::string currentFileName;
-	
+	// the currently loaded configuration represented in the window
+   	Configuration conf_;
+
 	// current name of a precessing step
 	std::string currentStepName;
 
-    ProcessingStepParams *modelTableParams;
-    ProcessingStepInputs *modelTableInputs;
-    
-    QStandardItemModel  *model;
-
-	// the currently loaded configuration represented in the window
-   	Configuration conf_;
    	// Redo and Undo stacks, which store configurations
-   	std::stack<Configuration> undoStack;  
-   	std::stack<Configuration> redoStack;  
-	// fills the stacks
-	void configChanged();
-   	
+   	std::stack<Configuration> undoStack;
+   	std::stack<Configuration> redoStack;
+	// fills the undo and redo stacks
+	void beforeConfigChange();
+
+	// sets a Module name list
+	void setModuleList();
+
 	// menu bar
     void createActions();
+    void deleteActions();
     void createMenus();
-    
+
     QMenu *fileMenu;
-    QMenu *helpMenu;
     QMenu *editMenu;
     QMenu *configMenu;
-    
+    QMenu *helpMenu;
+
+    // actions in fileMenu
     QAction *newAct;
     QAction *openAct;
     QAction *saveAct;
     QAction *saveAsAct;
     QAction *exitAct;
-    
-    QAction *aboutAct;
-    //~ QLabel *infoLabel;
-   	
+
+    // actions in editMenu
    	QAction *undoAct;
     QAction *redoAct;
-   	
+
+    // actions in configMenu
    	QAction *runAct;
     QAction *stopAct;
-   	
+
+    // actions in helpMenu
+    QAction *aboutAct;
 };
 
 }; // namespace

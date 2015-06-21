@@ -6,32 +6,36 @@
 using namespace std;
 using namespace uipf;
 
-ProcessingStepParams::ProcessingStepParams(QObject *parent)
-    :QAbstractTableModel(parent)
+// constructor
+ProcessingStepParams::ProcessingStepParams(QObject *parent) : QAbstractTableModel(parent)
 {
 }
 
-int ProcessingStepParams::rowCount(const QModelIndex & /*parent*/) const {
-	return paramNames.size();
-
+// sets the number of rows for the widget
+int ProcessingStepParams::rowCount(const QModelIndex & /*parent*/) const
+{
+	return paramNames_.size();
 }
 
-int ProcessingStepParams::columnCount(const QModelIndex & /*parent*/) const {
-    return 1;
+// sets the number of columns for the widget
+int ProcessingStepParams::columnCount(const QModelIndex & /*parent*/) const
+{
+	return 1;
 }
 
-
+// this method is triggered when a parameter has been edited
 bool ProcessingStepParams::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && role == Qt::EditRole) {
-        if (value.toString().isEmpty()){
+        if (value.toString().isEmpty()) {
 			return false;
 		}
 		// only the values can be changed
-		if(index.column() == 0){
-			this->step.params[this->paramNames[index.row()]] = value.toString().toStdString();
+		if (index.column() == 0) {
+			// FIXME this does not work! changes do not propagate back to main window
+			step_.params[paramNames_[index.row()]] = value.toString().toStdString();
 		}
-		
+
 		QModelIndex transposedIndex = createIndex(index.column(), index.row());
 		emit dataChanged(index, index);
 		emit dataChanged(transposedIndex, transposedIndex);
@@ -40,30 +44,28 @@ bool ProcessingStepParams::setData(const QModelIndex &index, const QVariant &val
     return false;
 }
 
-QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const {
-	map<string, string> para = this->step.params;
-    if (role == Qt::DisplayRole) {
-		return QString::fromStdString(para[this->paramNames[index.row()]]);
-	} else if (role == Qt::TextAlignmentRole) {
-        return int(Qt::AlignRight | Qt::AlignVCenter);
-    } else if(role == Qt::EditRole)	{
-		return QString::fromStdString(para[this->paramNames[index.row()]]);
+// describes the data that is displayed in the widget
+QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const
+{
+	map<string, string> para = step_.params;
+    if (role == Qt::DisplayRole || role == Qt::EditRole) {
+		return QString::fromStdString(para[paramNames_[index.row()]]);
+	}
+	else if (role == Qt::TextAlignmentRole) {
+        return int(Qt::AlignLeft | Qt::AlignVCenter);
 	}
     return QVariant();
 }
 
-
-QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientation, int role) const {
-
-	if(role == Qt::DisplayRole) {
-		stringstream ss;
-		if(orientation == Qt::Horizontal) {
-			  ss << "Value";
-			  return QString(ss.str().c_str());
+// describes what is displayed in the headers of the table
+QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role == Qt::DisplayRole) {
+		if (orientation == Qt::Horizontal) {
+			return QString("Value");
 		}
 		else if(orientation == Qt::Vertical) {
-			ss << this->paramNames[section];
-			return QString(ss.str().c_str());
+			return QString(paramNames_[section].c_str());
 		}
 	}
 	QSize size(100, 50);
@@ -74,23 +76,24 @@ QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientati
 	return QVariant(size);
 }
 
-
-void ProcessingStepParams::setProcessingStep(ProcessingStep proSt){
-
+// sets the processing step this widget represents and updates the content
+void ProcessingStepParams::setProcessingStep(ProcessingStep proSt)
+{
 	beginResetModel();
 
-	step = proSt;
+	step_ = proSt;
 
-	paramNames.clear();
-	map<string, string> par = proSt.params;
-	for (auto it = par.begin(); it!=par.end(); ++it) {
-		paramNames.push_back(it->first);
+	paramNames_.clear();
+	map<string, string> params = step_.params;
+	for (auto it = params.begin(); it != params.end(); ++it) {
+		paramNames_.push_back(it->first);
 	}
 
 	endResetModel();
 }
 
-Qt::ItemFlags ProcessingStepParams::flags (const QModelIndex &index) const {
-
+// set flags for the fields, allows them to be editable
+Qt::ItemFlags ProcessingStepParams::flags(const QModelIndex &index) const
+{
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
