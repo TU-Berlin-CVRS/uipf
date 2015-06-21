@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QTableView>
 
 #include "framework/ModuleManager.hpp"
 #include "gui/MainWindow.hpp"

@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Create models
     modelStep = new QStringListModel(this);
-    modelModule = new QStringListModel(this);
     modelTableParams = new ProcessingStepParams(this);
     modelTableInputs = new ProcessingStepInputs(this);
 	model = new QStandardItemModel(this); // TODO merge with input
@@ -30,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->listProcessingSteps->setModel(modelStep);
     ui->tableParams->setModel(modelTableParams);
     ui->tableInputs->setModel(modelTableInputs);
-	ui->comboModule->setModel(modelModule);
 	ui->tableView->setModel(model); // TODO merge with input
 
 	// Processing Step Names: allow to manually modify the data
@@ -47,10 +45,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(stepNameChanged()));
+    // react to changes in the module
+    connect(ui->comboModule, SIGNAL(currentIndexChanged(int)),
+			this, SLOT(on_comboModule_currentIndexChanged(int)));
 	// logger
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
 
+	// fill module dropdown
+	map<string, MetaData> modules = mm_.getAllModuleMetaData();
+	int mi = 0;
+	for (auto it = modules.begin(); it!=modules.end(); ++it) {
+		ui->comboModule->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
+	}
+	ui->comboModule->setCurrentIndex(-1);
 
     // commands for menu bar
     createActions();
@@ -64,17 +72,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // set initial state
 	currentFileName = "newFile";
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
-
-
-	// set the possible modules
-	setModuleList();
+    ui->comboModule->setEnabled(false);
+	ui->tableParams->setEnabled(false);
+	ui->tableInputs->setEnabled(false);
+	ui->tableView->setEnabled(false);
 }
 
 // destructor
 MainWindow::~MainWindow() {
     delete ui;
     delete modelStep;
-    delete modelModule;
     delete modelTableParams;
     delete modelTableInputs;
     delete model;
@@ -82,22 +89,6 @@ MainWindow::~MainWindow() {
     deleteActions();
 }
 
-
-// sets a Module list
-/*
-list	list of all availanle modules
-*/
-void MainWindow::setModuleList() {
-
-// TODO refactor
-	QStringList list_modules;
-	map<string, MetaData> modules = mm_.getAllModuleMetaData();
-	for (auto it = modules.begin(); it!=modules.end(); ++it) {
-		list_modules << it->first.c_str();
-	}
-
-	modelModule->setStringList(list_modules);
-}
 
 // loads a new configuration from file
 void MainWindow::loadDataFlow(string filename)
@@ -146,12 +137,12 @@ void MainWindow::on_addButton_clicked() {
     int row = modelStep->rowCount();
 
     // Enable add one or more rows
-    modelStep->insertRows(row,1);
+    modelStep->insertRows(row, 1);
 
     // Get the row for Edit mode
     QModelIndex index = modelStep->index(row);
 
-    // Enable item selection and put it edit mode
+    // Enable item selection
     ui->listProcessingSteps->setCurrentIndex(index);
 
 	// before config changes, we need to update our redo/undo stacks
@@ -181,9 +172,8 @@ void MainWindow::on_addButton_clicked() {
     proSt.name = newName.toStdString();
     conf_.addProcessingStep(proSt);
 
-	// the name can be changed
+	// put selected item in edit mode
     ui->listProcessingSteps->edit(index);
-
 }
 
 
@@ -204,15 +194,17 @@ void MainWindow::stepNameChanged(){
 			beforeConfigChange();
 
 			// create the processing step with the old name and the processing step with the new name
-			ProcessingStep proStOld = conf_.getProcessingChain()[oldName];
-			ProcessingStep proStNew = conf_.getProcessingChain()[oldName];
+			ProcessingStep proStOld = chain[oldName];
+			ProcessingStep proStNew = chain[oldName];
 			proStNew.name = newName;
 
 			// remove the processing step with the old name and add the processing step with the new name
 			conf_.removeProcessingStep(proStOld.name);
 			conf_.addProcessingStep(proStNew);
-		// name already exists - dont allow the change
-		} else{
+
+			// TODO update all the referneces
+		} else {
+			// name already exists - dont allow the change
 			modelStep->setData(ui->listProcessingSteps->currentIndex(), QString::fromStdString(oldName), Qt::EditRole);
 		}
 	}
@@ -231,11 +223,22 @@ void MainWindow::on_deleteButton_clicked() {
 // gets called when a processing step is selected
 void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 
+	// ensure elements are enabled
+    ui->comboModule->setEnabled(true);
+	ui->tableParams->setEnabled(true);
+	ui->tableInputs->setEnabled(true);
+	ui->tableView->setEnabled(true);
+
+
 	map<string, ProcessingStep> chain = conf_.getProcessingChain();
 
-	string selectedStep = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
-	currentStepName = selectedStep;
-	ProcessingStep proStep = chain[selectedStep];
+	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+	ProcessingStep proStep = chain[currentStepName];
+
+	// set the selection of the module dropdown
+	int modIndex = ui->comboModule->findData(QString(proStep.module.c_str()));
+	ui->comboModule->setCurrentIndex(modIndex);
+
 
 	modelTableParams->setProcessingStep(proStep);
 	modelTableInputs->setProcessingStep(proStep);
@@ -264,10 +267,10 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 	model->setHorizontalHeaderItem(0, item0);
 	model->setHorizontalHeaderItem(1, item1);
 
-	for (int i = 0; i<items.size(); i++){
+	for (unsigned int i = 0; i<items.size(); i++){
 		model->setVerticalHeaderItem(i, items[i]);
 	}
-	
+
 	ui->tableView->repaint();
 
 	// TODO move this to constructor
@@ -291,19 +294,29 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 		ui->tableView->openPersistentEditor( model->index(i, 1) );
 		ui->tableView->openPersistentEditor( model->index(i, 0) );
 	}
-	
+
 	for (int c = 0; c < ui->tableView->horizontalHeader()->count(); ++c) {
 		ui->tableView->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
 	}
-	
+
 	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
 		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
 	}
-	
+
 	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
 		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
 	}
 }
+
+void MainWindow::on_comboModule_currentIndexChanged(int index)
+{
+	string module = ui->comboModule->itemData(index).toString().toStdString();
+
+	conf_.setProcessingStepModule(currentStepName, module);
+
+	// TODO update params and inputs
+}
+
 
 // menu click File -> New
 void MainWindow::new_Data_Flow()
@@ -311,7 +324,7 @@ void MainWindow::new_Data_Flow()
 	if (currentFileHasChanged) {
 		// TODO confirm if the current data should really be dropped
 	}
-	
+
 	// save is not activated
 	saveAct->setEnabled(false);
 

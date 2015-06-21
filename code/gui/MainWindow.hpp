@@ -53,6 +53,9 @@ private slots:
     void on_listProcessingSteps_activated(const QModelIndex & index);
     void on_appendToLog(const Logger::LogType&, const std::string& );
 
+	// change of module dropdown
+	void on_comboModule_currentIndexChanged(int);
+
 	// menu bar
 	// File
 	void new_Data_Flow();
@@ -82,8 +85,6 @@ private:
 
 	// model for the listView of processing steps
     QStringListModel *modelStep;
-	// model for the module selector
-    QStringListModel *modelModule;
 	// model for the params editor table
     ProcessingStepParams *modelTableParams;
 	// model for the input editor table
@@ -104,9 +105,6 @@ private:
    	std::stack<Configuration> redoStack;
 	// fills the undo and redo stacks
 	void beforeConfigChange();
-
-	// sets a Module name list
-	void setModuleList();
 
 	// menu bar
     void createActions();

@@ -1,6 +1,3 @@
-#include <sstream>
-#include <iostream>
-
 #include "ProcessingStepParams.hpp"
 
 using namespace std;
