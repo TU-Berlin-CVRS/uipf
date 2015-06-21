@@ -245,16 +245,30 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 
 	map<string, pair<string, string> > inp = chain[currentStepName].inputs;
 	int rowSum = 0;
+	vector<QStandardItem*> items;
 	if(inp.empty()){
 		rowSum = 0;
 	} else {
 		for (auto it = inp.begin(); it!=inp.end(); ++it) {
+			items.push_back(new QStandardItem((it->first).c_str()));
 			rowSum++;
 		}
 	}
 
 	model->setColumnCount(2);
 	model->setRowCount(rowSum);
+
+
+	QStandardItem* item0 = new QStandardItem("From Step:");
+	QStandardItem* item1 = new QStandardItem("Output Name:");
+	model->setHorizontalHeaderItem(0, item0);
+	model->setHorizontalHeaderItem(1, item1);
+
+	for (int i = 0; i<items.size(); i++){
+		model->setVerticalHeaderItem(i, items[i]);
+	}
+	
+	ui->tableView->repaint();
 
 	// TODO move this to constructor
 	ComboBoxSourceOutput* sourceOutput = new ComboBoxSourceOutput(this);
