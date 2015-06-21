@@ -280,7 +280,12 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 }
 
 // menu click File -> New
-void MainWindow::new_Data_Flow() {
+void MainWindow::new_Data_Flow()
+{
+	if (currentFileHasChanged) {
+		// TODO confirm if the current data should really be dropped
+	}
+	
 	// save is not activated
 	saveAct->setEnabled(false);
 
@@ -299,6 +304,10 @@ void MainWindow::new_Data_Flow() {
 
 void MainWindow::load_Data_Flow()
 {
+	if (currentFileHasChanged) {
+		// TODO confirm if the current data should really be dropped
+	}
+
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."), QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
 	// abort button has been pressed
 	if (fn.isEmpty()) {
@@ -311,6 +320,7 @@ void MainWindow::load_Data_Flow()
 // only possible, if the configuration has already been stored in some file
 void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
+	currentFileHasChanged = false;
 }
 
 // by default the name is the current name of the configuration file
@@ -326,12 +336,12 @@ void MainWindow::save_Data_Flow_as() {
 		return;
 	}
 
-
     if (! (fn.endsWith(".yaml", Qt::CaseInsensitive)) )
         fn += ".yaml"; // default
   	currentFileName = fn.toStdString();
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
   	saveAct->setEnabled(true);
+	currentFileHasChanged = false;
 
 	conf_.store(fn.toStdString());
 }
@@ -401,6 +411,8 @@ void MainWindow::redo() {
 // has to be called BEFORE the config has changed!
 void MainWindow::beforeConfigChange(){
 	// configuration changed
+	currentFileHasChanged = true;
+
 	undoStack.push(conf_);
 	while(! redoStack.empty()){
 		redoStack.pop();

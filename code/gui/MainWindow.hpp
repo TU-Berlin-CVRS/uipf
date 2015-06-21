@@ -92,6 +92,7 @@ private:
 
 	// the file name of the currently loaded configuration
 	std::string currentFileName;
+	bool currentFileHasChanged = false;
 	// the currently loaded configuration represented in the window
    	Configuration conf_;
 
