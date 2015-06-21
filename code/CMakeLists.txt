@@ -61,6 +61,8 @@ add_executable(	uipf-gui
 	gui/ProcessingStepParams.cpp
 	gui/ProcessingStepInputs.cpp
 	gui/MainWindow.cpp
+	gui/ComboBoxSourceOutput.cpp
+	gui/ComboBoxSourceStep.cpp
 
 	framework/ModuleManager.cpp
 

@@ -22,6 +22,10 @@
 #include "../framework/Configuration.hpp"
 #include "../framework/Logger.hpp"
 #include "../framework/ProcessingStep.hpp"
+#include "../framework/ModuleManager.hpp"
+
+#include <QStandardItemModel>
+
 
 namespace Ui {
 class MainWindow;
@@ -47,6 +51,8 @@ public:
 
 	// sets the table
 	void setStepInputs(ProcessingStep);
+	
+	void setModuleManager(ModuleManager);
 
 
 private slots:
@@ -79,6 +85,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+	ModuleManager mm_;
+
 	// all the configuration steps
     QStringListModel *modelStep;
 
@@ -93,6 +101,8 @@ private:
 
     ProcessingStepParams *modelTableParams;
     ProcessingStepInputs *modelTableInputs;
+    
+    QStandardItemModel  *model;
 
 	// the currently loaded configuration represented in the window
    	Configuration conf_;

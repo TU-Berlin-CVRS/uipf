@@ -3,6 +3,14 @@
 #include <QScrollBar>
 #include <iostream>
 #include "../framework/ModuleManager.hpp"
+//~ #include "ComboBoxDelegate.hpp"
+#include "ComboBoxSourceStep.hpp"
+#include "ComboBoxSourceOutput.hpp"
+
+#include <QHeaderView>
+#include <QItemSelectionModel>
+#include <QStandardItemModel>
+
 
 using namespace std;
 using namespace uipf;
@@ -16,12 +24,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modelModule = new QStringListModel(this);
     modelTableParams = new ProcessingStepParams(this);
     modelTableInputs = new ProcessingStepInputs(this);
-
+	model = new QStandardItemModel(this);
+		
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);
     ui->tableParams->setModel(modelTableParams);
     ui->tableInputs->setModel(modelTableInputs);
 	ui->comboModule->setModel(modelModule);
+	ui->tableView->setModel(model);
+
 
 	// Processing Step Names:
     // allow to manually modify the data 
@@ -59,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
     
     // when starting the program, at first always start a new Data Flow
-   	new_Data_Flow();
+   	new_Data_Flow(); 	
 }
 
 // destructor
@@ -69,6 +80,7 @@ MainWindow::~MainWindow() {
     delete modelModule;
     delete modelTableParams;
     delete modelTableInputs;
+    delete model;
 }
 
 
@@ -80,6 +92,10 @@ void MainWindow::setModuleList(QStringList list){
 	modelModule->setStringList(list);
 }
 
+
+void MainWindow::setModuleManager(ModuleManager mm){
+	mm_ = mm;
+}
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
@@ -193,6 +209,43 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 
 	modelTableParams->setProcessingStep(proStep);
 	modelTableInputs->setProcessingStep(proStep);
+	
+	// Processing Step Inputs
+	model->clear();
+	
+	map<string, pair<string, string> > inp = chain[currentStepName].inputs;
+	int rowSum = 0;
+	if(inp.empty()){
+		rowSum = 0;
+	} else {
+		for (auto it = inp.begin(); it!=inp.end(); ++it) {
+			rowSum++;
+		}
+	}
+
+	model->setColumnCount(2);
+	model->setRowCount(rowSum);
+
+	ComboBoxSourceOutput* sourceOutput = new ComboBoxSourceOutput(this);
+	ComboBoxSourceStep* sourceStep = new ComboBoxSourceStep(this);
+
+
+	sourceOutput->setConfiguration(conf_);
+	sourceOutput->setCurrentStep(currentStepName);
+	sourceOutput->fill();	
+
+	sourceStep->setConfiguration(conf_);
+	sourceStep->setCurrentStep(currentStepName);
+	sourceStep->fill();	
+			
+	ui->tableView->setItemDelegateForColumn(0, sourceStep); 
+	ui->tableView->setItemDelegateForColumn(1, sourceOutput); 
+
+	// Make the combo boxes always displayed.
+	for ( int i = 0; i < model->rowCount(); ++i ) {
+		ui->tableView->openPersistentEditor( model->index(i, 1) );
+		ui->tableView->openPersistentEditor( model->index(i, 0) );
+	}  
 }
 
 void MainWindow::new_Data_Flow() {

@@ -4,6 +4,12 @@
 #include "framework/ModuleManager.hpp"
 #include "gui/MainWindow.hpp"
 
+//~ #include <QHeaderView>
+//~ #include <QItemSelectionModel>
+//~ #include <QStandardItemModel>
+//~ #include <iostream>
+//~ #include "gui/ComboBoxDelegate.hpp"
+
 using namespace std;
 using namespace uipf;
 
@@ -21,6 +27,8 @@ int main(int argc, char *argv[])
 		list_modules << it->first.c_str();
 	}
 	w.setModuleList(list_modules);
+	
+	w.setModuleManager(mm);
 	
     w.show();
 

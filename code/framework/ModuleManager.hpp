@@ -1,3 +1,6 @@
+#ifndef MODULEMANAGER_H
+#define MODULEMANAGER_H
+
 #include <opencv2/opencv.hpp>
 #include "Configuration.hpp"
 #include "ModuleInterface.hpp"
@@ -40,4 +43,6 @@ class ModuleManager{
 };
 
 }
+
+#endif
 
