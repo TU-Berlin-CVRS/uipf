@@ -12,6 +12,9 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
+#we need to set the path to libyaml-cpp.so so it can be found by linker       
+set(YAML_CPP_LIBRARY ${CMAKE_BINARY_DIR}/yaml-cpp/lib/libyaml-cpp.so)
+
 #c++11 support
 #if(UNIX)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++0x")
