@@ -291,6 +291,18 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
 		ui->tableView->openPersistentEditor( model->index(i, 1) );
 		ui->tableView->openPersistentEditor( model->index(i, 0) );
 	}
+	
+	for (int c = 0; c < ui->tableView->horizontalHeader()->count(); ++c) {
+		ui->tableView->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+	
+	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
+		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+	
+	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
+		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
 }
 
 // menu click File -> New
