@@ -16,7 +16,7 @@ The following dependencies are needed to build the console application:
 
 On Debian install the following packages:
 
-	libboost-serialization-dev libboost-program-options-dev
+	libboost-serialization-dev libboost-program-options-dev libboost-graph-dev
 
 
 The following dependencies are additionally needed to build the GUI:
@@ -38,4 +38,3 @@ If something goes wrong you may run `make VERBOSE=1` for more detailed output.
 ### Building with CMake on Windows
 
 TDB.
-
