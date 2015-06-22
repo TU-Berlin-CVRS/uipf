@@ -13,6 +13,7 @@ The following dependencies are needed to build the console application:
 - yaml-cpp (https://github.com/jbeder/yaml-cpp), will be built by cmake
   - Boost serialisation, needs to be available on the system
 - Boost program-options
+- Boost graph
 
 On Debian install the following packages:
 
@@ -25,10 +26,11 @@ The following dependencies are additionally needed to build the GUI:
 
 ### Building with CMake on Linux
 
+Run the following commands after cloning the repository in the repostiory base directory:
+
 ```
-cd code
-mkdir build
-cd build
+mkdir -p code/build
+cd code/build
 cmake ..
 make
 ```
