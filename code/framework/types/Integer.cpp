@@ -2,7 +2,7 @@
 
 using namespace uipf;
 
-// gives the Integer 
+// gives the Integer
 /*
 */
 int Integer::getContent(){
@@ -15,4 +15,9 @@ i	Integer content
 */
 void Integer::setContent(int i){
 	in = i;
+}
+
+// returns the data type of this data object
+Type Integer::getType(){
+	return INTEGER;
 }

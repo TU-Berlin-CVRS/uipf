@@ -8,7 +8,7 @@ namespace uipf{
 
 
 // String which is a specification of Elem
-class String : Data {
+class String : public Data {
 	public:
 		typedef SMARTPOINTER<String> ptr;
 		typedef const SMARTPOINTER<String> c_ptr;
@@ -18,13 +18,16 @@ class String : Data {
 		String(void){};
 		// destructor
 		~String(void){};
-		
+
 		// get content
 		std::string getContent();
-		
+
 		// set content
 		void setContent(std::string);
-		
+
+		// returns the data type of this data object
+		Type getType() override;
+
 	private:
 		// content
 		std::string str;
