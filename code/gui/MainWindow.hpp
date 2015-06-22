@@ -51,6 +51,8 @@ private slots:
 	// Buttons addStep/deleteStep
     void on_addButton_clicked();
     void on_deleteButton_clicked();
+	//stepName changed
+	void on_stepNameChanged();
 
     // Activation of Step (via clicking)
     void on_listProcessingSteps_activated(const QModelIndex & index);
@@ -77,8 +79,6 @@ private slots:
 	void run();
 	void stop();
 
-	//stepName changed
-	void stepNameChanged();
 
 private:
 	// default window title that appears next to the file name

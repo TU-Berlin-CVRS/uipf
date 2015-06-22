@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
             this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
-            this, SLOT(stepNameChanged()));
+            this, SLOT(on_stepNameChanged()));
     // react to changes in the module
     connect(ui->comboModule, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(on_comboModule_currentIndexChanged(int)));
@@ -324,7 +324,7 @@ void MainWindow::on_addButton_clicked() {
 
 
 // updates the name of a step, when changed
-void MainWindow::stepNameChanged(){
+void MainWindow::on_stepNameChanged(){
 
 	// get the new name
 	string newName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();

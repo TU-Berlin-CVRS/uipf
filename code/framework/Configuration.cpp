@@ -367,12 +367,12 @@ bool Configuration::renameProcessingStep(string oldName, string newName){
 		// update all the references
 		for(auto it = chain_.begin(); it != chain_.end(); ++it) {
 
-			ProcessingStep step = it->second;
+			ProcessingStep& step = it->second;
 			for(auto inputIt = step.inputs.begin(); inputIt != step.inputs.end(); ++inputIt) {
 
 				// if this input refers to the old step, rename it
-				if (oldName.compare(inputIt->second.first)) {
-					inputIt->second.first = newName;
+				if (oldName.compare(inputIt->second.first) == 0) {
+					step.inputs[inputIt->first].first = newName;
 				}
 			}
 		}
