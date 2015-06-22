@@ -488,6 +488,17 @@ void MainWindow::run() {
 	stopAct->setEnabled(true);
 
 	ModuleManager mm;
+
+	// validate configuration and show errors
+	vector<string> errors = conf_.validate(mm.getAllModuleMetaData());
+	if (!errors.empty()) {
+		LOG_E("There are configuration errors!");
+		for(unsigned int i = 0; i < errors.size(); ++i) {
+			LOG_E( errors[i]);
+		}
+		return;
+	}
+
 	mm.run(conf_);
 
 	// TODO inactivate stop, when finished!

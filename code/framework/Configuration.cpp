@@ -115,7 +115,64 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 
 	}
 
-	// TODO detect circular dependencies
+	// detect circular dependencies
+	map<string, ProcessingStep> chainTmp;
+	chainTmp.insert(chain_.begin(), chain_.end());
+
+	// contains the names of the processing steps in the correct order
+	vector<string> sortedChain;
+
+	// boolean, describes, whether any elem could be added
+	bool elemWasAdded;
+
+	// iterate over all processing steps and order them
+	while(!chainTmp.empty()){
+		// initially set to false
+		elemWasAdded = false;
+		map<string, ProcessingStep>::iterator itProSt = chainTmp.begin();
+		while(itProSt!=chainTmp.end()) {
+			// add all modules without any dependencies
+			if(itProSt->second.inputs.size() == 0){
+				sortedChain.push_back(itProSt->first);
+				// delete and set pointer to next element
+				itProSt = chainTmp.erase(itProSt);
+				// an elem was added
+				elemWasAdded = true;
+			} else {
+				// go through dependencies, and add only the modules, where module
+				// on which they depend have already been added
+				map<string, pair<string,string> >::iterator it = itProSt->second.inputs.begin();
+				int i = 1;
+				for (; it!=itProSt->second.inputs.end(); ++it) {
+					if (find(sortedChain.begin(), sortedChain.end(), it->second.first) != sortedChain.end()){
+						i *=1;
+					} else{
+						i *=0;
+					}
+				}
+				if (i == 1){
+					sortedChain.push_back(itProSt->first);
+					// delete and set pointer to next element
+					itProSt = chainTmp.erase(itProSt);
+					// an elem was added
+					elemWasAdded = true;
+				} else {
+					// try next element
+					++itProSt;
+				}
+			}
+		}
+		if(!elemWasAdded){
+			auto it = chainTmp.begin();
+			string stepNames = it->first;
+			++it;
+			for (; it!=chainTmp.end(); ++it) {
+				stepNames += string(", ") + it->first;
+			}
+			errors.push_back( string("Circular dependency detected between the following configuration steps: ") + stepNames);
+			break;
+		}
+	}
 
 	return errors;
 }
