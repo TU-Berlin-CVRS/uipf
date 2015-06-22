@@ -35,6 +35,9 @@ class Configuration{
 		// returns the named processing step
 		ProcessingStep getProcessingStep(std::string);
 
+		// returns a value indicating whether a named processing step exists
+		bool hasProcessingStep(std::string name);
+
 
 		// methods to manipulate the config:
 
@@ -43,6 +46,9 @@ class Configuration{
 
 		// removes a ProcessingStep from the chain
 		void removeProcessingStep(std::string);
+
+		// rename a ProcessingStep
+		bool renameProcessingStep(std::string, std::string);
 
 		// sets the module name for a named processing step
 		void setProcessingStepModule(std::string, std::string, MetaData);

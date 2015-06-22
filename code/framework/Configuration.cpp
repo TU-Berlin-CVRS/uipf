@@ -313,6 +313,11 @@ map<string, ProcessingStep> Configuration::getProcessingChain(){
 	return chain_;
 }
 
+// returns a value indicating whether a named processing step exists
+bool Configuration::hasProcessingStep(string name){
+	return chain_.count(name) != 0;
+}
+
 // returns the named processing step
 ProcessingStep Configuration::getProcessingStep(string name){
 	return chain_[name];
@@ -322,8 +327,8 @@ ProcessingStep Configuration::getProcessingStep(string name){
 /*
  ProSt 		processing step, which is added to the chain
 */
-void Configuration::addProcessingStep(ProcessingStep ProSt){
-	chain_.insert(pair<std::string, ProcessingStep> (ProSt.name, ProSt));
+void Configuration::addProcessingStep(ProcessingStep proSt){
+	chain_.insert(pair<std::string, ProcessingStep> (proSt.name, proSt));
 }
 
 // removes a ProcessingStep from the chain
@@ -332,6 +337,51 @@ stepName	name of processingStep, which has to been deleted from the chain
 */
 void Configuration::removeProcessingStep(string stepName){
 	chain_.erase(stepName);
+}
+
+// rename a ProcessingStep
+/*
+oldName	name of processingStep, which has to be renamed
+newName	name of processingStep, which has to be renamed
+
+returns true on success, false on failure
+*/
+bool Configuration::renameProcessingStep(string oldName, string newName){
+
+	// checks whether the name has been changed
+	if (oldName.compare(newName) == 0) {
+		return false;
+	}
+
+	// check whether the new name does not already exist
+	if (chain_.count(newName) == 0) {
+
+		// create the processing step with the old name and the processing step with the new name
+		ProcessingStep newStep = chain_[oldName];
+		newStep.name = newName;
+
+		// remove the processing step with the old name and add the processing step with the new name
+		chain_.erase(oldName);
+		chain_.insert(pair<string, ProcessingStep> (newStep.name, newStep));
+
+		// update all the references
+		for(auto it = chain_.begin(); it != chain_.end(); ++it) {
+
+			ProcessingStep step = it->second;
+			for(auto inputIt = step.inputs.begin(); inputIt != step.inputs.end(); ++inputIt) {
+
+				// if this input refers to the old step, rename it
+				if (oldName.compare(inputIt->second.first)) {
+					inputIt->second.first = newName;
+				}
+			}
+		}
+
+		return true;
+	} else {
+		// name already exists - dont allow the change
+		return false;
+	}
 }
 
 // sets the module name for a named processing step

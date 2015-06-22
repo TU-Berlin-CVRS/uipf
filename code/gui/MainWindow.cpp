@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modelTableParams = new ProcessingStepParams(this);
     modelTableInputs = new ProcessingStepInputs(this);
 	model = new QStandardItemModel(this); // TODO merge with input
-	modelSourceOutput = new ComboBoxSourceOutput(this);
+	modelSourceOutput = new ComboBoxSourceOutput(mm_, this);
 	modelSourceStep = new ComboBoxSourceStep(this);
 
     // Glue model and view together
@@ -286,7 +286,7 @@ void MainWindow::on_addButton_clicked() {
 
 	// set default name "new step i"
 	bool nameAlreadyExists = true;
-	int i=0;
+	int i=1;
     string name = "new step " + std::to_string(i);
 	map<string, ProcessingStep> chain = conf_.getProcessingChain();
 	while(nameAlreadyExists){
@@ -330,26 +330,21 @@ void MainWindow::stepNameChanged(){
 	string oldName = currentStepName;
 
 	// checks whether the name has been changed
-	if (oldName.compare(newName) != 0){
-		// check whether the new name does not already exist
-		map<string, ProcessingStep> chain = conf_.getProcessingChain();
-		if (!chain.count(newName)){
-			beforeConfigChange();
+	if (oldName.compare(newName) == 0) {
+		return;
+	}
 
-			// create the processing step with the old name and the processing step with the new name
-			ProcessingStep proStOld = chain[oldName];
-			ProcessingStep proStNew = chain[oldName];
-			proStNew.name = newName;
+	// check whether the new name does not already exist
+	if (!conf_.hasProcessingStep(newName)) {
+		beforeConfigChange();
 
-			// remove the processing step with the old name and add the processing step with the new name
-			conf_.removeProcessingStep(proStOld.name);
-			conf_.addProcessingStep(proStNew);
+		conf_.renameProcessingStep(oldName, newName);
 
-			// TODO update all the referneces
-		} else {
-			// name already exists - dont allow the change
-			modelStep->setData(ui->listProcessingSteps->currentIndex(), QString::fromStdString(oldName), Qt::EditRole);
-		}
+		// update current step pointer
+		currentStepName = newName;
+	} else {
+		// name already exists - dont allow the change
+		modelStep->setData(ui->listProcessingSteps->currentIndex(), QString::fromStdString(oldName), Qt::EditRole);
 	}
 
 	//update the graphview
@@ -389,7 +384,9 @@ void MainWindow::on_comboModule_currentIndexChanged(int index)
 {
 	string module = ui->comboModule->itemData(index).toString().toStdString();
 
-	if (mm_.hasModule(module)) {
+	// only update if module exists, a step is selected and the module has actually changed
+	if (mm_.hasModule(module) && !currentStepName.empty() && conf_.getProcessingStep(currentStepName).module.compare(module) != 0) {
+		beforeConfigChange();
 		conf_.setProcessingStepModule(currentStepName, module, mm_.getModuleMetaData(module));
 		refreshParams();
 		refreshInputs();
