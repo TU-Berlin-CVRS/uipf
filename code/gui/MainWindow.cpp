@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->tableInputs->setModel(modelTableInputs);
 	ui->tableView->setModel(model); // TODO merge with input
 
+	//create and add the graphwidget to the gui
+	graphView_ = new gui::GraphWidget();
+	ui->verticalLayoutRight->addWidget(graphView_);//add graphview
+
 	// Processing Step Names: allow to manually modify the data
     // -> It may be triggered by hitting any key or double-click etc.
     ui->listProcessingSteps-> setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
@@ -85,6 +89,7 @@ MainWindow::~MainWindow() {
     delete modelTableParams;
     delete modelTableInputs;
     delete model;
+    delete graphView_;
 
     deleteActions();
 }
@@ -115,17 +120,20 @@ void MainWindow::loadDataFlow(string filename)
 	modelStep->setStringList(list);
 
 	// TODO reset other models
+	//update the graphview
+	graphView_->renderConfig(conf_);
 }
 
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-// TODO: comment!
+// append messages from our logger to the log-textview
 void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
 	// For colored Messages we need html :-/
 	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
 	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
 	ui->tbLog->appendHtml(alertHtml);
+	//autoscroll
 	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
 }
 
@@ -174,6 +182,9 @@ void MainWindow::on_addButton_clicked() {
 
 	// put selected item in edit mode
     ui->listProcessingSteps->edit(index);
+
+    //update the graphview
+    graphView_->renderConfig(conf_);
 }
 
 
@@ -208,6 +219,9 @@ void MainWindow::stepNameChanged(){
 			modelStep->setData(ui->listProcessingSteps->currentIndex(), QString::fromStdString(oldName), Qt::EditRole);
 		}
 	}
+
+	//update the graphview
+	graphView_->renderConfig(conf_);
 }
 
 
@@ -217,6 +231,9 @@ void MainWindow::on_deleteButton_clicked() {
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
     // remove from the chain
 	conf_.removeProcessingStep(currentStepName);
+
+	//update the graphview
+	graphView_->renderConfig(conf_);
 }
 
 
@@ -339,6 +356,9 @@ void MainWindow::new_Data_Flow()
 
     QStringList list;
 	modelStep->setStringList(list);
+
+	//update the graphview
+	graphView_->renderConfig(conf_);
 }
 
 void MainWindow::load_Data_Flow()

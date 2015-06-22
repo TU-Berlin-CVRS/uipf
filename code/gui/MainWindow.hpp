@@ -23,6 +23,7 @@
 #include "../framework/Logger.hpp"
 #include "../framework/ProcessingStep.hpp"
 #include "../framework/ModuleManager.hpp"
+#include "graph/graphwidget.h"
 
 #include <QStandardItemModel>
 
@@ -133,6 +134,9 @@ private:
 
     // actions in helpMenu
     QAction *aboutAct;
+
+    //the view, that displays the graph
+    gui::GraphWidget* graphView_;
 };
 
 }; // namespace
