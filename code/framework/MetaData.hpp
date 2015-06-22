@@ -7,47 +7,61 @@
 
 namespace uipf {
 
+//Base class for all Descriptions
+class Description
+{
+public:
+
+	// constructor
+	Description(std::string d, bool bOptional=false) : description_(d),bIsOptional_(bOptional) {};
+	// constuctor to allow copying
+	Description() {};
+	// destructor
+	virtual ~Description(void){};
+
+	std::string getDescription() const { return description_; };
+	bool getIsOptional() const { return bIsOptional_; };
+
+protected:
+	// a textual description
+	std::string description_;
+	bool bIsOptional_;
+};
+
 // holds meta data for input and output
-class DataDescription {
+class DataDescription : public Description {
 	public:
 
 		// constructor
-		DataDescription(Type t, std::string d) : type_(t), description_(d) {};
+		DataDescription(Type t, std::string d, bool bOptional=false) : Description (d,bOptional), type_(t) {};
 		// constuctor to allow copying
 		DataDescription() {};
 		// destructor
-		~DataDescription(void){};
+		virtual ~DataDescription(void){};
 
 		Type getType() { return type_; };
-		std::string getDescription() { return description_; };
 
 	private:
 		// the type of the input/output data
 		Type type_;
-		// a textual description
-		std::string description_;
+
 };
 
 // holds meta data for module parameters
-class ParamDescription {
+class ParamDescription : public Description {
 	public:
 
 		// constructor
-		ParamDescription(std::string d) : description_(d) {};
+		ParamDescription(std::string d, bool bOptional=false) : Description (d,bOptional) {};
 		// constuctor to allow copying
 		ParamDescription() {};
 		// destructor
-		~ParamDescription(void){};
+		virtual ~ParamDescription(void){};
 
-		std::string getDescription() { return description_; };
-
-	private:
-		// a textual description
-		std::string description_;
 };
 
 // describes the module meta data
-class MetaData {
+class MetaData : public Description {
 	public:
 		// constructor
 		MetaData(
@@ -59,10 +73,7 @@ class MetaData {
 		// constuctor to allow copying
 		MetaData(){};
 		// destructor
-		~MetaData(void){};
-
-		// textual description of the module
-		std::string getDescription();
+		virtual ~MetaData(void){};
 
 		// list of inputs  name => description details
 		std::map<std::string, DataDescription> getInputs();
@@ -73,8 +84,16 @@ class MetaData {
 		// list of parameters  name => description details
 		std::map<std::string, ParamDescription> getParams();
 
+		// get input by name
+		DataDescription getInput(const std::string& ) const;
+		// get output by name
+		DataDescription getOutput(const std::string& ) const;
+		// get param by name
+		ParamDescription getParam(const std::string& ) const;
+
+
 	private:
-		std::string description_;
+
 
 		std::map<std::string, DataDescription> inputs_;
 		std::map<std::string, DataDescription> outputs_;

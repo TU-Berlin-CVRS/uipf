@@ -2,6 +2,7 @@
 #include "Configuration.hpp"
 #include "yaml-cpp/yaml.h"
 #include "Logger.hpp"
+#include "InvalidConfigException.hpp"
 
 using namespace std;
 using namespace uipf;
@@ -131,8 +132,26 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 			}
 		}
 
+		MetaData module = modules[step.module];
+		auto paramDesc = module.getParams();
+		//check, if all mandatory parameters are given
+		for(auto paramIt = paramDesc.cbegin(); paramIt != paramDesc.end(); ++paramIt)
+		{
+			if (!paramIt->second.getIsOptional())
+				if ( step.params.find(paramIt->first) == step.params.end())
+					errors.push_back("mandatory parameter: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
+
+		}
+		//check, if all params given in yaml do exist in Metdata
 		for(auto paramIt = step.params.cbegin(); paramIt != step.params.end(); ++paramIt) {
-			// TODO check for mandatory params
+			try
+			{
+				auto paramDescription = module.getParam(paramIt->first);
+			}
+			catch(InvalidConfigException& ex)
+			{
+				errors.push_back(ex.what());
+			}
 		}
 
 	}
