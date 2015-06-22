@@ -7,7 +7,7 @@
 
 namespace uipf{
 
-// Matrix which is a specification of Elem
+// Matrix which is a specification of Data
 class Matrix : public Data {
 	public:
 		typedef SMARTPOINTER<Matrix> ptr;
@@ -16,7 +16,7 @@ class Matrix : public Data {
 	public:
 		// constructor (can't be virtual!)
 		Matrix(void){};
-		
+
 		Matrix(cv::Mat&);
 		// destructor
 		~Matrix(void){};
@@ -28,6 +28,7 @@ class Matrix : public Data {
 		// set content
 		void setContent(cv::Mat&);
 
+		// returns the data type of this data object
 		Type getType() override;
 
 	private:
