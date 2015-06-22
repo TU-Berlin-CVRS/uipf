@@ -52,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // react to changes in the module
     connect(ui->comboModule, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(on_comboModule_currentIndexChanged(int)));
+	// react to changes in the params
+    connect(modelTableParams, SIGNAL(paramChanged(std::string, std::string)),
+			this, SLOT(on_paramChanged(std::string, std::string)));
 	// logger
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
@@ -392,6 +395,18 @@ void MainWindow::on_comboModule_currentIndexChanged(int index)
 		refreshInputs();
 	}
 }
+
+// react to params changes and store them in the config
+void MainWindow::on_paramChanged(std::string paramName, std::string value)
+{
+	if (!currentStepName.empty()) {
+		beforeConfigChange();
+		map<string, string> params = conf_.getProcessingStep(currentStepName).params;
+		params[paramName] = value;
+		conf_.setProcessingStepParams(currentStepName, params);
+	}
+}
+
 
 
 // menu click File -> New

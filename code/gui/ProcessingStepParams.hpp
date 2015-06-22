@@ -35,6 +35,10 @@ public:
     // set flags for the fields, allows them to be editable
 	Qt::ItemFlags flags (const QModelIndex &index) const;
 
+signals:
+
+    void paramChanged(std::string, std::string);
+
 private:
 	// the processing step represented by this widget
 	ProcessingStep step_;

@@ -29,8 +29,8 @@ bool ProcessingStepParams::setData(const QModelIndex &index, const QVariant &val
 		}
 		// only the values can be changed
 		if (index.column() == 0) {
-			// FIXME this does not work! changes do not propagate back to main window
 			step_.params[paramNames_[index.row()]] = value.toString().toStdString();
+			emit paramChanged(paramNames_[index.row()], value.toString().toStdString());
 		}
 
 		QModelIndex transposedIndex = createIndex(index.column(), index.row());
