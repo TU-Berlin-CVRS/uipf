@@ -64,6 +64,9 @@ add_executable(	uipf-gui
 	gui/ProcessingStepParams.cpp
 	gui/ProcessingStepInputs.cpp
 	gui/MainWindow.cpp
+	gui/graph/edge.cpp
+	gui/graph/node.cpp
+	gui/graph/graphwidget.cpp
 	gui/ComboBoxSourceOutput.cpp
 	gui/ComboBoxSourceStep.cpp
 
@@ -85,7 +88,7 @@ add_executable(	uipf-gui
 
 
 
-target_link_libraries (uipf-gui mainwindow opencv_core opencv_imgproc opencv_highgui boost_program_options ModuleBase ${YAML_CPP_LIBRARY})
+target_link_libraries (uipf-gui mainwindow opencv_core opencv_imgproc opencv_highgui boost_graph boost_program_options ModuleBase ${YAML_CPP_LIBRARY})
 
 # add qt modules to the gui
 qt5_use_modules(uipf-gui Core Gui Widgets)
