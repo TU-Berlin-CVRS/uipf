@@ -24,10 +24,11 @@ MetaData ShowImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
 		{"image", DataDescription(MATRIX, "the image to show.") },
-		{"blocking", DataDescription(BOOL, "'true' or 'false' determines if the processing chain has to wait for this window to close or not.") },
+
 	};
 	map<string, ParamDescription> params = {
-		{"title", ParamDescription("the title of the window.") }
+		{"title", ParamDescription("the title of the window.") },
+		{"blocking", ParamDescription("'true' or 'false' determines if the processing chain has to wait for this window to close or not.",true) }
 	};
 
 	return MetaData(

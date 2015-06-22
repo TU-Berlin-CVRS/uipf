@@ -42,7 +42,7 @@ MetaData LoadImageModule::getMetaData() const
 	};
 	map<string, ParamDescription> params = {
 		{"filename", ParamDescription("file name of the file to load from.") },
-		{"mode", ParamDescription("can be either 'color' or 'grayscale' for whether to load the image in color or grayscale mode. Defaults to 'color'.") },
+		{"mode", ParamDescription("can be either 'color' or 'grayscale' for whether to load the image in color or grayscale mode. Defaults to 'color'.",true) },
 	};
 
 	return MetaData(

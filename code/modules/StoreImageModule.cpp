@@ -53,7 +53,7 @@ MetaData StoreImageModule::getMetaData() const
 	};
 	map<string, ParamDescription> params = {
 		{"filename", ParamDescription("file name of the file to save to. imageformat is derived by fileending automatically.") },
-		{"quality", ParamDescription("compression quality (optional)") }		
+		{"quality", ParamDescription("compression quality (optional)",true) }
 	};
 
 	return MetaData(
