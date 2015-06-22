@@ -8,8 +8,6 @@
 #include "../framework/ModuleManager.hpp"
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-#include "ComboBoxSourceStep.hpp"
-#include "ComboBoxSourceOutput.hpp"
 
 using namespace std;
 using namespace uipf;
@@ -24,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modelTableParams = new ProcessingStepParams(this);
     modelTableInputs = new ProcessingStepInputs(this);
 	model = new QStandardItemModel(this); // TODO merge with input
+	modelSourceOutput = new ComboBoxSourceOutput(this);
+	modelSourceStep = new ComboBoxSourceStep(this);
 
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);
@@ -119,10 +119,138 @@ void MainWindow::loadDataFlow(string filename)
 	}
 	modelStep->setStringList(list);
 
-	// TODO reset other models
+	// reset other models
+	resetModule();
+	resetParams();
+	resetInputs();
 	//update the graphview
-	graphView_->renderConfig(conf_);
+	refreshGraph();
 }
+
+// refresh module dropdown
+void MainWindow::refreshModule()
+{
+    ui->comboModule->setEnabled(true);
+
+	ProcessingStep step = conf_.getProcessingStep(currentStepName);
+
+	// set the selection of the module dropdown
+	int modIndex = ui->comboModule->findData(QString(step.module.c_str()));
+	ui->comboModule->setCurrentIndex(modIndex);
+}
+
+// refresh params table
+void MainWindow::refreshParams()
+{
+	ui->tableParams->setEnabled(true);
+
+	ProcessingStep step = conf_.getProcessingStep(currentStepName);
+	modelTableParams->setProcessingStep(step);
+}
+
+// refresh inputs table
+void MainWindow::refreshInputs()
+{
+	ui->tableInputs->setEnabled(true);
+	ui->tableView->setEnabled(true);
+
+	map<string, ProcessingStep> chain = conf_.getProcessingChain();
+	ProcessingStep proStep = chain[currentStepName];
+
+
+	modelTableInputs->setProcessingStep(proStep);
+
+	// Processing Step Inputs
+	model->clear();
+
+	map<string, pair<string, string> > inp = chain[currentStepName].inputs;
+	int rowSum = 0;
+	vector<QStandardItem*> items;
+	if(inp.empty()){
+		rowSum = 0;
+	} else {
+		for (auto it = inp.begin(); it!=inp.end(); ++it) {
+			items.push_back(new QStandardItem((it->first).c_str()));
+			rowSum++;
+		}
+	}
+
+	model->setColumnCount(2);
+	model->setRowCount(rowSum);
+
+
+	QStandardItem* item0 = new QStandardItem("From Step:");
+	QStandardItem* item1 = new QStandardItem("Output Name:");
+	model->setHorizontalHeaderItem(0, item0);
+	model->setHorizontalHeaderItem(1, item1);
+
+	for (unsigned int i = 0; i<items.size(); i++){
+		model->setVerticalHeaderItem(i, items[i]);
+	}
+
+	//~ ui->tableView->repaint();
+
+	modelSourceOutput->setConfiguration(conf_);
+	modelSourceOutput->setCurrentStep(currentStepName);
+	modelSourceOutput->fill();
+
+	modelSourceStep->setConfiguration(conf_);
+	modelSourceStep->setCurrentStep(currentStepName);
+	modelSourceStep->fill();
+
+	ui->tableView->setItemDelegateForColumn(0, modelSourceStep);
+	ui->tableView->setItemDelegateForColumn(1, modelSourceOutput);
+
+	// Make the combo boxes always displayed.
+	for ( int i = 0; i < model->rowCount(); ++i ) {
+		ui->tableView->openPersistentEditor( model->index(i, 1) );
+		ui->tableView->openPersistentEditor( model->index(i, 0) );
+	}
+
+	for (int c = 0; c < ui->tableView->horizontalHeader()->count(); ++c) {
+		ui->tableView->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+
+	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
+		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+
+	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
+		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+}
+
+// refresh the graph view
+void MainWindow::refreshGraph()
+{
+    graphView_->renderConfig(conf_);
+}
+
+// resets the module dropdown to empty
+void MainWindow::resetModule()
+{
+	ui->comboModule->setCurrentIndex(-1);
+    ui->comboModule->setEnabled(false);
+}
+
+// resets the params table to empty
+void MainWindow::resetParams()
+{
+	ProcessingStep step;
+	modelTableParams->setProcessingStep(step);
+	ui->tableParams->setEnabled(false);
+}
+
+// resets the inputs table to empty
+void MainWindow::resetInputs()
+{
+	ProcessingStep step;
+	modelTableInputs->setProcessingStep(step);
+	ui->tableInputs->setEnabled(false);
+
+	model->clear();
+}
+
 
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
@@ -183,8 +311,12 @@ void MainWindow::on_addButton_clicked() {
 	// put selected item in edit mode
     ui->listProcessingSteps->edit(index);
 
-    //update the graphview
-    graphView_->renderConfig(conf_);
+	// refresh configuration widgets
+	refreshModule();
+	refreshInputs();
+	refreshParams();
+    // update the graphview
+    refreshGraph();
 }
 
 
@@ -221,7 +353,7 @@ void MainWindow::stepNameChanged(){
 	}
 
 	//update the graphview
-	graphView_->renderConfig(conf_);
+	refreshGraph();
 }
 
 
@@ -233,105 +365,35 @@ void MainWindow::on_deleteButton_clicked() {
 	conf_.removeProcessingStep(currentStepName);
 
 	//update the graphview
-	graphView_->renderConfig(conf_);
+	refreshGraph();
+
+	// ensure configuration widgets are empty
+	resetModule();
+	resetParams();
+	resetInputs();
 }
 
 
 // gets called when a processing step is selected
-void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index) {
-
-	// ensure elements are enabled
-    ui->comboModule->setEnabled(true);
-	ui->tableParams->setEnabled(true);
-	ui->tableInputs->setEnabled(true);
-	ui->tableView->setEnabled(true);
-
-
-	map<string, ProcessingStep> chain = conf_.getProcessingChain();
-
+void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
+{
 	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
-	ProcessingStep proStep = chain[currentStepName];
 
-	// set the selection of the module dropdown
-	int modIndex = ui->comboModule->findData(QString(proStep.module.c_str()));
-	ui->comboModule->setCurrentIndex(modIndex);
-
-
-	modelTableParams->setProcessingStep(proStep);
-	modelTableInputs->setProcessingStep(proStep);
-
-	// Processing Step Inputs
-	model->clear();
-
-	map<string, pair<string, string> > inp = chain[currentStepName].inputs;
-	int rowSum = 0;
-	vector<QStandardItem*> items;
-	if(inp.empty()){
-		rowSum = 0;
-	} else {
-		for (auto it = inp.begin(); it!=inp.end(); ++it) {
-			items.push_back(new QStandardItem((it->first).c_str()));
-			rowSum++;
-		}
-	}
-
-	model->setColumnCount(2);
-	model->setRowCount(rowSum);
-
-
-	QStandardItem* item0 = new QStandardItem("From Step:");
-	QStandardItem* item1 = new QStandardItem("Output Name:");
-	model->setHorizontalHeaderItem(0, item0);
-	model->setHorizontalHeaderItem(1, item1);
-
-	for (unsigned int i = 0; i<items.size(); i++){
-		model->setVerticalHeaderItem(i, items[i]);
-	}
-
-	ui->tableView->repaint();
-
-	// TODO move this to constructor
-	ComboBoxSourceOutput* sourceOutput = new ComboBoxSourceOutput(this);
-	ComboBoxSourceStep* sourceStep = new ComboBoxSourceStep(this);
-
-
-	sourceOutput->setConfiguration(conf_);
-	sourceOutput->setCurrentStep(currentStepName);
-	sourceOutput->fill();
-
-	sourceStep->setConfiguration(conf_);
-	sourceStep->setCurrentStep(currentStepName);
-	sourceStep->fill();
-
-	ui->tableView->setItemDelegateForColumn(0, sourceStep);
-	ui->tableView->setItemDelegateForColumn(1, sourceOutput);
-
-	// Make the combo boxes always displayed.
-	for ( int i = 0; i < model->rowCount(); ++i ) {
-		ui->tableView->openPersistentEditor( model->index(i, 1) );
-		ui->tableView->openPersistentEditor( model->index(i, 0) );
-	}
-
-	for (int c = 0; c < ui->tableView->horizontalHeader()->count(); ++c) {
-		ui->tableView->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
-
-	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
-		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
-
-	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
-		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
+	// refresh configuration widgets
+	refreshModule();
+	refreshInputs();
+	refreshParams();
 }
 
 void MainWindow::on_comboModule_currentIndexChanged(int index)
 {
 	string module = ui->comboModule->itemData(index).toString().toStdString();
 
-	conf_.setProcessingStepModule(currentStepName, module);
-
-	// TODO update params and inputs
+	if (mm_.hasModule(module)) {
+		conf_.setProcessingStepModule(currentStepName, module, mm_.getModuleMetaData(module));
+		refreshParams();
+		refreshInputs();
+	}
 }
 
 
@@ -357,8 +419,13 @@ void MainWindow::new_Data_Flow()
     QStringList list;
 	modelStep->setStringList(list);
 
-	//update the graphview
-	graphView_->renderConfig(conf_);
+	// reset other models
+	resetModule();
+	resetParams();
+	resetInputs();
+	// update the graphview
+	refreshGraph();
+
 }
 
 void MainWindow::load_Data_Flow()
@@ -435,6 +502,13 @@ void MainWindow::undo() {
 		} else{
 			undoAct->setEnabled(false);
 		}
+
+		// refresh configuration widgets
+		refreshModule();
+		refreshInputs();
+		refreshParams();
+		// update the graphview
+		refreshGraph();
 	}
 }
 
@@ -463,6 +537,13 @@ void MainWindow::redo() {
 		} else{
 			redoAct->setEnabled(false);
 		}
+
+		// refresh configuration widgets
+		refreshModule();
+		refreshInputs();
+		refreshParams();
+		// update the graphview
+		refreshGraph();
 	}
 }
 

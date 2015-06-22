@@ -32,6 +32,9 @@ class Configuration{
 		// return processing chain  name => step
 		std::map<std::string, ProcessingStep> getProcessingChain();
 
+		// returns the named processing step
+		ProcessingStep getProcessingStep(std::string);
+
 
 		// methods to manipulate the config:
 
@@ -42,7 +45,7 @@ class Configuration{
 		void removeProcessingStep(std::string);
 
 		// sets the module name for a named processing step
-		void setProcessingStepModule(std::string, std::string);
+		void setProcessingStepModule(std::string, std::string, MetaData);
 
 		// sets the parameters for a named processing step
 		void setProcessingStepParams(std::string, std::map<std::string, std::string>);

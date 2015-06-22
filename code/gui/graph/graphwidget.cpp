@@ -86,10 +86,12 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 		for (auto inputIt = inputs.begin();inputIt!=inputs.end();++inputIt)
 		{
 			std::string othername = inputIt->second.first;
-			auto edge =new Edge(nodes[it->first], nodes[othername]);
-			scene->addItem(edge);
-			//add to calculation graph
-			add_edge(get_vertex(thisname, g, names), get_vertex(othername, g, names), g);
+			if (nodes.count(othername) != 0) { // only create edge if referenced node exists
+				auto edge =new Edge(nodes[it->first], nodes[othername]);
+				scene->addItem(edge);
+				//add to calculation graph
+				add_edge(get_vertex(thisname, g, names), get_vertex(othername, g, names), g);
+			}
 		}
 	}
 
