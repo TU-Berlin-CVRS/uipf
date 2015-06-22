@@ -18,6 +18,8 @@
 
 #include "ProcessingStepParams.hpp"
 #include "ProcessingStepInputs.hpp"
+#include "ComboBoxSourceStep.hpp"
+#include "ComboBoxSourceOutput.hpp"
 
 #include "../framework/Configuration.hpp"
 #include "../framework/Logger.hpp"
@@ -91,6 +93,8 @@ private:
 	// model for the input editor table
     ProcessingStepInputs *modelTableInputs;
     QStandardItemModel  *model; // TODO replaces the above
+	ComboBoxSourceOutput* modelSourceOutput;
+	ComboBoxSourceStep* modelSourceStep;
 
 	// the file name of the currently loaded configuration
 	std::string currentFileName;
@@ -106,6 +110,17 @@ private:
    	std::stack<Configuration> redoStack;
 	// fills the undo and redo stacks
 	void beforeConfigChange();
+
+	// refresh UI triggers
+	void refreshModule();
+	void refreshParams();
+	void refreshInputs();
+	void refreshGraph();
+
+	// reset UI triggers
+	void resetModule();
+	void resetParams();
+	void resetInputs();
 
 	// menu bar
     void createActions();

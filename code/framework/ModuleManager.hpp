@@ -25,6 +25,9 @@ class ModuleManager{
 		// returns meta data information for a named module
 		MetaData getModuleMetaData(const std::string& name);
 
+		// returns a value indicating whether the named module exists
+		bool hasModule(const std::string& name);
+
 		// returns a map of module name => meta data
 		std::map<std::string, MetaData> getAllModuleMetaData();
 
@@ -32,8 +35,6 @@ class ModuleManager{
 		// module chain
 
 		ModuleInterface* loadModule(const std::string& name);
-
-		bool hasModule(const std::string& name);
 
 		void initModules();
 

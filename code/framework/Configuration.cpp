@@ -287,8 +287,14 @@ string Configuration::getYAML(){
 	return string(out.c_str());
 }
 
+// return processing chain  name => step
 map<string, ProcessingStep> Configuration::getProcessingChain(){
 	return chain_;
+}
+
+// returns the named processing step
+ProcessingStep Configuration::getProcessingStep(string name){
+	return chain_[name];
 }
 
 // adds a ProcessingStep to the chain
@@ -308,8 +314,39 @@ void Configuration::removeProcessingStep(string stepName){
 }
 
 // sets the module name for a named processing step
-void Configuration::setProcessingStepModule(string name, string module){
-	chain_[name].module = module;
+void Configuration::setProcessingStepModule(string name, string module, MetaData metaData){
+	string oldModule = chain_[name].module;
+
+	// only update if the module has changed
+	if (module.compare(oldModule) != 0) {
+		chain_[name].module = module;
+
+		// update params
+		map<string, string> newParams;
+		map<string, ParamDescription> paramsMeta = metaData.getParams();
+		for(auto it = paramsMeta.begin(); it != paramsMeta.end(); ++it) {
+			// add param to new list if it existed already, otherwise add default value i.e. ""
+			if (chain_[name].params.count(it->first)) {
+				newParams.insert( pair<string, string>(it->first, chain_[name].params[it->first]) );
+			} else {
+				newParams.insert( pair<string, string>(it->first, string("")) ); // TODO maybe add default value to ParamDescription of MetaData
+			}
+		}
+		chain_[name].params = newParams;
+
+		// update inputs
+		map<string, pair<string, string> > newInputs;
+		map<string, DataDescription> inputsMeta = metaData.getInputs();
+		for(auto it = inputsMeta.begin(); it != inputsMeta.end(); ++it) {
+			// add param to new list if it existed already, otherwise add default value i.e. ""
+			if (chain_[name].inputs.count(it->first)) {
+				newInputs.insert( pair<string, pair<string, string> >(it->first, chain_[name].inputs[it->first]) );
+			} else {
+				newInputs.insert( pair<string, pair<string, string> >(it->first, pair<string, string>(string(""), string("")) ) );
+			}
+		}
+		chain_[name].inputs = newInputs;
+	}
 }
 
 // sets the parameters for a named processing step
