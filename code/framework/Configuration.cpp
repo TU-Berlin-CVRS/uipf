@@ -142,6 +142,27 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 					errors.push_back("mandatory parameter: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
 
 		}
+
+		auto inputDesc = module.getInputs();
+		//check, if all mandatory inputs are given
+		for(auto paramIt = inputDesc.cbegin(); paramIt != inputDesc.end(); ++paramIt)
+		{
+			if (!paramIt->second.getIsOptional())
+				if ( step.inputs.find(paramIt->first) == step.inputs.end())
+					errors.push_back("mandatory input: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
+
+		}
+
+		/*auto outputDesc = module.getOutputs();
+		//check, if all mandatory outputs are given
+		for(auto paramIt = outputDesc.cbegin(); paramIt != outputDesc.end(); ++paramIt)
+		{
+			if (!paramIt->second.getIsOptional())
+				if ( step.outputs.find(paramIt->first) == step.outputs.end()) //2DO: no outputs here
+					errors.push_back("mandatory output: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
+
+		}*/
+
 		//check, if all params given in yaml do exist in Metdata
 		for(auto paramIt = step.params.cbegin(); paramIt != step.params.end(); ++paramIt) {
 			try
