@@ -18,9 +18,6 @@
     <item row="0" column="2">
      <layout class="QVBoxLayout" name="verticalLayoutRight">
       <item>
-       <widget class="QTreeView" name="treeProcessingChain"/>
-      </item>
-      <item>
        <widget class="QLabel" name="labelLogs">
         <property name="text">
          <string>Logs</string>
@@ -96,7 +93,7 @@
      <x>0</x>
      <y>0</y>
      <width>842</width>
-     <height>29</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -1,6 +1,7 @@
 #include <fstream>
 #include "Configuration.hpp"
 #include "yaml-cpp/yaml.h"
+#include "Logger.hpp"
 
 using namespace std;
 using namespace uipf;
@@ -11,51 +12,72 @@ filename	the path to the .yaml file
 */
 void Configuration::load(string filename){
 
-	// clear current config
-	chain_.clear();
+	//basic requirement checks
+	bool bHasModule = false;
+	bool bHasInput = false;
 
-	// load yaml file
-	YAML::Node config = YAML::LoadFile(filename);
+	try
+	{
+		// clear current config
+		chain_.clear();
 
-	// yaml file must be a map of step-name => configuration
-	assert(config.IsMap());
+		// load yaml file
+		YAML::Node config = YAML::LoadFile(filename);
 
-	// create a ProcessingStep object from each config element
-	YAML::const_iterator it = config.begin();
-	for ( ; it != config.end(); ++it) {
+		// yaml file must be a map of step-name => configuration
+		assert(config.IsMap());
 
-		ProcessingStep step;
+		// create a ProcessingStep object from each config element
+		YAML::const_iterator it = config.begin();
+		for ( ; it != config.end(); ++it) {
 
-		step.name = it->first.as<string>();
+			ProcessingStep step;
 
-		// iterate over step config, which is a map too
-		assert(it->second.IsMap());
-		YAML::const_iterator confIt = it->second.begin();
-		for( ; confIt != it->second.end(); ++confIt) {
-			string key = confIt->first.as<string>();
-			if (key == "module") {
-				step.module = confIt->second.as<string>();
-			} else if (key == "input") {
-				// input is a map of input dependencies
-				assert(confIt->second.IsMap());
-				YAML::const_iterator inputIt = confIt->second.begin();
-				for(; inputIt != confIt->second.end(); ++inputIt) {
-					string inputName = inputIt->first.as<string>();
-					string dependsOnS = inputIt->second.as<string>();
+			step.name = it->first.as<string>();
 
-					// split dependsOn by first . to separate step name and output name
-					size_t dotPos = dependsOnS.find(".");
-					pair<string, string> dependsOn( dependsOnS.substr( 0, dotPos ), dependsOnS.substr( dotPos + 1 ));
+			// iterate over step config, which is a map too
+			assert(it->second.IsMap());
+			YAML::const_iterator confIt = it->second.begin();
 
-					step.inputs.insert( pair<string, pair<string, string> >(inputName, dependsOn) );
+
+			for( ; confIt != it->second.end(); ++confIt) {
+				string key = confIt->first.as<string>();
+				if (key == "module")
+				{
+					bHasModule = true;
+					step.module = confIt->second.as<string>();
 				}
-			} else {
-				// otherwise it is a parameter of the module
-				step.params.insert( pair<string,string>(key, confIt->second.as<string>()) );
-			}
-		}
+				else if (key == "input")
+				{
+					bHasInput = true;
+					// input is a map of input dependencies
+					assert(confIt->second.IsMap());
+					YAML::const_iterator inputIt = confIt->second.begin();
+					for(; inputIt != confIt->second.end(); ++inputIt) {
+						string inputName = inputIt->first.as<string>();
+						string dependsOnS = inputIt->second.as<string>();
 
-		chain_.insert( pair<string, ProcessingStep>(step.name, step) );
+						// split dependsOn by first . to separate step name and output name
+						size_t dotPos = dependsOnS.find(".");
+						pair<string, string> dependsOn( dependsOnS.substr( 0, dotPos ), dependsOnS.substr( dotPos + 1 ));
+
+						step.inputs.insert( pair<string, pair<string, string> >(inputName, dependsOn) );
+					}
+				} else {
+					// otherwise it is a parameter of the module
+					step.params.insert( pair<string,string>(key, confIt->second.as<string>()) );
+				}
+			}
+
+			chain_.insert( pair<string, ProcessingStep>(step.name, step) );
+		}
+	}
+	catch(...)
+	{
+		if (bHasInput && bHasModule)
+			LOG_E("your yaml seems to be invalid.");
+		else
+			LOG_E("your yaml seems to be invalid. check if you defined 'module' and 'input'");
 	}
 
 }
