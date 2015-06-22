@@ -8,21 +8,22 @@ How to build
 
 ### Dependencies
 
-The following dependencies are needed to build the console application:
+The following dependencies are needed to build:
 
 - yaml-cpp (https://github.com/jbeder/yaml-cpp), will be built by cmake
-  - Boost serialisation, needs to be available on the system
-- Boost program-options
-- Boost graph
+  - [Boost serialisation](http://www.boost.org/doc/libs/release/libs/serialization/), needs to be available on the system
+- [Boost program-options](http://www.boost.org/doc/libs/release/libs/program_options/)
+- [Boost graph](http://www.boost.org/doc/libs/release/libs/graph/)
+- [Qt 5](http://doc.qt.io/qt-5/index.html), at least 5.3
 
-On Debian install the following packages:
+On Debian/Ubuntu you can install the above packages by running the following command:
 
-	libboost-serialization-dev libboost-program-options-dev libboost-graph-dev
+	sudo apt-get install libboost-serialization-dev libboost-program-options-dev libboost-graph-de qtbase5-dev qtbase5-dev-tools
 
+The following additional packages may be needed for building C++ code:
 
-The following dependencies are additionally needed to build the GUI:
+    sudo apt-get install build-essential cmake pkg-config
 
-- Qt 5
 
 ### Building with CMake on Linux
 
