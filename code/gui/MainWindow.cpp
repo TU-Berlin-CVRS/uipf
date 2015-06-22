@@ -484,13 +484,26 @@ void MainWindow::beforeConfigChange(){
 
 // run the current configuration
 void MainWindow::run() {
-	// stop is now activated
+
+	// validate configuration and show errors
+	vector<string> errors = conf_.validate(mm_.getAllModuleMetaData());
+	if (!errors.empty()) {
+		LOG_E("There are configuration errors!");
+		for(unsigned int i = 0; i < errors.size(); ++i) {
+			LOG_E( errors[i]);
+		}
+		return;
+	}
+
+	// stop is now activated and run unactivated
 	stopAct->setEnabled(true);
+	runAct->setEnabled(false);
 
-	ModuleManager mm;
-	mm.run(conf_);
+	mm_.run(conf_);
 
-	// TODO inactivate stop, when finished!
+	// run is now activated and stop unactivated
+	stopAct->setEnabled(false);
+	runAct->setEnabled(true);
 }
 
 void MainWindow::stop() {

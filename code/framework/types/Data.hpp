@@ -4,25 +4,15 @@
 #include "../StdIncl.hpp"
 
 namespace uipf{
-	
-	// TODO make this an interface for all possible types:
-	// string
-	// integer
-	// char
-	// uchar
-	// Mat with arbitrary number of channels
-	// vec<Elem>
-	// float
-	// map
 
-enum Type
-{
+enum Type {
+
 	STRING,
 	INTEGER,
 	FLOAT,
 	BOOL,
-//	LIST, // TODO
-//	MAP, // TODO
+	LIST,
+	MAP,
 	MATRIX,
 };
 

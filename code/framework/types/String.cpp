@@ -3,7 +3,7 @@
 using namespace std;
 using namespace uipf;
 
-// gives the string 
+// gives the string
 /*
 */
 string String::getContent(){
@@ -16,4 +16,9 @@ s	string content
 */
 void String::setContent(std::string s){
 	str = s;
+}
+
+// returns the data type of this data object
+Type String::getType(){
+	return STRING;
 }

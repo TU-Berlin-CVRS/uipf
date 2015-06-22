@@ -9,12 +9,12 @@ Matrix::Matrix(cv::Mat& oMat)
 
 }
 
-Type Matrix::getType()
-{
-return MATRIX;
+// returns the data type of this data object
+Type Matrix::getType() {
+	return MATRIX;
 }
 
-// gives the matrix 
+// gives the matrix
 /*
 */
 Mat Matrix::getContent(bool bAutoClone /*= true*/) const{
