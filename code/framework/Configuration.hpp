@@ -33,10 +33,10 @@ class Configuration{
 		std::map<std::string, ProcessingStep> getProcessingChain();
 
 		// returns the named processing step
-		ProcessingStep getProcessingStep(std::string);
+		ProcessingStep getProcessingStep(std::string) const;
 
 		// returns a value indicating whether a named processing step exists
-		bool hasProcessingStep(std::string name);
+		bool hasProcessingStep(std::string name) const;
 
 
 		// methods to manipulate the config:

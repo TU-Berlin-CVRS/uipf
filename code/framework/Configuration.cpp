@@ -243,7 +243,7 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 /*
 see also https://github.com/jbeder/yaml-cpp/wiki/How-To-Emit-YAML
 */
-void Configuration::print(){
+void Configuration::print() {
 
 	string out = getYAML();
 
@@ -314,13 +314,13 @@ map<string, ProcessingStep> Configuration::getProcessingChain(){
 }
 
 // returns a value indicating whether a named processing step exists
-bool Configuration::hasProcessingStep(string name){
+bool Configuration::hasProcessingStep(string name) const {
 	return chain_.count(name) != 0;
 }
 
 // returns the named processing step
-ProcessingStep Configuration::getProcessingStep(string name){
-	return chain_[name];
+ProcessingStep Configuration::getProcessingStep(string name) const {
+	return chain_.at(name);
 }
 
 // adds a ProcessingStep to the chain

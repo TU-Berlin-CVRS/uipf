@@ -20,8 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Create models
     modelStep = new QStringListModel(this);
     modelTableParams = new ProcessingStepParams(this);
-    modelTableInputs = new ProcessingStepInputs(this);
-	model = new QStandardItemModel(this); // TODO merge with input
+    modelTableInputs = new QStandardItemModel(this);
 	modelSourceOutput = new ComboBoxSourceOutput(mm_, this);
 	modelSourceStep = new ComboBoxSourceStep(this);
 
@@ -29,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->listProcessingSteps->setModel(modelStep);
     ui->tableParams->setModel(modelTableParams);
     ui->tableInputs->setModel(modelTableInputs);
-	ui->tableView->setModel(model); // TODO merge with input
 
 	//create and add the graphwidget to the gui
 	graphView_ = new gui::GraphWidget();
@@ -82,7 +80,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
-	ui->tableView->setEnabled(false);
 }
 
 // destructor
@@ -91,7 +88,6 @@ MainWindow::~MainWindow() {
     delete modelStep;
     delete modelTableParams;
     delete modelTableInputs;
-    delete model;
     delete graphView_;
 
     deleteActions();
@@ -149,75 +145,61 @@ void MainWindow::refreshParams()
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
 	modelTableParams->setProcessingStep(step);
+
+	// ensure size of the columns match the widget
+	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
+		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+
 }
 
 // refresh inputs table
 void MainWindow::refreshInputs()
 {
 	ui->tableInputs->setEnabled(true);
-	ui->tableView->setEnabled(true);
 
-	map<string, ProcessingStep> chain = conf_.getProcessingChain();
-	ProcessingStep proStep = chain[currentStepName];
+	ProcessingStep step = conf_.getProcessingStep(currentStepName);
 
+	modelTableInputs->clear();
 
-	modelTableInputs->setProcessingStep(proStep);
-
-	// Processing Step Inputs
-	model->clear();
-
-	map<string, pair<string, string> > inp = chain[currentStepName].inputs;
-	int rowSum = 0;
+	map<string, pair<string, string> > inp = step.inputs;
+	int rowCount = 0;
 	vector<QStandardItem*> items;
-	if(inp.empty()){
-		rowSum = 0;
-	} else {
-		for (auto it = inp.begin(); it!=inp.end(); ++it) {
-			items.push_back(new QStandardItem((it->first).c_str()));
-			rowSum++;
-		}
+	for (auto it = inp.begin(); it!=inp.end(); ++it) {
+		items.push_back(new QStandardItem((it->first).c_str()));
+		rowCount++;
 	}
 
-	model->setColumnCount(2);
-	model->setRowCount(rowSum);
+	modelTableInputs->setRowCount(rowCount);
 
-
+	// TODO this could be constant somewhere
+	modelTableInputs->setColumnCount(2);
 	QStandardItem* item0 = new QStandardItem("From Step:");
 	QStandardItem* item1 = new QStandardItem("Output Name:");
-	model->setHorizontalHeaderItem(0, item0);
-	model->setHorizontalHeaderItem(1, item1);
+	modelTableInputs->setHorizontalHeaderItem(0, item0);
+	modelTableInputs->setHorizontalHeaderItem(1, item1);
+	// TODO until here
 
 	for (unsigned int i = 0; i<items.size(); i++){
-		model->setVerticalHeaderItem(i, items[i]);
+		modelTableInputs->setVerticalHeaderItem(i, items[i]);
 	}
 
-	//~ ui->tableView->repaint();
+	//~ ui->tableInputs->repaint();
 
-	modelSourceOutput->setConfiguration(conf_);
-	modelSourceOutput->setCurrentStep(currentStepName);
-	modelSourceOutput->fill();
+	modelSourceStep->setConfiguration(conf_, currentStepName);
+	modelSourceOutput->setConfiguration(conf_, currentStepName);
 
-	modelSourceStep->setConfiguration(conf_);
-	modelSourceStep->setCurrentStep(currentStepName);
-	modelSourceStep->fill();
 
-	ui->tableView->setItemDelegateForColumn(0, modelSourceStep);
-	ui->tableView->setItemDelegateForColumn(1, modelSourceOutput);
+	ui->tableInputs->setItemDelegateForColumn(0, modelSourceStep);
+	ui->tableInputs->setItemDelegateForColumn(1, modelSourceOutput);
 
 	// Make the combo boxes always displayed.
-	for ( int i = 0; i < model->rowCount(); ++i ) {
-		ui->tableView->openPersistentEditor( model->index(i, 1) );
-		ui->tableView->openPersistentEditor( model->index(i, 0) );
+	for ( int i = 0; i < modelTableInputs->rowCount(); ++i ) {
+		ui->tableInputs->openPersistentEditor( modelTableInputs->index(i, 1) );
+		ui->tableInputs->openPersistentEditor( modelTableInputs->index(i, 0) );
 	}
 
-	for (int c = 0; c < ui->tableView->horizontalHeader()->count(); ++c) {
-		ui->tableView->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
-
-	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
-		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
-
+	// ensure size of the columns match the widget
 	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
 		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
 	}
@@ -240,18 +222,22 @@ void MainWindow::resetModule()
 void MainWindow::resetParams()
 {
 	ProcessingStep step;
+	step.params.insert(pair<string, string>("", ""));
 	modelTableParams->setProcessingStep(step);
 	ui->tableParams->setEnabled(false);
+
+	// ensure size of the columns match the widget
+	for (int c = 0; c < ui->tableParams->horizontalHeader()->count(); ++c) {
+		ui->tableParams->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
 }
 
 // resets the inputs table to empty
 void MainWindow::resetInputs()
 {
 	ProcessingStep step;
-	modelTableInputs->setProcessingStep(step);
+	modelTableInputs->clear();
 	ui->tableInputs->setEnabled(false);
-
-	model->clear();
 }
 
 
@@ -379,8 +365,8 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
 
 	// refresh configuration widgets
 	refreshModule();
-	refreshInputs();
 	refreshParams();
+	refreshInputs();
 }
 
 void MainWindow::on_comboModule_currentIndexChanged(int index)

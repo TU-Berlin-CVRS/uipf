@@ -1,43 +1,46 @@
 #ifndef COMBOBOXSOURCESTEP_H
 #define COMBOBOXSOURCESTEP_H
- 
+
 #include <string>
 #include <vector>
 #include <../framework/Configuration.hpp>
- 
+
 #include <QItemDelegate>
- 
+
 class QModelIndex;
 class QWidget;
 class QVariant;
- 
-namespace uipf { 
- 
+
+namespace uipf {
+
 class ComboBoxSourceStep : public QItemDelegate
 {
 Q_OBJECT
 public:
 	ComboBoxSourceStep(QObject *parent = 0);
 
+	// create editor widget
 	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	// set column content for edit-mode
 	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	// set column content for non edit-mode
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-	void fill();
+	// updates the model by setting the current configuration
+	void setConfiguration(Configuration, std::string);
 
-	void setConfiguration(Configuration);
-	void setCurrentStep(std::string); 
- 
 private:
-  std::vector<std::string> Items;
-  
+	// available options for the dropdown box
+	std::vector<std::string> items_;
+
+	// currently selected reference steps
+	std::vector<std::string> selected_;
+
   	// the currently loaded configuration represented in the window
    	Configuration conf_;
   	// current name of a precessing step
 	std::string currentStepName;
- 
+
 };
 
 }

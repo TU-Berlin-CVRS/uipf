@@ -93,9 +93,8 @@ private:
     QStringListModel *modelStep;
 	// model for the params editor table
     ProcessingStepParams *modelTableParams;
-	// model for the input editor table
-    ProcessingStepInputs *modelTableInputs;
-    QStandardItemModel  *model; // TODO replaces the above
+	// models for the input editor table
+    QStandardItemModel *modelTableInputs;
 	ComboBoxSourceOutput* modelSourceOutput;
 	ComboBoxSourceStep* modelSourceStep;
 

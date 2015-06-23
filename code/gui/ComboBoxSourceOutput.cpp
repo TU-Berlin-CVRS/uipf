@@ -14,57 +14,50 @@ using namespace uipf;
 ComboBoxSourceOutput::ComboBoxSourceOutput(ModuleManager& mm, QObject *parent) : QItemDelegate(parent) , mm_(mm) {
 }
 
-void ComboBoxSourceOutput::setConfiguration(Configuration conf){
+void ComboBoxSourceOutput::setConfiguration(Configuration conf, std::string currentStep) {
 	conf_ = conf;
-}
+	currentStepName = currentStep;
 
-void ComboBoxSourceOutput::setCurrentStep(std::string name){
-	currentStepName = name;
-}
+	items_.clear();
 
-void ComboBoxSourceOutput::fill(){
-	map<string, ProcessingStep> chain = conf_.getProcessingChain();
-	map<string, DataDescription> out = mm_.getAllModuleMetaData()[chain[currentSelectedSource].module].getOutputs();
+	// fill vector of possible outputs for each referenced module
+	ProcessingStep step = conf_.getProcessingStep(currentStepName);
+	for(auto it = step.inputs.cbegin(); it != step.inputs.end(); ++it) {
 
-	for (auto it = out.begin(); it!=out.end(); ++it) {
-		string value = (it->first).c_str();
-		Items.push_back(value);
+		ProcessingStep referencedStep = conf_.getProcessingStep(it->second.first);
+
+		// fill vector of possible output selections
+		map<string, DataDescription> out = mm_.getModuleMetaData(referencedStep.module).getOutputs();
+		vector<string> subItems;
+		for (auto oit = out.cbegin(); oit!=out.end(); ++oit) {
+			subItems.push_back(it->first);
+		}
+		items_.push_back(subItems);
+
+		// fill vector of selected outputs
+		selected_.push_back(it->second.second);
 	}
 }
 
-QWidget *ComboBoxSourceOutput::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const {
-  QComboBox* editor = new QComboBox(parent);
-  for(unsigned int i = 0; i < Items.size(); ++i) {
-    editor->addItem(Items[i].c_str());
-  }
-  return editor;
+// create editor widget
+QWidget *ComboBoxSourceOutput::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex & index) const {
+	QComboBox* editor = new QComboBox(parent); // will be deleted by Qt automatically http://doc.qt.io/qt-5/qabstractitemdelegate.html#destroyEditor
+	for(unsigned int i = 0; i < items_[index.row()].size(); ++i) {
+		QString item = QString(items_[index.row()][i].c_str());
+		editor->insertItem(i, item, item);
+	}
+	return editor;
 }
 
+// set column content for edit-mode
 void ComboBoxSourceOutput::setEditorData(QWidget *editor, const QModelIndex &index) const {
-  QComboBox *comboBox = static_cast<QComboBox*>(editor);
-  int value = index.model()->data(index, Qt::EditRole).toUInt();
-  comboBox->setCurrentIndex(value);
+	QComboBox *comboBox = static_cast<QComboBox*>(editor);
+	int value = comboBox->findData(QString(selected_[index.row()].c_str()));
+	comboBox->setCurrentIndex(value);
 }
 
+// set column content for non edit-mode
 void ComboBoxSourceOutput::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-  QComboBox *comboBox = static_cast<QComboBox*>(editor);
-  model->setData(index, comboBox->currentIndex(), Qt::EditRole);
+	//~ QComboBox *comboBox = static_cast<QComboBox*>(editor);
+	model->setData(index, QString(selected_[index.row()].c_str()), Qt::EditRole);
 }
-
-void ComboBoxSourceOutput::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const {
-  editor->setGeometry(option.rect);
-}
-
-void ComboBoxSourceOutput::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-  QStyleOptionViewItemV4 myOption = option;
-
-  	  if (Items.size() == 0)
-  		  return;
-
-	  QString text = Items[index.row()].c_str();
-
-	  myOption.text = text;
-
-	  QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &myOption, painter);
-}
-
