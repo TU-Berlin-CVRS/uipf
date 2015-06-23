@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modelStep = new QStringListModel(this);
     modelTableParams = new ProcessingStepParams(this);
     modelTableInputs = new QStandardItemModel(this);
-	modelSourceOutput = new ComboBoxSourceOutput(mm_, this);
 	modelSourceStep = new ComboBoxSourceStep(this);
+	modelSourceOutput = new ComboBoxSourceOutput(mm_, this);
 
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);
@@ -53,6 +53,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// react to changes in the params
     connect(modelTableParams, SIGNAL(paramChanged(std::string, std::string)),
 			this, SLOT(on_paramChanged(std::string, std::string)));
+	// react to changes in the inputs
+    connect(modelSourceStep, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
+			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
+    connect(modelSourceOutput, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
+			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
 	// logger
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
@@ -393,6 +398,16 @@ void MainWindow::on_paramChanged(std::string paramName, std::string value)
 	}
 }
 
+// react to input changes and store them in the config
+void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, std::string> value)
+{
+	if (!currentStepName.empty()) {
+		beforeConfigChange();
+		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
+		inputs[inputName] = value;
+		conf_.setProcessingStepInputs(currentStepName, inputs);
+	}
+}
 
 
 // menu click File -> New

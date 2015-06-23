@@ -63,6 +63,7 @@ private slots:
 
 	// change in the params table
 	void on_paramChanged(std::string, std::string);
+	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
 	// menu bar
 	// File

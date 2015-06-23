@@ -12,6 +12,8 @@ using namespace std;
 using namespace uipf;
 
 ComboBoxSourceOutput::ComboBoxSourceOutput(ModuleManager& mm, QObject *parent) : QItemDelegate(parent) , mm_(mm) {
+
+	// TODO connect to change in dropdown and emit signal inputChanged(std::string, std::pair<std::string, std::string>); on change
 }
 
 void ComboBoxSourceOutput::setConfiguration(Configuration conf, std::string currentStep) {

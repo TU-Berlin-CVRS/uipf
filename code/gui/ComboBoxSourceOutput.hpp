@@ -31,6 +31,9 @@ public:
 	// updates the model by setting the current configuration
 	void setConfiguration(Configuration, std::string);
 
+signals:
+	void inputChanged(std::string, std::pair<std::string, std::string>);
+
 private:
 	ModuleManager& mm_;
 
