@@ -19,6 +19,7 @@ void ComboBoxSourceStep::setConfiguration(Configuration conf, std::string curren
 	currentStepName = currentStep;
 
 	items_.clear();
+	selected_.clear();
 
 	// fill vector of possible reference steps
 	map<string, ProcessingStep> chain = conf_.getProcessingChain();

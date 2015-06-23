@@ -19,6 +19,7 @@ void ComboBoxSourceOutput::setConfiguration(Configuration conf, std::string curr
 	currentStepName = currentStep;
 
 	items_.clear();
+	selected_.clear();
 
 	// fill vector of possible outputs for each referenced module
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
