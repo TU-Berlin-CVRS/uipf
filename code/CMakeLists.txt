@@ -34,6 +34,7 @@ add_executable(uipf
 	framework/Configuration.cpp
 	framework/DataManager.cpp
 	framework/Context.cpp
+	framework/GUIEventDispatcher.cpp
 	framework/Logger.cpp
 	framework/MetaData.cpp
     framework/Utils.cpp
@@ -72,6 +73,7 @@ add_executable(	uipf-gui
 
 	framework/ModuleManager.cpp
 
+	framework/GUIEventDispatcher.cpp
 	framework/Configuration.cpp
 	framework/DataManager.cpp
 	framework/Context.cpp
