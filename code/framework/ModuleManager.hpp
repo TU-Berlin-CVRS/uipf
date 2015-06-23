@@ -5,6 +5,7 @@
 #include "Configuration.hpp"
 #include "ModuleInterface.hpp"
 #include "MetaData.hpp"
+#include "GUIEventDispatcher.h"
 #include <QObjectList>
 #include <QPluginLoader>
 #include <map>
@@ -31,6 +32,8 @@ class ModuleManager{
 		// returns a map of module name => meta data
 		std::map<std::string, MetaData> getAllModuleMetaData();
 
+		const GUIEventDispatcher* getGUIEventDispatcher()const {return &guiEventDispatcher_;}
+
 	private:
 		// module chain
 
@@ -41,6 +44,7 @@ class ModuleManager{
 		// map: module name -> plugin loader instance which can instantiate a module
 		std::map<std::string, QPluginLoader*> plugins_;
 
+		GUIEventDispatcher guiEventDispatcher_;
 };
 
 }

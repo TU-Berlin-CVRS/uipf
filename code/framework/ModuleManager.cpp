@@ -138,6 +138,8 @@ void ModuleManager::run(Configuration config){
 			break;
 		}
 
+		guiEventDispatcher_.triggerReportProgress(static_cast<float>(i+1)/static_cast<float>(sortedChain.size())*100.0f);
+
 		LOG_I( "Done with step '" + proSt.name + "'." );
 
 		// fill the outputs of the current processing step
