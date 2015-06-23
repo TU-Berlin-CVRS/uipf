@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // -> It may be triggered by hitting any key or double-click etc.
     ui->listProcessingSteps-> setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
 
+    ui->progressBar->setValue(0.0f);
 
 	// set up slots for signals
 
@@ -56,6 +57,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// logger
     connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+
+    // logger
+    connect(mm_.getGUIEventDispatcher(), SIGNAL (reportProgressEvent(const float&)),
+    			this, SLOT (on_reportProgress(const float&)));
 
 	// fill module dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -80,6 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
+
 }
 
 // destructor
@@ -252,6 +258,12 @@ void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& 
 	ui->tbLog->appendHtml(alertHtml);
 	//autoscroll
 	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
+}
+
+// moves the progressbar on every step of the processing chain
+void MainWindow::on_reportProgress(const float& fValue)
+{
+	ui->progressBar->setValue(fValue);
 }
 
 

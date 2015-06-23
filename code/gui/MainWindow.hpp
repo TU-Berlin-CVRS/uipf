@@ -56,7 +56,11 @@ private slots:
 
     // Activation of Step (via clicking)
     void on_listProcessingSteps_activated(const QModelIndex & index);
+
+    // append messages from our logger to the log-textview
     void on_appendToLog(const Logger::LogType&, const std::string& );
+    // moves the progressbar on every step of the processing chain
+    void on_reportProgress(const float& );
 
 	// change of module dropdown
 	void on_comboModule_currentIndexChanged(int);
