@@ -3,23 +3,20 @@
 using namespace std;
 using namespace uipf;
 
-// gives the float
-/*
-*/
+// returns the value of the boolean
 bool Bool::getContent(){
-	return b;
+	return b_;
 }
 
-// sets the float
+// sets the value of the boolean
 /*
-f	float content
+b	new boolean value
 */
 void Bool::setContent(bool b){
 	b_ = b;
 }
 
-
-// returns the data type of this data object
+// returns the data type of this data object: in this case: BOOL
 Type String::getType(){
 	return BOOL;
 }

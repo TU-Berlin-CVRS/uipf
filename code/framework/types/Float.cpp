@@ -3,22 +3,20 @@
 using namespace std;
 using namespace uipf;
 
-// gives the float
-/*
-*/
+// returns the value of the float
 float Float::getContent(){
-	return fl;
+	return f_;
 }
 
-// sets the float
+// sets the value of the float
 /*
-f	float content
+f	new float value
 */
 void Float::setContent(float f){
-	fl = f;
+	f_ = f;
 }
 
-// returns the data type of this data object
+// returns the data type of this data object: in this case: FLOAT
 Type Float::getType(){
 	return FLOAT;
 }
