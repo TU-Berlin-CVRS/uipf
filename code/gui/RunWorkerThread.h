@@ -7,7 +7,7 @@
 using namespace uipf;
 
 //A class that does the background work in a thread.
-//By deriving QThread QT handles signals/slot thread marshaling automatically
+//By deriving QThread QT handles signals/slot thread marshaling automatically.
 //for this all Types used in signals have to be registered by qRegisterMetaType() -> see GUIEventDispatcher.cpp
 class RunWorkerThread: public QThread {
 
