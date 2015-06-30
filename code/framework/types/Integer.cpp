@@ -2,22 +2,21 @@
 
 using namespace uipf;
 
-// gives the Integer
-/*
-*/
+
+// returns the value of the integer
 int Integer::getContent(){
-	return in;
+	return i_;
 }
 
-// sets the Integer
+// sets the value of the integer
 /*
-i	Integer content
+i	new integer value
 */
 void Integer::setContent(int i){
-	in = i;
+	i_ = i;
 }
 
-// returns the data type of this data object
+// returns the data type of this data object: in this case: INTEGER
 Type Integer::getType(){
 	return INTEGER;
 }

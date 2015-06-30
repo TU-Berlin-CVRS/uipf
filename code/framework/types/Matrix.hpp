@@ -14,9 +14,8 @@ class Matrix : public Data {
 		typedef const SMARTPOINTER<Matrix> c_ptr;
 
 	public:
-		// constructor (can't be virtual!)
+		// constructor
 		Matrix(void){};
-
 		Matrix(cv::Mat&);
 		// destructor
 		~Matrix(void){};
@@ -25,14 +24,14 @@ class Matrix : public Data {
 		// this is due to prevent overwriting accidentally
 		cv::Mat getContent(bool bAutoClone = true) const;
 
-		// set content
+		// sets the content of the matrix
 		void setContent(cv::Mat&);
 
-		// returns the data type of this data object
+		// returns the data type of this data object: in this case: MATRIX
 		Type getType() override;
 
 	private:
-		// content
+		// content of the matrix
 		cv::Mat matrix_;
 };
 

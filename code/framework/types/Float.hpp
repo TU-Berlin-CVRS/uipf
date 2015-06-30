@@ -1,35 +1,35 @@
 #ifndef FLOAT_H
 #define FLOAT_H
 
-
+#include "../StdIncl.hpp"
 #include "Data.hpp"
 
 namespace uipf{
 
 
-// Float which is a specification of Elem
+// Float which is a specification of Data
 class Float : public Data {
 	public:
 			typedef SMARTPOINTER<Float> ptr;
 			typedef const SMARTPOINTER<Float> c_ptr;
 	public:
-		// constructor (can't be virtual!)
+		// constructor
 		Float(void){};
 		// destructor
 		~Float(void){};
 
-		// get content
+		// returns the value of the float
 		float getContent();
 
-		// set content
+		// sets the value of the float
 		void setContent(float);
 
-		// returns the data type of this data object
+		// returns the data type of this data object: in this case: FLOAT
 		Type getType() override;
 
 	private:
-		// content
-		float fl;
+		// value of the float
+		float f_;
 };
 
 }

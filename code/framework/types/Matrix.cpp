@@ -3,20 +3,16 @@
 using namespace cv;
 using namespace uipf;
 
-Matrix::Matrix(cv::Mat& oMat)
-:matrix_(oMat)
-{
-
-}
-
-// returns the data type of this data object
-Type Matrix::getType() {
-	return MATRIX;
-}
-
-// gives the matrix
+// constructor
 /*
+oMat	the content of the matrix	(matrix_ = oMat)
 */
+Matrix::Matrix(cv::Mat& oMat) :matrix_(oMat){
+}
+
+
+// get content (returns a cloned version of Mat by default)
+// this is due to prevent overwriting accidentally
 Mat Matrix::getContent(bool bAutoClone /*= true*/) const{
 	if (bAutoClone)
 		return matrix_.clone();
@@ -24,10 +20,15 @@ Mat Matrix::getContent(bool bAutoClone /*= true*/) const{
 		return matrix_;
 }
 
-// sets the matrix
+// sets the content of the matrix
 /*
-m	matrix content
+m	new matrix content
 */
 void Matrix::setContent(Mat& m){
 	matrix_ = m;
+}
+
+// returns the data type of this data object: in this case: MATRIX
+Type Matrix::getType() {
+	return MATRIX;
 }

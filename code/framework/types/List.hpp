@@ -5,8 +5,10 @@
 
 namespace uipf{
 
+// List of Data which is a specification of Data.
+// The elements of the list are also Data, but are all of the same Type!
+// This class is a template, for this reason, there is no .cpp file and the implementation is done inside the .hpp file
 template <typename T>
-// List of Data which is a specification of Data
 class List : public Data {
 	public:
 		typedef SMARTPOINTER<List<T> > ptr;
@@ -18,39 +20,40 @@ class List : public Data {
 		// destructor
 		~List(void){};
 
-		// get content
+		// returns the content of the list
 		std::list<T> getContent();
 
-		// set content
+		// sets the content of the list
 		void setContent(std::list<T>);
 
-		// returns the data type of this data object
+		// returns the data type of this data object: in this case: LIST
 		Type getType() override;
 
 	private:
-		// content
-		std::list<T> lst;
+		// content of the list
+		std::list<T> list_;
 };
 
-// returns the Data
-/*
-*/
+
+/*----------------------implementation----------------------------------*/
+
+// returns the content of the list
 template <typename T>
 std::list<T> List<T>::getContent(){
-	return lst;
+	return list_;
 }
 
-// sets the Data
+// sets the content of the list
 /*
-d	list<Data> content
+list	list<Data> content
 */
 template <typename T>
-void List<T>::setContent(std::list<T> l){
-	lst = l;
+void List<T>::setContent(std::list<T> list){
+	list_ = list;
 }
 
 
-// returns the data type of this data object
+// returns the data type of this data object: in this case: LIST
 template <typename T>
 Type List<T>::getType(){
 	return LIST;

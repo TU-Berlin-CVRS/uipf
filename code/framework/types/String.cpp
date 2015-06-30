@@ -3,22 +3,20 @@
 using namespace std;
 using namespace uipf;
 
-// gives the string
-/*
-*/
+// returns the value of the string
 string String::getContent(){
-	return str;
+	return str_;
 }
 
-// sets the string
+// sets the value of the string
 /*
-s	string content
+str		new string value
 */
-void String::setContent(std::string s){
-	str = s;
+void String::setContent(std::string str){
+	str_ = str;
 }
 
-// returns the data type of this data object
+// returns the data type of this data object: in this case: STRING
 Type String::getType(){
 	return STRING;
 }
