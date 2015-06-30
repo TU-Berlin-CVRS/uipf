@@ -4,6 +4,7 @@
 #include "framework/ModuleManager.hpp"
 #include "framework/Configuration.hpp"
 #include "framework/Utils.hpp"
+#include "framework/Logger.hpp"
 
 // foor Boost:
 #include <boost/program_options/options_description.hpp>
@@ -234,15 +235,15 @@ int main(int argc, char** argv){
 	}
 
 	// print the loaded config
-	cout << "Here is the loaded configuration:" << endl;
+	LOG_I("Here is the loaded configuration:");
 	conf.print();
 
 	// validate configuration and show errors
 	vector<string> errors = conf.validate(mm.getAllModuleMetaData());
 	if (!errors.empty()) {
-		cout << endl << "There are configuration errors!" << endl << endl;
+		LOG_E("There are configuration errors!");
 		for(unsigned int i = 0; i < errors.size(); ++i) {
-			cout << errors[i] << endl;
+			LOG_E(errors[i]);
 		}
 		return 1;
 	}
