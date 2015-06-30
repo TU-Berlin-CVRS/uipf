@@ -14,6 +14,7 @@
 #include "ErrorException.hpp"
 #include "InvalidConfigException.hpp"
 #include "DataManager.hpp"
+#include "GUIEventDispatcher.h"
 
 using namespace uipf;
 using namespace std;
@@ -22,7 +23,8 @@ using namespace std;
 /*
 conf	Configuration file, which has to be executed
 */
-ModuleManager::ModuleManager() {
+ModuleManager::ModuleManager()
+{
 	initModules();
 }
 
@@ -40,6 +42,8 @@ ModuleManager::~ModuleManager()
 */
 void ModuleManager::run(Configuration config){
 
+	//reset StopSignal
+	context_.bStopRequested_ = false;
 	// get processing chain
 	map<string, ProcessingStep> chain = config.getProcessingChain();
 
@@ -84,7 +88,7 @@ void ModuleManager::run(Configuration config){
 		}
 	}
 
-	Context context;
+
 
 	// contains the outputs of the processing steps
 	map<string, map<string, Data::ptr>* > stepsOutputs;
@@ -101,7 +105,7 @@ void ModuleManager::run(Configuration config){
 		string moduleName = proSt.module;
 		if (hasModule(moduleName)) {
 			module = loadModule(moduleName);
-			module->setContext(&context);
+			module->setContext(&context_);
 
 		} else {
 			LOG_E( "Module '" + moduleName + "' could not be found." );
@@ -138,10 +142,15 @@ void ModuleManager::run(Configuration config){
 			break;
 		}
 
-		guiEventDispatcher_.triggerReportProgress(static_cast<float>(i+1)/static_cast<float>(sortedChain.size())*100.0f);
+		GUIEventDispatcher::instance()->triggerReportProgress(static_cast<float>(i+1)/static_cast<float>(sortedChain.size())*100.0f);
 
 		LOG_I( "Done with step '" + proSt.name + "'." );
 
+		if (context_.bStopRequested_ )
+		{
+			LOG_I("processing stopped");
+			break;
+		}
 		// fill the outputs of the current processing step
 		stepsOutputs.insert(pair<string, map<string, Data::ptr>* > (proSt.name, outputs));
 
