@@ -131,13 +131,13 @@ void ModuleManager::run(Configuration config){
 			DataManager dataMnrg(inputs, proSt.params, *outputs);
 			module->run(dataMnrg);
 
-		} catch (ErrorException e) {
+		} catch (ErrorException& e) {
 			LOG_E( string("Error: ") + e.what() );
 			break;
-		} catch (InvalidConfigException e) {
+		} catch (InvalidConfigException& e) {
 			LOG_E( string("Invalid config: ") + e.what() );
 			break;
-		} catch (std::exception e) {
+		} catch (std::exception& e) {
 			LOG_E( string("Error: module threw exception: ") + e.what() );
 			break;
 		}
