@@ -2,18 +2,19 @@
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QStandardItemModel>
-
+#include <QThread>
 #include <iostream>
 
 #include "../framework/ModuleManager.hpp"
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-
+#include "../framework/GUIEventDispatcher.h"
+#include "RunWorkerThread.h"
 using namespace std;
 using namespace uipf;
 
 // constructor
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),workerThread_(nullptr) {
 
     ui->setupUi(this);
 
@@ -54,12 +55,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// react to changes in the params
     connect(modelTableParams, SIGNAL(paramChanged(std::string, std::string)),
 			this, SLOT(on_paramChanged(std::string, std::string)));
-	// logger
-    connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
-			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
 
     // logger
-    connect(mm_.getGUIEventDispatcher(), SIGNAL (reportProgressEvent(const float&)),
+    connect(GUIEventDispatcher::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
+			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+
+    // progressbar
+    connect(GUIEventDispatcher::instance(), SIGNAL (reportProgressEvent(const float&)),
     			this, SLOT (on_reportProgress(const float&)));
 
 	// fill module dropdown
@@ -573,6 +575,9 @@ void MainWindow::beforeConfigChange(){
 	redoAct->setEnabled(false);
 }
 
+
+
+
 // run the current configuration
 void MainWindow::run() {
 
@@ -590,15 +595,37 @@ void MainWindow::run() {
 	stopAct->setEnabled(true);
 	runAct->setEnabled(false);
 
-	mm_.run(conf_);
+	workerThread_ = new RunWorkerThread(mm_,conf_);
 
+	// Setup callback for cleanup when it finishes
+	connect(workerThread_, SIGNAL(finished()),  this, SLOT(on_backgroundWorkerFinished()));
+	// Run, Forest, run!
+	workerThread_->start(); // This invokes WorkerThread::run in a new thread
+}
+
+void MainWindow::on_backgroundWorkerFinished()
+{
 	// run is now activated and stop unactivated
 	stopAct->setEnabled(false);
 	runAct->setEnabled(true);
+	delete workerThread_;
+	workerThread_ = nullptr;
 }
 
 void MainWindow::stop() {
-	// TODO
+
+	if (workerThread_ != nullptr)
+	{
+		workerThread_->stop();
+		workerThread_->wait(1000);
+		workerThread_->terminate();
+		delete workerThread_;
+		workerThread_ = nullptr;
+	}
+
+
+	stopAct->setEnabled(false);
+	runAct->setEnabled(true);
 }
 // Up to here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
