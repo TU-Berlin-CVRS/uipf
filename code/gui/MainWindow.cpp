@@ -107,6 +107,21 @@ MainWindow::~MainWindow() {
 // loads a new configuration from file
 void MainWindow::loadDataFlow(string filename)
 {
+
+	unknownFile = false;
+	savedVersion = 0;
+	currentFileHasChanged = false;
+
+	// when new dataflow, both stacks become empty and the buttons will be deactivated
+	while(! redoStack.empty()){
+		redoStack.pop();
+	}
+	while(! undoStack.empty()){
+		undoStack.pop();
+	}
+	redoAct->setEnabled(false);
+	undoAct->setEnabled(false);
+
 	currentFileName = filename;
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
 
@@ -116,7 +131,7 @@ void MainWindow::loadDataFlow(string filename)
 	conf_.print();
 
 	// save is now activated
-	saveAct->setEnabled(true);
+	saveAct->setEnabled(false);
 
 	// set the names of the processing steps:
 	QStringList list;
@@ -481,20 +496,6 @@ void MainWindow::load_Data_Flow()
 	//check whether there are unsaved changes, and ask the user, whether he wants to save them
 	if (!okToContinue()) return;
 
-	unknownFile = false;
-
-	currentFileHasChanged = false;
-
-	// when new dataflow, both stacks become empty and the buttons will be deactivated
-	while(! redoStack.empty()){
-		redoStack.pop();
-	}
-	while(! undoStack.empty()){
-		undoStack.pop();
-	}
-	redoAct->setEnabled(false);
-	undoAct->setEnabled(false);
-
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."), QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
 
 	// if abort button has been pressed
@@ -528,9 +529,9 @@ bool MainWindow::okToContinue() {
 
 // only possible, if the configuration has already been stored in some file
 void MainWindow::save_Data_Flow() {
+	conf_.store(currentFileName);
 	unknownFile = false;
 	savedVersion = 0;
-	conf_.store(currentFileName);
 	currentFileHasChanged = false;
 	saveAct->setEnabled(false);
 
@@ -541,8 +542,6 @@ void MainWindow::save_Data_Flow() {
 // the currently opened configuration switches to the stored file
 void MainWindow::save_Data_Flow_as() {
 
-	unknownFile = false;
-
 	QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
                                                QString::fromStdString(currentFileName), tr("YAML files (*.yaml);;All Files (*)"));
 
@@ -551,17 +550,18 @@ void MainWindow::save_Data_Flow_as() {
 		return;
 	}
 
-	savedVersion = 0;
 
     if (! (fn.endsWith(".yaml", Qt::CaseInsensitive)) )
         fn += ".yaml"; // default
   	currentFileName = fn.toStdString();
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
-  	saveAct->setEnabled(true);
-	currentFileHasChanged = false;
-	saveAct->setEnabled(false);
 
-	conf_.store(fn.toStdString());
+	conf_.store(currentFileName);
+
+	saveAct->setEnabled(false);
+	currentFileHasChanged = false;
+	unknownFile = false;
+	savedVersion = 0;
 }
 
 void MainWindow::about() {
@@ -675,8 +675,8 @@ void MainWindow::redo() {
 void MainWindow::beforeConfigChange(){
 	// configuration changed
 	currentFileHasChanged = true;
-
 	savedVersion++;
+	if (!unknownFile) saveAct->setEnabled(true);
 
 	undoStack.push(conf_);
 	while(! redoStack.empty()){
