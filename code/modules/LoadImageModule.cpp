@@ -28,7 +28,7 @@ void LoadImageModule::run( DataManager& data) const
 
 	  if (!image.data)// Check for invalid input
 	  {
-	    throw new ErrorException(string("Could not open or find the image: ") + strFilename);
+	    throw ErrorException(string("Could not open or find the image: ") + strFilename);
 	  }
 
 	  data.setOutputData("image",new Matrix(image));

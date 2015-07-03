@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
+#include "GUIEventDispatcher.h"
 
 namespace uipf
 {
@@ -11,7 +12,7 @@ Logger* Logger::instance_ = nullptr;
 
 Logger* Logger::instance()
 {
-  static Guard w;
+  static Logger::Guard w;
   if( instance_ == nullptr )
     instance_ = new Logger();
   return instance_;
@@ -24,7 +25,7 @@ void Logger::Warn(const std::string& strMessage)
 	print(output);
 
 	//send signal to GUI
-	emit logEvent(WARNING,strMessage);
+	GUIEventDispatcher::instance()->triggerLogEvent(WARNING,strMessage);
 }
 
 void Logger::Error(const std::string& strMessage)
@@ -36,7 +37,7 @@ void Logger::Error(const std::string& strMessage)
 	print(output);
 
 	//send signal to GUI
-	emit logEvent(ERROR,strMessage);
+	GUIEventDispatcher::instance()->triggerLogEvent(ERROR,strMessage);
 }
 
 void Logger::Info(const std::string& strMessage)
@@ -46,7 +47,7 @@ void Logger::Info(const std::string& strMessage)
 	print(output);
 
 	//send signal to GUI
-	emit logEvent(INFO,strMessage);
+	GUIEventDispatcher::instance()->triggerLogEvent(INFO,strMessage);
 }
 
 void Logger::print(const std::stringstream& what)

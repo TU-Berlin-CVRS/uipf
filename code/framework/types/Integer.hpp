@@ -1,36 +1,36 @@
 #ifndef INTEGER_H
 #define INTEGER_H
 
-
+#include "../StdIncl.hpp"
 #include "Data.hpp"
 
 namespace uipf{
 
 
-// Integer which is a specification of Elem
+// Integer which is a specification of Data
 class Integer : public Data {
 	public:
 		typedef SMARTPOINTER<Integer> ptr;
 		typedef const SMARTPOINTER<Integer> c_ptr;
 
 	public:
-		// constructor (can't be virtual!)
+		// constructor
 		Integer(void){};
 		// destructor
 		~Integer(void){};
 
-		// get content
+		// returns the value of the integer
 		int getContent();
 
-		// set content
+		// sets the value of the integer
 		void setContent(int);
 
-		// returns the data type of this data object
+		// returns the data type of this data object: in this case: INTEGER
 		Type getType() override;
 
 	private:
-		// content
-		int in;
+		// value of the integer
+		int i_;
 };
 
 }
