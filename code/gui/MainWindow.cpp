@@ -347,6 +347,7 @@ void MainWindow::on_deleteButton_clicked() {
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
     // remove from the chain
 	conf_.removeProcessingStep(currentStepName);
+	currentStepName = string("");
 
 	//update the graphview
 	refreshGraph();
@@ -361,6 +362,7 @@ void MainWindow::on_deleteButton_clicked() {
 // gets called when a processing step is selected
 void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
 {
+	ui->deleteButton->setEnabled(true);
 	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 
 	// refresh configuration widgets
