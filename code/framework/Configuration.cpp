@@ -334,7 +334,7 @@ string Configuration::getYAML(){
 }
 
 // return processing chain  name => step
-map<string, ProcessingStep> Configuration::getProcessingChain(){
+map<string, ProcessingStep> Configuration::getProcessingChain() const {
 	return chain_;
 }
 

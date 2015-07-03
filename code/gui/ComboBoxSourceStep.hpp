@@ -7,6 +7,8 @@
 #include <QItemDelegate>
 
 #include <../framework/Configuration.hpp>
+#include <../framework/ModuleManager.hpp>
+#include <../framework/MetaData.hpp>
 
 class QModelIndex;
 class QWidget;
@@ -18,7 +20,7 @@ class ComboBoxSourceStep : public QItemDelegate
 {
 Q_OBJECT
 public:
-	ComboBoxSourceStep(QObject *parent = 0);
+	ComboBoxSourceStep(ModuleManager&, QObject *parent = 0);
 
 	// create editor widget
 	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -28,22 +30,22 @@ public:
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
 	// updates the model by setting the current configuration
-	void setConfiguration(Configuration, std::string);
+	void setConfiguration(const Configuration&, const std::string&, std::vector<std::string>);
 
 signals:
-	void inputChanged(std::string, std::pair<std::string, std::string>);
+	void inputChanged(std::string, std::pair<std::string, std::string>) const;
 
 private:
-	// available options for the dropdown box
-	std::vector<std::string> items_;
+	ModuleManager& mm_;
 
-	// currently selected reference steps
-	std::vector<std::string> selected_;
+	// available options for the step dropdown box
+	std::vector<std::string> stepItems_;
 
-  	// the currently loaded configuration represented in the window
-   	Configuration conf_;
-  	// current name of a precessing step
-	std::string currentStepName;
+	// available options for the output dropdown box
+	std::vector< std::vector<std::string> > outputItems_;
+
+	// reference to input names, row index => input name
+	std::vector<std::string> inputNames_;
 
 };
 

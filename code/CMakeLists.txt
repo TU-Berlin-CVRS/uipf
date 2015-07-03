@@ -68,10 +68,9 @@ add_executable(	uipf-gui
 	gui/graph/edge.cpp
 	gui/graph/node.cpp
 	gui/graph/graphwidget.cpp
-	gui/ComboBoxSourceOutput.cpp
 	gui/ComboBoxSourceStep.cpp
 	gui/RunWorkerThread.cpp
-	
+
 	framework/ModuleManager.cpp
 
 	framework/GUIEventDispatcher.cpp

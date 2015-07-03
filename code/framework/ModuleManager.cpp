@@ -202,7 +202,7 @@ ModuleInterface* ModuleManager::loadModule(const std::string& name)
 		QPluginLoader* loader = plugins_[name];
 		QObject *plugin = loader->instance();
 		if (plugin) {
-			Logger::instance()->Info("load module: " + name);
+			// Logger::instance()->Info("load module: " + name);
 			return qobject_cast<ModuleInterface* >(plugin);
 		}
 	}
