@@ -7,6 +7,7 @@
 #include <QStringListModel>
 #include <QAbstractItemView>
 #include <QListWidgetItem>
+#include <QStandardItemModel>
 
 #include <QDialog>
 #include <QLabel>
@@ -14,6 +15,7 @@
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+
 #include <stack>
 
 #include "ProcessingStepParams.hpp"
@@ -29,8 +31,6 @@
 #include "../framework/GUIEventDispatcher.hpp"
 
 #include "graph/graphwidget.h"
-
-#include <QStandardItemModel>
 
 
 namespace Ui {
@@ -170,6 +170,6 @@ private:
     RunWorkerThread* workerThread_;
 };
 
-}; // namespace
+} // namespace
 
 #endif // MAINWINDOW_H

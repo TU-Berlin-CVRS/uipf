@@ -3,9 +3,10 @@
 
 #include <string>
 #include <vector>
-#include <../framework/Configuration.hpp>
 
 #include <QItemDelegate>
+
+#include <../framework/Configuration.hpp>
 
 class QModelIndex;
 class QWidget;
@@ -46,6 +47,6 @@ private:
 
 };
 
-}
-#endif
+} // namespace
 
+#endif

@@ -3,11 +3,12 @@
 
 #include <string>
 #include <vector>
+
+#include <QItemDelegate>
+
 #include <../framework/Configuration.hpp>
 #include <../framework/ModuleManager.hpp>
 #include <../framework/MetaData.hpp>
-
-#include <QItemDelegate>
 
 class QModelIndex;
 class QWidget;
@@ -49,6 +50,6 @@ private:
 	std::string currentStepName;
 };
 
-}
-#endif
+} // namespace
 
+#endif

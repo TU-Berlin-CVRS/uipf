@@ -1,10 +1,12 @@
 #ifndef RUNWORKERTHREAD_H_
 #define RUNWORKERTHREAD_H_
+
 #include <QThread>
+
 #include "../framework/Configuration.hpp"
 #include "../framework/ModuleManager.hpp"
 
-using namespace uipf;
+namespace uipf {
 
 //A class that does the background work in a thread.
 //By deriving QThread QT handles signals/slot thread marshaling automatically.
@@ -14,7 +16,7 @@ class RunWorkerThread: public QThread {
 	Q_OBJECT
 
 public:
-	RunWorkerThread(ModuleManager& mm, Configuration& config);
+	RunWorkerThread(uipf::ModuleManager& mm, uipf::Configuration& config);
 	virtual ~RunWorkerThread();
 
 	//run module chain in a separate thread
@@ -32,5 +34,7 @@ private:
 	uipf::ModuleManager& mm_;
 	uipf::Configuration& config_;
 };
+
+} // namespace
 
 #endif /* RUNWORKERTHREAD_H_ */

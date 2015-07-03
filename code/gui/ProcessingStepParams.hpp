@@ -47,6 +47,6 @@ private:
 	std::vector<std::string> paramNames_;
 };
 
-}; // namespace
+} // namespace
 
 #endif // PROCESSINGSTEPPARAMS_H

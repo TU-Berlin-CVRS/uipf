@@ -28,6 +28,6 @@ private:
 	std::vector<std::string> inputNames;
 };
 
-}; // namespace
+} // namespace
 
 #endif // PROCESSINGSTEPINPUTS_H
