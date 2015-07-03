@@ -34,6 +34,7 @@ add_executable(uipf
 	framework/Configuration.cpp
 	framework/DataManager.cpp
 	framework/Context.cpp
+	framework/GUIEventDispatcher.cpp
 	framework/Logger.cpp
 	framework/MetaData.cpp
     framework/Utils.cpp
@@ -69,9 +70,11 @@ add_executable(	uipf-gui
 	gui/graph/graphwidget.cpp
 	gui/ComboBoxSourceOutput.cpp
 	gui/ComboBoxSourceStep.cpp
-
+	gui/RunWorkerThread.cpp
+	
 	framework/ModuleManager.cpp
 
+	framework/GUIEventDispatcher.cpp
 	framework/Configuration.cpp
 	framework/DataManager.cpp
 	framework/Context.cpp
@@ -118,12 +121,16 @@ add_library(StoreImageModule SHARED modules/StoreImageModule.cpp)
 qt5_use_modules(StoreImageModule Core ) #QtCore is needed for <QPlugin>
 add_library(ShowImageModule SHARED modules/ShowImageModule.cpp)
 qt5_use_modules(ShowImageModule Core ) #QtCore is needed for <QPlugin>
+add_library(LongRunningDummyModule SHARED modules/LongRunningDummyModule.cpp)
+qt5_use_modules(LongRunningDummyModule Core ) #QtCore is needed for <QPlugin>
+
 
 #link dependencies of dynamic modules
 target_link_libraries(LoadImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 target_link_libraries(GaussianModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 target_link_libraries(StoreImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
+target_link_libraries(LongRunningDummyModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 
 #
 # external dependencies

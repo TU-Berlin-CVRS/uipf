@@ -2,18 +2,19 @@
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QStandardItemModel>
-
+#include <QThread>
 #include <iostream>
 
 #include "../framework/ModuleManager.hpp"
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-
+#include "../framework/GUIEventDispatcher.h"
+#include "RunWorkerThread.h"
 using namespace std;
 using namespace uipf;
 
 // constructor
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),workerThread_(nullptr) {
 
     ui->setupUi(this);
 
@@ -37,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // -> It may be triggered by hitting any key or double-click etc.
     ui->listProcessingSteps-> setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
 
+    ui->progressBar->setValue(0.0f);
 
 	// set up slots for signals
 
@@ -58,9 +60,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
     connect(modelSourceOutput, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
 			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
-	// logger
-    connect(Logger::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
+    // logger
+    connect(GUIEventDispatcher::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
+
+    // progressbar
+    connect(GUIEventDispatcher::instance(), SIGNAL (reportProgressEvent(const float&)),
+    			this, SLOT (on_reportProgress(const float&)));
 
 	// fill module dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -85,6 +91,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
+
 }
 
 // destructor
@@ -259,6 +266,12 @@ void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& 
 	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
 }
 
+// moves the progressbar on every step of the processing chain
+void MainWindow::on_reportProgress(const float& fValue)
+{
+	ui->progressBar->setValue(fValue);
+}
+
 
 // Add button clicked - allows to add a new Processing Step
 // Step is always added at the end of the list
@@ -352,6 +365,7 @@ void MainWindow::on_deleteButton_clicked() {
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
     // remove from the chain
 	conf_.removeProcessingStep(currentStepName);
+	currentStepName = string("");
 
 	//update the graphview
 	refreshGraph();
@@ -366,6 +380,7 @@ void MainWindow::on_deleteButton_clicked() {
 // gets called when a processing step is selected
 void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
 {
+	ui->deleteButton->setEnabled(true);
 	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 
 	// refresh configuration widgets
@@ -576,6 +591,9 @@ void MainWindow::beforeConfigChange(){
 	redoAct->setEnabled(false);
 }
 
+
+
+
 // run the current configuration
 void MainWindow::run() {
 
@@ -593,15 +611,37 @@ void MainWindow::run() {
 	stopAct->setEnabled(true);
 	runAct->setEnabled(false);
 
-	mm_.run(conf_);
+	workerThread_ = new RunWorkerThread(mm_,conf_);
 
+	// Setup callback for cleanup when it finishes
+	connect(workerThread_, SIGNAL(finished()),  this, SLOT(on_backgroundWorkerFinished()));
+	// Run, Forest, run!
+	workerThread_->start(); // This invokes WorkerThread::run in a new thread
+}
+
+void MainWindow::on_backgroundWorkerFinished()
+{
 	// run is now activated and stop unactivated
 	stopAct->setEnabled(false);
 	runAct->setEnabled(true);
+	delete workerThread_;
+	workerThread_ = nullptr;
 }
 
 void MainWindow::stop() {
-	// TODO
+
+	if (workerThread_ != nullptr)
+	{
+		workerThread_->stop();
+		workerThread_->wait(1000);
+		workerThread_->terminate();
+		delete workerThread_;
+		workerThread_ = nullptr;
+	}
+
+
+	stopAct->setEnabled(false);
+	runAct->setEnabled(true);
 }
 // Up to here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 

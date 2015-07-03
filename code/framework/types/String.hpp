@@ -7,30 +7,30 @@
 namespace uipf{
 
 
-// String which is a specification of Elem
+// String which is a specification of Data
 class String : public Data {
 	public:
 		typedef SMARTPOINTER<String> ptr;
 		typedef const SMARTPOINTER<String> c_ptr;
 
 	public:
-		// constructor (can't be virtual!)
+		// constructor
 		String(void){};
 		// destructor
 		~String(void){};
 
-		// get content
+		// returns the value of the string
 		std::string getContent();
 
-		// set content
+		// sets the value of the string
 		void setContent(std::string);
 
-		// returns the data type of this data object
+		// returns the data type of this data object: in this case: STRING
 		Type getType() override;
 
 	private:
-		// content
-		std::string str;
+		// value of the string
+		std::string str_;
 };
 
 }

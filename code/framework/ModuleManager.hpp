@@ -31,6 +31,9 @@ class ModuleManager{
 		// returns a map of module name => meta data
 		std::map<std::string, MetaData> getAllModuleMetaData();
 
+		//if set modules should finish their work
+		void requestStop(){context_.bStopRequested_=true;}
+
 	private:
 		// module chain
 
@@ -41,6 +44,7 @@ class ModuleManager{
 		// map: module name -> plugin loader instance which can instantiate a module
 		std::map<std::string, QPluginLoader*> plugins_;
 
+		Context context_;
 };
 
 }

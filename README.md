@@ -23,6 +23,11 @@ On Debian/Ubuntu you can install the above packages by running the following com
 The following additional packages may be needed for building C++ code:
 
     sudo apt-get install build-essential cmake pkg-config
+    
+To install Qt5, you can download '.run' offline or online installer from qt open source community download (https://www.qt.io/download-open-source/#section-2)
+(where 'qt-opensource-linux-x64-5.4.2.run' is the downloaded file, use the below command via terminal)
+    chmod +x qt-opensource-linux-x64-5.4.2.run
+    ./qt-opensource-linux-x64-5.4.2.run
 
 
 ### Building with CMake on Linux

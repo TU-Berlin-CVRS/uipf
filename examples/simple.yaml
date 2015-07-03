@@ -15,7 +15,7 @@ sourceImage:
 # sourceImage module configured above.
 process:
   module: gaussian
-  kernelSize: 5
+  windowSize: 5
   sigma: 10.5
   input:
     image: sourceImage.image

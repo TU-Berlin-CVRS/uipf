@@ -27,13 +27,16 @@ void ComboBoxSourceOutput::setConfiguration(Configuration conf, std::string curr
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
 	for(auto it = step.inputs.cbegin(); it != step.inputs.end(); ++it) {
 
-		ProcessingStep referencedStep = conf_.getProcessingStep(it->second.first);
-
-		// fill vector of possible output selections
-		map<string, DataDescription> out = mm_.getModuleMetaData(referencedStep.module).getOutputs();
 		vector<string> subItems;
-		for (auto oit = out.cbegin(); oit!=out.end(); ++oit) {
-			subItems.push_back(it->first);
+		if (conf_.hasProcessingStep(it->second.first)) {
+			// only possible to add items if the referenced step exists and we can get its module
+			ProcessingStep referencedStep = conf_.getProcessingStep(it->second.first);
+
+			// fill vector of possible output selections
+			map<string, DataDescription> out = mm_.getModuleMetaData(referencedStep.module).getOutputs();
+			for (auto oit = out.cbegin(); oit!=out.end(); ++oit) {
+				subItems.push_back(oit->first);
+			}
 		}
 		items_.push_back(subItems);
 

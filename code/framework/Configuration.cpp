@@ -15,7 +15,6 @@ void Configuration::load(string filename){
 
 	//basic requirement checks
 	bool bHasModule = false;
-	bool bHasInput = false;
 
 	try
 	{
@@ -26,7 +25,10 @@ void Configuration::load(string filename){
 		YAML::Node config = YAML::LoadFile(filename);
 
 		// yaml file must be a map of step-name => configuration
-		assert(config.IsMap());
+
+		if (!config.IsMap())
+			throw InvalidConfigException("check if you provided at least one step.");
+
 
 		// create a ProcessingStep object from each config element
 		YAML::const_iterator it = config.begin();
@@ -37,9 +39,10 @@ void Configuration::load(string filename){
 			step.name = it->first.as<string>();
 
 			// iterate over step config, which is a map too
-			assert(it->second.IsMap());
-			YAML::const_iterator confIt = it->second.begin();
+			if (!it->second.IsMap())
+				throw InvalidConfigException("check if you provided valid value(s) in your yaml for step '" + it->first.as<string>() + "'");
 
+			YAML::const_iterator confIt = it->second.begin();
 
 			for( ; confIt != it->second.end(); ++confIt) {
 				string key = confIt->first.as<string>();
@@ -50,9 +53,10 @@ void Configuration::load(string filename){
 				}
 				else if (key == "input")
 				{
-					bHasInput = true;
 					// input is a map of input dependencies
-					assert(confIt->second.IsMap());
+					if (!confIt->second.IsMap())
+						throw InvalidConfigException("check if you provided valid keys and a values for 'input'");
+
 					YAML::const_iterator inputIt = confIt->second.begin();
 					for(; inputIt != confIt->second.end(); ++inputIt) {
 						string inputName = inputIt->first.as<string>();
@@ -66,19 +70,42 @@ void Configuration::load(string filename){
 					}
 				} else {
 					// otherwise it is a parameter of the module
-					step.params.insert( pair<string,string>(key, confIt->second.as<string>()) );
+					try
+					{
+						step.params.insert( pair<string,string>(key, confIt->second.as<string>()) );
+					}
+					catch(YAML::TypedBadConversion<std::string>& ex)
+					{
+						throw InvalidConfigException("check if you provided a valid key and value for '"+ key + "'");
+					}
 				}
 			}
 
 			chain_.insert( pair<string, ProcessingStep>(step.name, step) );
 		}
 	}
+	catch(InvalidConfigException& ex)
+	{
+		LOG_E(string(ex.what()));
+	}
+	catch(YAML::BadFile& ex)
+	{
+		LOG_E("Error loading '" + filename +"'");
+	}
+	catch(YAML::TypedBadConversion<std::string>& ex)
+	{
+		LOG_E(string(ex.what()));
+	}
+	catch(YAML::ParserException& ex)
+	{
+		LOG_E(string(ex.what()));
+	}
 	catch(...)
 	{
-		if (bHasInput && bHasModule)
+		if (bHasModule)
 			LOG_E("your yaml seems to be invalid.");
 		else
-			LOG_E("your yaml seems to be invalid. check if you defined 'module' and 'input'");
+			LOG_E("your yaml seems to be invalid. check if you defined 'module'");
 	}
 
 }
@@ -247,9 +274,7 @@ void Configuration::print() {
 
 	string out = getYAML();
 
-	std::cout << out;
-	std::cout << std::endl;
-
+	LOG_I(out);
 }
 // stores the current module configuration in a yaml file
 /*

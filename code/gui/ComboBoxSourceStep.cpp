@@ -57,6 +57,6 @@ void ComboBoxSourceStep::setEditorData(QWidget *editor, const QModelIndex &index
 
 // set column content for non edit-mode
 void ComboBoxSourceStep::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-	QComboBox *comboBox = static_cast<QComboBox*>(editor);
-	model->setData(index, QString(items_[comboBox->currentIndex()].c_str()), Qt::EditRole);
+	//QComboBox *comboBox = static_cast<QComboBox*>(editor);
+	model->setData(index, QString(selected_[index.row()].c_str()), Qt::EditRole);
 }
