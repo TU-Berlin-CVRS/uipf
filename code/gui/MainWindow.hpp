@@ -118,9 +118,9 @@ private:
    	Configuration conf_;
 
 	// counts the undo/redo, when = 0, it is the saved version
-	int savedVersion;
+	int savedVersion = 0;
 
-	bool unknownFile;
+	bool unknownFile = true;
 
 	// current name of a precessing step
 	std::string currentStepName;

@@ -89,6 +89,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
+	ui->deleteButton->setEnabled(false);
+
+	resetParams();
 
 }
 
@@ -108,6 +111,7 @@ MainWindow::~MainWindow() {
 void MainWindow::loadDataFlow(string filename)
 {
 
+	ui->deleteButton->setEnabled(false);
 	unknownFile = false;
 	savedVersion = 0;
 	currentFileHasChanged = false;
@@ -332,6 +336,7 @@ void MainWindow::on_addButton_clicked() {
 	}
 
 	currentStepName = name;
+	ui->deleteButton->setEnabled(true);
 
     QString newName = QString::fromStdString(name);
     modelStep->setData(index, newName, Qt::EditRole);
@@ -392,15 +397,20 @@ void MainWindow::on_deleteButton_clicked() {
     // remove from the chain
 	beforeConfigChange();
 	conf_.removeProcessingStep(currentStepName);
-	currentStepName = string("");
 
-	//update the graphview
-	refreshGraph();
+	if (ui->listProcessingSteps->currentIndex().row() == -1){
+		currentStepName = string("");
+		ui->deleteButton->setEnabled(false);
+	} else {
+		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+	}
 
-	// ensure configuration widgets are empty
-	resetModule();
-	resetParams();
-	resetInputs();
+	// refresh configuration widgets
+	refreshModule();
+	refreshInputs();
+	refreshParams();
+    // update the graphview
+    refreshGraph();
 }
 
 
@@ -457,6 +467,7 @@ void MainWindow::new_Data_Flow() {
 	//check whether there are unsaved changes, and ask the user, whether he wants to save them
 	if (!okToContinue()) return;
 
+	ui->deleteButton->setEnabled(false);
 	currentFileHasChanged = false;
 	unknownFile = true;
 
@@ -601,6 +612,7 @@ void MainWindow::undo() {
 		// reset current step if necessary
 		if (!conf_.hasProcessingStep(currentStepName)) {
 			currentStepName = string("");
+			ui->deleteButton->setEnabled(false);
 		}
 
 		// set the undo/redo in the menu bar gray if inactive or black, if active
@@ -651,6 +663,7 @@ void MainWindow::redo() {
 		// reset current step if necessary
 		if (!conf_.hasProcessingStep(currentStepName)) {
 			currentStepName = string("");
+			ui->deleteButton->setEnabled(false);
 		}
 
 		// set the undo/redo in the menu bar gray if inactive or black, if active
