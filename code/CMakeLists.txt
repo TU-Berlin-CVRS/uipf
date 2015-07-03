@@ -62,17 +62,18 @@ find_package(Qt5Widgets REQUIRED)
 #create gui-executable
 add_executable(	uipf-gui
 	main-gui.cpp
-	gui/ProcessingStepParams.cpp
-	gui/ProcessingStepInputs.cpp
 	gui/MainWindow.cpp
+
 	gui/graph/edge.cpp
 	gui/graph/node.cpp
 	gui/graph/graphwidget.cpp
-	gui/ComboBoxSourceStep.cpp
+
+	gui/models/ParamsModel.cpp
+	gui/models/InputsDelegate.cpp
+
 	gui/RunWorkerThread.cpp
 
 	framework/ModuleManager.cpp
-
 	framework/GUIEventDispatcher.cpp
 	framework/Configuration.cpp
 	framework/DataManager.cpp

@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // create model for step list
     modelStep = new QStringListModel(this);
     // create model for params list
-    modelTableParams = new ProcessingStepParams(this);
+    modelTableParams = new ParamsModel(this);
 
     // create model for inputs list
     modelTableInputs = new QStandardItemModel(this);
@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	QStandardItem* item1 = new QStandardItem("Output Name:");
 	modelTableInputs->setHorizontalHeaderItem(0, item0);
 	modelTableInputs->setHorizontalHeaderItem(1, item1);
-	delegateTableInputs = new ComboBoxSourceStep(mm_, this);
+	delegateTableInputs = new InputsDelegate(mm_, this);
 
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);

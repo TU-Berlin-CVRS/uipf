@@ -1,4 +1,4 @@
-#include "ComboBoxSourceStep.hpp"
+#include "InputsDelegate.hpp"
 
 #include <QComboBox>
 #include <QWidget>
@@ -11,11 +11,11 @@
 using namespace std;
 using namespace uipf;
 
-ComboBoxSourceStep::ComboBoxSourceStep(ModuleManager& mm, QObject *parent) : QItemDelegate(parent) , mm_(mm) {
+InputsDelegate::InputsDelegate(ModuleManager& mm, QObject *parent) : QItemDelegate(parent) , mm_(mm) {
 
 }
 
-void ComboBoxSourceStep::setConfiguration(const Configuration& conf, const std::string& currentStepName, std::vector<std::string> inputNames) {
+void InputsDelegate::setConfiguration(const Configuration& conf, const std::string& currentStepName, std::vector<std::string> inputNames) {
 
 	inputNames_ = inputNames;
 
@@ -64,7 +64,7 @@ void ComboBoxSourceStep::setConfiguration(const Configuration& conf, const std::
 }
 
 // create editor widget
-QWidget *ComboBoxSourceStep::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex & index) const {
+QWidget *InputsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex & index) const {
 	QComboBox* editor = new QComboBox(parent); // will be deleted by Qt automatically http://doc.qt.io/qt-5/qabstractitemdelegate.html#destroyEditor
 
 	// first column is the processing step
@@ -84,14 +84,14 @@ QWidget *ComboBoxSourceStep::createEditor(QWidget *parent, const QStyleOptionVie
 }
 
 // set column content for edit-mode
-void ComboBoxSourceStep::setEditorData(QWidget *editor, const QModelIndex &index) const {
+void InputsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
 	QComboBox *comboBox = static_cast<QComboBox*>(editor);
 	int value = comboBox->findData(index.data());
 	comboBox->setCurrentIndex(value);
 }
 
 // set column content for non edit-mode
-void ComboBoxSourceStep::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+void InputsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
 	QComboBox *comboBox = static_cast<QComboBox*>(editor);
 	string selectedItem = comboBox->currentData().toString().toStdString();
 	model->setData(index, QString(selectedItem.c_str()));

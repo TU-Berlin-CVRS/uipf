@@ -1,5 +1,5 @@
-#ifndef COMBOBOXSOURCESTEP_H
-#define COMBOBOXSOURCESTEP_H
+#ifndef InputsDelegate_H
+#define InputsDelegate_H
 
 #include <string>
 #include <vector>
@@ -16,11 +16,11 @@ class QVariant;
 
 namespace uipf {
 
-class ComboBoxSourceStep : public QItemDelegate
+class InputsDelegate : public QItemDelegate
 {
 Q_OBJECT
 public:
-	ComboBoxSourceStep(ModuleManager&, QObject *parent = 0);
+	InputsDelegate(ModuleManager&, QObject *parent = 0);
 
 	// create editor widget
 	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
