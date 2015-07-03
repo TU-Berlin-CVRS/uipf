@@ -103,6 +103,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
+	ui->deleteButton->setEnabled(false);
+
+	resetParams();
 
 }
 
@@ -121,18 +124,32 @@ MainWindow::~MainWindow() {
 // loads a new configuration from file
 void MainWindow::loadDataFlow(string filename)
 {
+
+	ui->deleteButton->setEnabled(false);
+	unknownFile = false;
+	savedVersion = 0;
+	currentFileHasChanged = false;
+
+	// when new dataflow, both stacks become empty and the buttons will be deactivated
+	while(! redoStack.empty()){
+		redoStack.pop();
+	}
+	while(! undoStack.empty()){
+		undoStack.pop();
+	}
+	redoAct->setEnabled(false);
+	undoAct->setEnabled(false);
+
 	currentFileName = filename;
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
 
-    // configuration changed
-	beforeConfigChange(); // TODO maybe better reset undo stack for new files
 	conf_.load(currentFileName);
 
     // only for debug, print the loaded config
 	conf_.print();
 
 	// save is now activated
-	saveAct->setEnabled(true);
+	saveAct->setEnabled(false);
 
 	// set the names of the processing steps:
 	QStringList list;
@@ -153,6 +170,11 @@ void MainWindow::loadDataFlow(string filename)
 // refresh module dropdown
 void MainWindow::refreshModule()
 {
+    if (currentStepName.empty()){
+		resetModule();
+		return;
+	}
+
     ui->comboModule->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
@@ -165,6 +187,11 @@ void MainWindow::refreshModule()
 // refresh params table
 void MainWindow::refreshParams()
 {
+	if (currentStepName.empty()){
+		resetParams();
+		return;
+	}
+
 	ui->tableParams->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
@@ -180,6 +207,11 @@ void MainWindow::refreshParams()
 // refresh inputs table
 void MainWindow::refreshInputs()
 {
+	if (currentStepName.empty()){
+		resetInputs();
+		return;
+	}
+
 	ui->tableInputs->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
@@ -291,6 +323,7 @@ void MainWindow::on_addButton_clicked() {
 	}
 
 	currentStepName = name;
+	ui->deleteButton->setEnabled(true);
 
     QString newName = QString::fromStdString(name);
     modelStep->setData(index, newName, Qt::EditRole);
@@ -349,16 +382,22 @@ void MainWindow::on_deleteButton_clicked() {
     // Get the position and remove the row
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
     // remove from the chain
+	beforeConfigChange();
 	conf_.removeProcessingStep(currentStepName);
-	currentStepName = string("");
 
-	//update the graphview
-	refreshGraph();
+	if (ui->listProcessingSteps->currentIndex().row() == -1){
+		currentStepName = string("");
+		ui->deleteButton->setEnabled(false);
+	} else {
+		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+	}
 
-	// ensure configuration widgets are empty
-	resetModule();
-	resetParams();
-	resetInputs();
+	// refresh configuration widgets
+	refreshModule();
+	refreshInputs();
+	refreshParams();
+    // update the graphview
+    refreshGraph();
 }
 
 
@@ -414,25 +453,34 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 
 
 // menu click File -> New
-void MainWindow::new_Data_Flow()
-{
-	if (currentFileHasChanged) {
-		// TODO confirm if the current data should really be dropped
+void MainWindow::new_Data_Flow() {
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
+
+	ui->deleteButton->setEnabled(false);
+	currentFileHasChanged = false;
+	unknownFile = true;
+
+	// when new dataflow, both stacks become empty and the buttons will be deactivated
+	while(! redoStack.empty()){
+		redoStack.pop();
 	}
+	while(! undoStack.empty()){
+		undoStack.pop();
+	}
+	redoAct->setEnabled(false);
+	undoAct->setEnabled(false);
 
 	// save is not activated
 	saveAct->setEnabled(false);
 
 	currentFileName = "newFile";
-    setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
+	setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
 
-    // configuration changed
-	beforeConfigChange();
+	Configuration conf;
+	conf_ = conf;
 
-    Configuration conf;
-    conf_ = conf;
-
-    QStringList list;
+	QStringList list;
 	modelStep->setStringList(list);
 
 	// reset other models
@@ -446,12 +494,12 @@ void MainWindow::new_Data_Flow()
 
 void MainWindow::load_Data_Flow()
 {
-	if (currentFileHasChanged) {
-		// TODO confirm if the current data should really be dropped
-	}
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
 
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."), QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
-	// abort button has been pressed
+
+	// if abort button has been pressed
 	if (fn.isEmpty()) {
 		return;
 	}
@@ -459,10 +507,35 @@ void MainWindow::load_Data_Flow()
 	loadDataFlow(fn.toStdString());
 }
 
+// when unsaved changes occure, give the user the possibility to save them
+bool MainWindow::okToContinue() {
+
+    if (currentFileHasChanged) {
+        int r = QMessageBox::warning(this, tr("Spreadsheet"),
+                        tr("The document has been modified.\n"
+                           "Do you want to save your changes?"),
+                        QMessageBox::Yes | QMessageBox::No
+                        | QMessageBox::Cancel);
+        if (r == QMessageBox::Yes) {
+			if (saveAct->isEnabled() ) save_Data_Flow();
+            else save_Data_Flow_as();
+            return true;
+        } else if (r == QMessageBox::Cancel) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 // only possible, if the configuration has already been stored in some file
 void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
+	unknownFile = false;
+	savedVersion = 0;
 	currentFileHasChanged = false;
+	saveAct->setEnabled(false);
+
 }
 
 // by default the name is the current name of the configuration file
@@ -478,14 +551,18 @@ void MainWindow::save_Data_Flow_as() {
 		return;
 	}
 
+
     if (! (fn.endsWith(".yaml", Qt::CaseInsensitive)) )
         fn += ".yaml"; // default
   	currentFileName = fn.toStdString();
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
-  	saveAct->setEnabled(true);
-	currentFileHasChanged = false;
 
-	conf_.store(fn.toStdString());
+	conf_.store(currentFileName);
+
+	saveAct->setEnabled(false);
+	currentFileHasChanged = false;
+	unknownFile = false;
+	savedVersion = 0;
 }
 
 void MainWindow::about() {
@@ -496,12 +573,23 @@ void MainWindow::about() {
 // sets the current configuration to the previous one
 void MainWindow::undo() {
 	if(!undoStack.empty()){
+
+		if (!unknownFile) saveAct->setEnabled(true);
+
+		savedVersion--;
+		if (!unknownFile && savedVersion == 0){
+			currentFileHasChanged = false;
+			saveAct->setEnabled(false);
+		}
+
+
 		// move the current config to the redo stack
 		redoStack.push(conf_);
 		// get the last config stored in undo stack
 		conf_ = undoStack.top();
 		// delete the last config from the undo stack
 		undoStack.pop();
+
 
 		// set the names of the processing steps:
 		QStringList list;
@@ -510,6 +598,12 @@ void MainWindow::undo() {
 			list << it->first.c_str();
 		}
 		modelStep->setStringList(list);
+
+		// reset current step if necessary
+		if (!conf_.hasProcessingStep(currentStepName)) {
+			currentStepName = string("");
+			ui->deleteButton->setEnabled(false);
+		}
 
 		// set the undo/redo in the menu bar gray if inactive or black, if active
 		redoAct->setEnabled(true);
@@ -530,7 +624,17 @@ void MainWindow::undo() {
 
 // sets the current configuration back to the next one
 void MainWindow::redo() {
+
 	if(!redoStack.empty()){
+
+		if (!unknownFile) saveAct->setEnabled(true);
+
+		savedVersion++;
+		if (!unknownFile && savedVersion == 0){
+			currentFileHasChanged = false;
+			saveAct->setEnabled(false);
+		}
+
 		// move the current config to the undo stack
 		undoStack.push(conf_);
 		// get the last config stored in redo stack
@@ -545,6 +649,12 @@ void MainWindow::redo() {
 			list << it->first.c_str();
 		}
 		modelStep->setStringList(list);
+
+		// reset current step if necessary
+		if (!conf_.hasProcessingStep(currentStepName)) {
+			currentStepName = string("");
+			ui->deleteButton->setEnabled(false);
+		}
 
 		// set the undo/redo in the menu bar gray if inactive or black, if active
 		undoAct->setEnabled(true);
@@ -568,6 +678,8 @@ void MainWindow::redo() {
 void MainWindow::beforeConfigChange(){
 	// configuration changed
 	currentFileHasChanged = true;
+	savedVersion++;
+	if (!unknownFile) saveAct->setEnabled(true);
 
 	undoStack.push(conf_);
 	while(! redoStack.empty()){
@@ -726,3 +838,4 @@ void MainWindow::createMenus() {
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
 }
+
