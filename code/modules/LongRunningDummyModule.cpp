@@ -10,7 +10,7 @@ using namespace uipf;
 */
 void LongRunningDummyModule::run( DataManager& data) const
 {
-	unsigned int uiCounter = 100;
+	unsigned int uiCounter = 10;
 	while(uiCounter-->0)
 	{
 		LOG_I("I am soo busy!");

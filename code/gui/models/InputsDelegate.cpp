@@ -96,7 +96,7 @@ void InputsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, co
 	string selectedItem = comboBox->currentData().toString().toStdString();
 	model->setData(index, QString(selectedItem.c_str()));
 
-	cout << "set model data " << index.row() << "," << index.column() << " : " << selectedItem << endl;
+	//cout << "set model data " << index.row() << "," << index.column() << " : " << selectedItem << endl;
 
 	pair<string, string> newInput(
 		model->data(model->index(index.row(), 0)).toString().toStdString(),

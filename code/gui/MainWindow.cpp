@@ -444,7 +444,7 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 		beforeConfigChange();
 		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
 		inputs[inputName] = value;
-		cout << "input " << inputName << " changed: " << value.first << "." << value.second << endl;
+		//cout << "input " << inputName << " changed: " << value.first << "." << value.second << endl;
 		conf_.setProcessingStepInputs(currentStepName, inputs);
 
 		refreshInputs();
