@@ -112,8 +112,15 @@ private:
 	// the file name of the currently loaded configuration
 	std::string currentFileName;
 	bool currentFileHasChanged = false;
+	// asks the user, whether he wants to save the file
+	bool okToContinue();
 	// the currently loaded configuration represented in the window
    	Configuration conf_;
+
+	// counts the undo/redo, when = 0, it is the saved version
+	int savedVersion;
+
+	bool unknownFile;
 
 	// current name of a precessing step
 	std::string currentStepName;
