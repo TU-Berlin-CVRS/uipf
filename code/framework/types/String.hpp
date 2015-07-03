@@ -33,6 +33,6 @@ class String : public Data {
 		std::string str_;
 };
 
-}
+} // namespace
 
 #endif

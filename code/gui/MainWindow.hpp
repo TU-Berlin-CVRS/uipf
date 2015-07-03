@@ -26,6 +26,8 @@
 #include "../framework/Logger.hpp"
 #include "../framework/ProcessingStep.hpp"
 #include "../framework/ModuleManager.hpp"
+#include "../framework/GUIEventDispatcher.hpp"
+
 #include "graph/graphwidget.h"
 
 #include <QStandardItemModel>

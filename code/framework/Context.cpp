@@ -2,10 +2,6 @@
 
 using namespace uipf;
 
-// TODO implement logger
-// TODO implement window opener
-// ...
-
 void Context::displayImage(const std::string strTitle, const Matrix& oMat, bool bBlocking) const
 {
 	//2DO:Use QT
@@ -17,3 +13,5 @@ void Context::displayImage(const std::string strTitle, const Matrix& oMat, bool 
 	if (bBlocking)
 		waitKey(-1);
 }
+
+// TODO maybe implement logger here?

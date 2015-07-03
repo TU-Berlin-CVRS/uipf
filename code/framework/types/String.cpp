@@ -12,7 +12,7 @@ string String::getContent(){
 /*
 str		new string value
 */
-void String::setContent(std::string str){
+void String::setContent(string str){
 	str_ = str;
 }
 

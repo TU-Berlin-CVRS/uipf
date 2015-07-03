@@ -3,8 +3,6 @@
 
 #include <QObject>
 #include <QtPlugin>
-#include <string>
-#include <map>
 #include "types/Data.hpp"
 #include "Context.hpp"
 #include "MetaData.hpp"
@@ -31,7 +29,7 @@ class ModuleInterface {
 		virtual std::string name() const = 0;
 
 		// meta data that contains description of modules inputs, outputs and parameters
-		virtual uipf::MetaData getMetaData() const = 0;
+		virtual MetaData getMetaData() const = 0;
 
 		// context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 		virtual void setContext(Context*) = 0;
@@ -39,11 +37,11 @@ class ModuleInterface {
 
 } //namespace
 
+// this is used for dynamic loading of Qt Plugins
+// it allows modules to be loaded dynamically from shared library files
 QT_BEGIN_NAMESPACE
 #define ModuleInterface_iid "org.tu-berlin.uipf.ModuleInterface"
 Q_DECLARE_INTERFACE(uipf::ModuleInterface,ModuleInterface_iid)
 QT_END_NAMESPACE
 
-
 #endif // MODULEINTERFACE_H
-

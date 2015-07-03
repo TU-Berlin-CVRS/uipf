@@ -13,46 +13,46 @@ namespace uipf
 {
 
 //This is a very simple Logger implemented as singleton, that writes to console
-//2DO: use a loggingframework e.g. Log4QT
 class Logger
 {
-
 	public:
 		enum LogType
 		{
 			INFO,WARNING,ERROR
 		};
 	public:
-     		static Logger* instance();
+		static Logger* instance();
 
-	   private:
-	     static Logger *instance_;
-	     Logger() {}
-	     Logger( const Logger& );
+	private:
+		// holds the singleton instance of the logger
+		static Logger *instance_;
+		Logger() {}
+		Logger( const Logger& );
 
-	     ~Logger() {}
+		~Logger() {}
 
-	 	class Guard {
-			 public: ~Guard() {
-			   if( Logger::instance_ != 0 )
-			     delete Logger::instance_;
-			 }
-		     };
-     		friend class Guard;
+		// helper class to ensure logger gets deleted when the context is gone
+		class Guard {
+			public: ~Guard() {
+				if( Logger::instance_ != 0 ) {
+					delete Logger::instance_;
+				}
+			}
+		};
+		friend class Guard;
 
 	public:
-			
+
 		void Warn(const std::string& strMessage);
 		void Error(const std::string& strMessage);
 		void Info(const std::string& strMessage);
 
 	private:
-		
+
 		void print(const std::stringstream& what);
 
 };
 
-} //namespace
+} // namespace
 
 #endif // LOGGER_H
-

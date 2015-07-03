@@ -1,6 +1,5 @@
 #include "Bool.hpp"
 
-using namespace std;
 using namespace uipf;
 
 // returns the value of the boolean

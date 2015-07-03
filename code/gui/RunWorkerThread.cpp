@@ -1,12 +1,5 @@
-/*
- * RunWorkerThread.cpp
- *
- *  Created on: 30 Jun 2015
- *      Author: uipf
- */
-
 #include "RunWorkerThread.h"
-#include "../framework/GUIEventDispatcher.h"
+#include "../framework/GUIEventDispatcher.hpp"
 #include "../framework/Logger.hpp"
 
 using namespace uipf;

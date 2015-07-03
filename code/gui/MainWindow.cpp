@@ -5,11 +5,9 @@
 #include <QThread>
 #include <iostream>
 
-#include "../framework/ModuleManager.hpp"
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-#include "../framework/GUIEventDispatcher.h"
-#include "RunWorkerThread.h"
+
 using namespace std;
 using namespace uipf;
 

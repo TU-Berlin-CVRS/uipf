@@ -14,7 +14,7 @@
 #include "ErrorException.hpp"
 #include "InvalidConfigException.hpp"
 #include "DataManager.hpp"
-#include "GUIEventDispatcher.h"
+#include "GUIEventDispatcher.hpp"
 
 using namespace uipf;
 using namespace std;
@@ -52,7 +52,6 @@ void ModuleManager::run(Configuration config){
 
 	// contains the names of the processing steps in the correct order
 	vector<string> sortedChain;
-
 
 	// iterate over all processing steps and order them
 	while(!chainTmp.empty()){
@@ -95,7 +94,7 @@ void ModuleManager::run(Configuration config){
 
 	LOG_I( "Starting processing chain." );
 
-	// run over the sortedChain and run the modules in the order given by the chain
+	// iterate over the sortedChain and run the modules in the order given by the chain
 	for (unsigned int i=0; i<sortedChain.size(); i++){
 
 		ProcessingStep proSt = chain[sortedChain[i]];
@@ -128,6 +127,7 @@ void ModuleManager::run(Configuration config){
 		LOG_I( "Running step '" + proSt.name + "'..." );
 
 		try {
+
 			DataManager dataMnrg(inputs, proSt.params, *outputs);
 			module->run(dataMnrg);
 
@@ -142,10 +142,12 @@ void ModuleManager::run(Configuration config){
 			break;
 		}
 
+		// update the progress bar in the GUI
 		GUIEventDispatcher::instance()->triggerReportProgress(static_cast<float>(i+1)/static_cast<float>(sortedChain.size())*100.0f);
 
 		LOG_I( "Done with step '" + proSt.name + "'." );
 
+		// check if stop button was pressed
 		if (context_.bStopRequested_ )
 		{
 			LOG_I("processing stopped");
@@ -185,7 +187,6 @@ void ModuleManager::initModules()
 		}
 
 	}
-
 }
 
 // check whether a module exists

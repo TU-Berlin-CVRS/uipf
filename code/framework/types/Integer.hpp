@@ -1,7 +1,6 @@
 #ifndef INTEGER_H
 #define INTEGER_H
 
-#include "../StdIncl.hpp"
 #include "Data.hpp"
 
 namespace uipf{
@@ -33,6 +32,6 @@ class Integer : public Data {
 		int i_;
 };
 
-}
+} // namespace
 
 #endif

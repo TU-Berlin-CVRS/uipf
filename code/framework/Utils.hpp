@@ -1,12 +1,12 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "StdIncl.hpp" 
-
+#include <string>
+#include <sstream>
 
 // This is a collection of help-methods
 
-namespace uipf{ 
+namespace uipf{
 namespace utils{
 
 
@@ -35,7 +35,7 @@ std::string rename(std::string s);
 
 
 
-} //utils
-} //uipf
-#endif //STDINCL
+} // namespace utils
+} // namespace uipf
 
+#endif

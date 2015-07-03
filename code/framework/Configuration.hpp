@@ -68,7 +68,6 @@ class Configuration{
 
 };
 
-}
+} // namespace
 
 #endif
-

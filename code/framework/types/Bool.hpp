@@ -1,7 +1,6 @@
 #ifndef BOOL_H
 #define BOOL_H
 
-#include "../StdIncl.hpp"
 #include "Data.hpp"
 
 namespace uipf{
@@ -33,6 +32,6 @@ class Bool : public Data {
 		bool b_;
 };
 
-}
+} // namespace
 
 #endif
