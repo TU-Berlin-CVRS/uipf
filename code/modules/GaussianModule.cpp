@@ -18,8 +18,9 @@ void GaussianModule::run( DataManager& data) const
 	data.listParams();
 
 	// read the params (window size and sigma) given for this step
-	int nWindowSize = data.getParam<int>("windowSize",-1);
-	double dSigma = data.getParam<double>("sigma",0.0);
+	int nWindowSize = data.getParam<int>("windowSize", 0);
+	double sigmaX = data.getParam<double>("sigmaX", 0.0);
+	double sigmaY = data.getParam<double>("sigmaY", 0.0);
 
 	// get a pointer to the "image" input data
 	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
@@ -27,7 +28,7 @@ void GaussianModule::run( DataManager& data) const
 	Mat m = oMatrix->getContent();
 
 	// do gaussian blur using opencv
-	GaussianBlur(m,m,Size( nWindowSize, nWindowSize ), dSigma, dSigma );
+	GaussianBlur(m,m,Size( nWindowSize, nWindowSize ), sigmaX, sigmaY );
 
 	// set the result (output) on the datamanager
 	data.setOutputData("image",new Matrix(m));
@@ -44,12 +45,13 @@ MetaData GaussianModule::getMetaData() const
 		{"image", DataDescription(MATRIX, "the result image.") }
 	};
 	map<string, ParamDescription> params = {
-		{"windowSize", ParamDescription("window size of the kernel.") },
-		{"sigma", ParamDescription("variance of the gaussian kernel.") }
+		{"windowSize", ParamDescription("window size of the kernel. Must be an odd number. Optional, defaults to 0 which means that it is calculated based on sigma.", true) },
+		{"sigmaX", ParamDescription("variance of the gaussian kernel in X direction.") },
+		{"sigmaY", ParamDescription("variance of the gaussian kernel in Y direction. Optional, defaults to sigmaX.", true) }
 	};
 
 	return MetaData(
-		"Applies Gaussian blurring to an image.",
+		"Applies Gaussian blurring to an image using openCV.",
 		"Image Processing",
 		input,
 		output,

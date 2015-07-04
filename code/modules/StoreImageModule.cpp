@@ -33,7 +33,6 @@ void StoreImageModule::run( DataManager& data) const
 
 			compression_params.push_back(nQuality);
 
-
 			try {
 				imwrite(strFilename.c_str(), oMatrix->getContent(), compression_params);
 			}
