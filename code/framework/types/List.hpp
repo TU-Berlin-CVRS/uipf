@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include <list>
+#include "Data.hpp"
 
 namespace uipf{
 
@@ -59,6 +60,6 @@ Type List<T>::getType(){
 	return LIST;
 }
 
-}
+} // namespace
 
 #endif

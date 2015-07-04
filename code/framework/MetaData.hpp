@@ -8,24 +8,23 @@
 namespace uipf {
 
 //Base class for all Descriptions
-class Description
-{
-public:
+class Description {
+	public:
 
-	// constructor
-	Description(std::string d, bool bOptional=false) : description_(d),bIsOptional_(bOptional) {};
-	// constuctor to allow copying
-	Description() {};
-	// destructor
-	virtual ~Description(void){};
+		// constructor
+		Description(std::string d, bool bOptional=false) : description_(d),bIsOptional_(bOptional) {};
+		// constuctor to allow copying
+		Description() {};
+		// destructor
+		virtual ~Description(void){};
 
-	std::string getDescription() const { return description_; };
-	bool getIsOptional() const { return bIsOptional_; };
+		std::string getDescription() const { return description_; };
+		bool getIsOptional() const { return bIsOptional_; };
 
-protected:
-	// a textual description
-	std::string description_;
-	bool bIsOptional_;
+	protected:
+		// a textual description
+		std::string description_;
+		bool bIsOptional_;
 };
 
 // holds meta data for input and output
@@ -61,11 +60,12 @@ class ParamDescription : public Description {
 };
 
 // describes the module meta data
-class MetaData : public Description {
+class MetaData {
 	public:
 		// constructor
 		MetaData(
-			std::string, // description
+			std::string, // general verbal description of the module
+			std::string, // category
 			std::map<std::string, DataDescription>, // input
 			std::map<std::string, DataDescription>, // output
 			std::map<std::string, ParamDescription> // params
@@ -75,14 +75,20 @@ class MetaData : public Description {
 		// destructor
 		virtual ~MetaData(void){};
 
+		// general verbal description of the module
+		std::string getDescription() const;
+
+		// category the module belongs to
+		std::string getCategory() const;
+
 		// list of inputs  name => description details
-		std::map<std::string, DataDescription> getInputs();
+		std::map<std::string, DataDescription> getInputs() const;
 
 		// list of outputs  name => description details
-		std::map<std::string, DataDescription> getOutputs();
+		std::map<std::string, DataDescription> getOutputs() const;
 
 		// list of parameters  name => description details
-		std::map<std::string, ParamDescription> getParams();
+		std::map<std::string, ParamDescription> getParams() const;
 
 		// get input by name
 		DataDescription getInput(const std::string& ) const;
@@ -94,14 +100,14 @@ class MetaData : public Description {
 
 	private:
 
-
+		std::string description_;
+		std::string category_;
 		std::map<std::string, DataDescription> inputs_;
 		std::map<std::string, DataDescription> outputs_;
 		std::map<std::string, ParamDescription> params_;
 
 };
 
-}
+} // namespace
 
 #endif
-

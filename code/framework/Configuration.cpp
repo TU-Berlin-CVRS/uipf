@@ -25,7 +25,6 @@ void Configuration::load(string filename){
 		YAML::Node config = YAML::LoadFile(filename);
 
 		// yaml file must be a map of step-name => configuration
-
 		if (!config.IsMap())
 			throw InvalidConfigException("check if you provided at least one step.");
 
@@ -276,6 +275,7 @@ void Configuration::print() {
 
 	LOG_I(out);
 }
+
 // stores the current module configuration in a yaml file
 /*
 filename	the path to the .yaml file
@@ -334,7 +334,7 @@ string Configuration::getYAML(){
 }
 
 // return processing chain  name => step
-map<string, ProcessingStep> Configuration::getProcessingChain(){
+map<string, ProcessingStep> Configuration::getProcessingChain() const {
 	return chain_;
 }
 
@@ -454,4 +454,3 @@ void Configuration::setProcessingStepParams(string name, map<string, string> par
 void Configuration::setProcessingStepInputs(string name, map<string, pair<string, string> > inputs){
 	chain_[name].inputs = inputs;
 }
-

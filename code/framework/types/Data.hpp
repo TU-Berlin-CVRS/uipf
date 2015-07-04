@@ -42,9 +42,6 @@ class Data {
 
 };
 
-}
+} // namespace
+
 #endif
-
-
-
-

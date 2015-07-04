@@ -18,6 +18,7 @@ MetaData DummyModule::getMetaData() const
 {
 	return MetaData(
 		"A dummy module for testing purposes. It does nothing but printing the parameters.",
+		"Dummy",
 		map<string, DataDescription>(),
 		map<string, DataDescription>(),
 		map<string, ParamDescription>()

@@ -1,9 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "../StdIncl.hpp"
 #include "Data.hpp"
-#include <opencv2/opencv.hpp>
 
 namespace uipf{
 
@@ -35,6 +33,6 @@ class Matrix : public Data {
 		cv::Mat matrix_;
 };
 
-}
+} // namespace
 
 #endif

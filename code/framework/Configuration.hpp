@@ -30,7 +30,7 @@ class Configuration{
 		std::vector<std::string> validate(std::map<std::string, MetaData>);
 
 		// return processing chain  name => step
-		std::map<std::string, ProcessingStep> getProcessingChain();
+		std::map<std::string, ProcessingStep> getProcessingChain() const;
 
 		// returns the named processing step
 		ProcessingStep getProcessingStep(std::string) const;
@@ -68,7 +68,6 @@ class Configuration{
 
 };
 
-}
+} // namespace
 
 #endif
-

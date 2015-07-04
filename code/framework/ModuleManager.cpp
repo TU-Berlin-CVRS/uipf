@@ -14,7 +14,7 @@
 #include "ErrorException.hpp"
 #include "InvalidConfigException.hpp"
 #include "DataManager.hpp"
-#include "GUIEventDispatcher.h"
+#include "GUIEventDispatcher.hpp"
 
 using namespace uipf;
 using namespace std;
@@ -52,7 +52,6 @@ void ModuleManager::run(Configuration config){
 
 	// contains the names of the processing steps in the correct order
 	vector<string> sortedChain;
-
 
 	// iterate over all processing steps and order them
 	while(!chainTmp.empty()){
@@ -95,7 +94,7 @@ void ModuleManager::run(Configuration config){
 
 	LOG_I( "Starting processing chain." );
 
-	// run over the sortedChain and run the modules in the order given by the chain
+	// iterate over the sortedChain and run the modules in the order given by the chain
 	for (unsigned int i=0; i<sortedChain.size(); i++){
 
 		ProcessingStep proSt = chain[sortedChain[i]];
@@ -105,6 +104,7 @@ void ModuleManager::run(Configuration config){
 		string moduleName = proSt.module;
 		if (hasModule(moduleName)) {
 			module = loadModule(moduleName);
+			context_.processingStepName_ = proSt.name;
 			module->setContext(&context_);
 
 		} else {
@@ -128,6 +128,7 @@ void ModuleManager::run(Configuration config){
 		LOG_I( "Running step '" + proSt.name + "'..." );
 
 		try {
+
 			DataManager dataMnrg(inputs, proSt.params, *outputs);
 			module->run(dataMnrg);
 
@@ -142,10 +143,12 @@ void ModuleManager::run(Configuration config){
 			break;
 		}
 
+		// update the progress bar in the GUI
 		GUIEventDispatcher::instance()->triggerReportProgress(static_cast<float>(i+1)/static_cast<float>(sortedChain.size())*100.0f);
 
 		LOG_I( "Done with step '" + proSt.name + "'." );
 
+		// check if stop button was pressed
 		if (context_.bStopRequested_ )
 		{
 			LOG_I("processing stopped");
@@ -155,6 +158,36 @@ void ModuleManager::run(Configuration config){
 		stepsOutputs.insert(pair<string, map<string, Data::ptr>* > (proSt.name, outputs));
 
 		// TODO delete module, check for side effects with the data pointers first
+
+		// free some outputs that are not needed anymore
+		map<string, map<string, Data::ptr>* >::iterator osit = stepsOutputs.begin();
+		for (; osit!=stepsOutputs.end(); ++osit) {
+
+			string outputStep = osit->first;
+
+			for (auto oit = osit->second->begin(); oit!=osit->second->end(); ++oit) {
+
+				string outputName = oit->first;
+
+				// iterate over the future steps to see if this output is requested
+				bool requested = false;
+				for (unsigned int s = i + 1; s<sortedChain.size() && !requested; s++){
+
+					ProcessingStep fstep = chain[sortedChain[s]];
+					for (auto iit=fstep.inputs.cbegin(); iit != fstep.inputs.end(); ++iit) {
+						if (outputStep.compare(iit->second.first) == 0 && outputName.compare(iit->second.second) == 0) {
+							requested = true;
+							break;
+						}
+					}
+				}
+				if (!requested) {
+					// output is not requested in any further step, delete it
+					LOG_I(string("deleted ") + outputStep + string(".") + outputName);
+					oit = osit->second->erase(oit);
+				}
+			}
+		}
 	}
 
 	// delete the ouput map
@@ -185,7 +218,6 @@ void ModuleManager::initModules()
 		}
 
 	}
-
 }
 
 // check whether a module exists
@@ -201,7 +233,7 @@ ModuleInterface* ModuleManager::loadModule(const std::string& name)
 		QPluginLoader* loader = plugins_[name];
 		QObject *plugin = loader->instance();
 		if (plugin) {
-			Logger::instance()->Info("load module: " + name);
+			// Logger::instance()->Info("load module: " + name);
 			return qobject_cast<ModuleInterface* >(plugin);
 		}
 	}

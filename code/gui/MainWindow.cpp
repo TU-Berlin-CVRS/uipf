@@ -8,7 +8,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "../framework/ModuleManager.hpp"
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
 #include "../framework/GUIEventDispatcher.h"
@@ -25,16 +24,32 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mm_.setHaveGUI();
 
     // Create models
+
+    // create model for step list
     modelStep = new QStringListModel(this);
-    modelTableParams = new ProcessingStepParams(this);
+    // create model for params list
+    modelTableParams = new ParamsModel(this);
+
+    // create model for inputs list
     modelTableInputs = new QStandardItemModel(this);
-	modelSourceOutput = new ComboBoxSourceOutput(mm_, this);
-	modelSourceStep = new ComboBoxSourceStep(this);
+	modelTableInputs->setColumnCount(2);
+	QStandardItem* item0 = new QStandardItem("From Step:");
+	QStandardItem* item1 = new QStandardItem("Output Name:");
+	modelTableInputs->setHorizontalHeaderItem(0, item0);
+	modelTableInputs->setHorizontalHeaderItem(1, item1);
+	delegateTableInputs = new InputsDelegate(mm_, this);
 
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);
     ui->tableParams->setModel(modelTableParams);
     ui->tableInputs->setModel(modelTableInputs);
+	ui->tableInputs->setItemDelegateForColumn(0, delegateTableInputs);
+	ui->tableInputs->setItemDelegateForColumn(1, delegateTableInputs);
+	// ensure size of the columns match the widget
+	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
+		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+	ui->tableInputs->setEditTriggers(QAbstractItemView::AllEditTriggers); // http://doc.qt.io/qt-5/qabstractitemview.html#EditTrigger-enum
 
 	//create and add the graphwidget to the gui
 	graphView_ = new gui::GraphWidget();
@@ -55,13 +70,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(on_stepNameChanged()));
+    // react to changes in the module category
+    connect(ui->comboCategory, SIGNAL(currentIndexChanged(int)),
+			this, SLOT(on_comboCategory_currentIndexChanged(int)));
     // react to changes in the module
     connect(ui->comboModule, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(on_comboModule_currentIndexChanged(int)));
 	// react to changes in the params
     connect(modelTableParams, SIGNAL(paramChanged(std::string, std::string)),
 			this, SLOT(on_paramChanged(std::string, std::string)));
-
+	// react to changes in the inputs
+    connect(delegateTableInputs, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
+			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
     // logger
     connect(GUIEventDispatcher::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
 			this, SLOT (on_appendToLog(const Logger::LogType&,const std::string&)));
@@ -74,13 +94,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& )),
       			this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
 
-	// fill module dropdown
+	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
-	int mi = 0;
 	for (auto it = modules.begin(); it!=modules.end(); ++it) {
-		ui->comboModule->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
+		if(categories_.count(it->second.getCategory()) == 0){
+			vector<string> temp;
+			temp.push_back(it->first);
+			categories_.insert( pair<string, vector<string> > (it->second.getCategory(), temp));
+		} else {
+			categories_[it->second.getCategory()].push_back(it->first);
+		}
 	}
-	ui->comboModule->setCurrentIndex(-1);
+	int mi = 0;
+	for (auto it = categories_.begin(); it!=categories_.end(); ++it) {
+		ui->comboCategory->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
+	}
+	ui->comboCategory->setCurrentIndex(-1);
 
     // commands for menu bar
     createActions();
@@ -94,9 +123,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // set initial state
 	currentFileName = "newFile";
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
+    ui->comboCategory->setEnabled(false);
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
+	ui->deleteButton->setEnabled(false);
+
+	resetParams();
 
 }
 
@@ -114,18 +147,32 @@ MainWindow::~MainWindow() {
 // loads a new configuration from file
 void MainWindow::loadDataFlow(string filename)
 {
+
+	ui->deleteButton->setEnabled(false);
+	unknownFile = false;
+	savedVersion = 0;
+	currentFileHasChanged = false;
+
+	// when new dataflow, both stacks become empty and the buttons will be deactivated
+	while(! redoStack.empty()){
+		redoStack.pop();
+	}
+	while(! undoStack.empty()){
+		undoStack.pop();
+	}
+	redoAct->setEnabled(false);
+	undoAct->setEnabled(false);
+
 	currentFileName = filename;
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
 
-    // configuration changed
-	beforeConfigChange(); // TODO maybe better reset undo stack for new files
 	conf_.load(currentFileName);
 
     // only for debug, print the loaded config
 	conf_.print();
 
 	// save is now activated
-	saveAct->setEnabled(true);
+	saveAct->setEnabled(false);
 
 	// set the names of the processing steps:
 	QStringList list;
@@ -136,28 +183,51 @@ void MainWindow::loadDataFlow(string filename)
 	modelStep->setStringList(list);
 
 	// reset other models
-	resetModule();
+	resetCategoryAndModule();
 	resetParams();
 	resetInputs();
 	//update the graphview
 	refreshGraph();
 }
 
-// refresh module dropdown
-void MainWindow::refreshModule()
+// refresh module category dropdown and module dropdown
+void MainWindow::refreshCategoryAndModule()
 {
+    if (currentStepName.empty()){
+		resetCategoryAndModule();
+		return;
+	}
+
+    ui->comboCategory->setEnabled(true);
     ui->comboModule->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
+	if (step.module.empty()){
+		resetCategoryAndModule();
+		ui->comboCategory->setEnabled(true);
+		return;
+	}
+	int modIndex = ui->comboModule->findData(QString(step.module.c_str()));
+
+	// set the selection of the module category dropdown
+	int catIndex = ui->comboCategory->findData(QString(mm_.getModuleMetaData(step.module).getCategory().c_str()));
+	ui->comboCategory->setCurrentIndex(catIndex);
+	on_comboCategory_currentIndexChanged(catIndex);
 
 	// set the selection of the module dropdown
-	int modIndex = ui->comboModule->findData(QString(step.module.c_str()));
+	modIndex = ui->comboModule->findData(QString(step.module.c_str()));
 	ui->comboModule->setCurrentIndex(modIndex);
+
 }
 
 // refresh params table
 void MainWindow::refreshParams()
 {
+	if (currentStepName.empty()){
+		resetParams();
+		return;
+	}
+
 	ui->tableParams->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
@@ -173,53 +243,30 @@ void MainWindow::refreshParams()
 // refresh inputs table
 void MainWindow::refreshInputs()
 {
+	if (currentStepName.empty()){
+		resetInputs();
+		return;
+	}
+
 	ui->tableInputs->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
 
-	modelTableInputs->clear();
+	// clear all data rows
+	modelTableInputs->setRowCount(0);
 
-	map<string, pair<string, string> > inp = step.inputs;
-	int rowCount = 0;
-	vector<QStandardItem*> items;
-	for (auto it = inp.begin(); it!=inp.end(); ++it) {
-		items.push_back(new QStandardItem((it->first).c_str()));
-		rowCount++;
+	map<string, pair<string, string> > inputs = step.inputs;
+	vector<string> inputNames(inputs.size());
+	int row = 0;
+	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
+		modelTableInputs->setVerticalHeaderItem(row, new QStandardItem((it->first).c_str()));
+		inputNames[row] = it->first;
+		modelTableInputs->setItem(row, 0, new QStandardItem((it->second.first).c_str()));
+		modelTableInputs->setItem(row, 1, new QStandardItem((it->second.second).c_str()));
+		row++;
 	}
 
-	modelTableInputs->setRowCount(rowCount);
-
-	// TODO this could be constant somewhere
-	modelTableInputs->setColumnCount(2);
-	QStandardItem* item0 = new QStandardItem("From Step:");
-	QStandardItem* item1 = new QStandardItem("Output Name:");
-	modelTableInputs->setHorizontalHeaderItem(0, item0);
-	modelTableInputs->setHorizontalHeaderItem(1, item1);
-	// TODO until here
-
-	for (unsigned int i = 0; i<items.size(); i++){
-		modelTableInputs->setVerticalHeaderItem(i, items[i]);
-	}
-
-	//~ ui->tableInputs->repaint();
-
-	modelSourceStep->setConfiguration(conf_, currentStepName);
-	modelSourceOutput->setConfiguration(conf_, currentStepName);
-
-
-	ui->tableInputs->setItemDelegateForColumn(0, modelSourceStep);
-	ui->tableInputs->setItemDelegateForColumn(1, modelSourceOutput);
-
-	// Make the combo boxes always displayed.
-	for ( int i = 0; i < modelTableInputs->rowCount(); ++i ) {
-		ui->tableInputs->openPersistentEditor( modelTableInputs->index(i, 1) );
-		ui->tableInputs->openPersistentEditor( modelTableInputs->index(i, 0) );
-	}
-
-	// ensure size of the columns match the widget
-	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
-		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
+	delegateTableInputs->setConfiguration(conf_, currentStepName, inputNames);
 }
 
 // refresh the graph view
@@ -228,9 +275,12 @@ void MainWindow::refreshGraph()
     graphView_->renderConfig(conf_);
 }
 
-// resets the module dropdown to empty
-void MainWindow::resetModule()
+// resets the category dropdown and the module dropdown to empty
+void MainWindow::resetCategoryAndModule()
 {
+	ui->comboCategory->setCurrentIndex(-1);
+    ui->comboCategory->setEnabled(false);
+
 	ui->comboModule->setCurrentIndex(-1);
     ui->comboModule->setEnabled(false);
 }
@@ -253,7 +303,8 @@ void MainWindow::resetParams()
 void MainWindow::resetInputs()
 {
 	ProcessingStep step;
-	modelTableInputs->clear();
+	// clear all data rows
+	modelTableInputs->setRowCount(0);
 	ui->tableInputs->setEnabled(false);
 }
 
@@ -318,6 +369,7 @@ void MainWindow::on_addButton_clicked() {
 	}
 
 	currentStepName = name;
+	ui->deleteButton->setEnabled(true);
 
     QString newName = QString::fromStdString(name);
     modelStep->setData(index, newName, Qt::EditRole);
@@ -331,7 +383,7 @@ void MainWindow::on_addButton_clicked() {
     ui->listProcessingSteps->edit(index);
 
 	// refresh configuration widgets
-	refreshModule();
+	refreshCategoryAndModule();
 	refreshInputs();
 	refreshParams();
     // update the graphview
@@ -376,35 +428,65 @@ void MainWindow::on_deleteButton_clicked() {
     // Get the position and remove the row
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
     // remove from the chain
+	beforeConfigChange();
 	conf_.removeProcessingStep(currentStepName);
 
-	//update the graphview
-	refreshGraph();
+	if (ui->listProcessingSteps->currentIndex().row() == -1){
+		currentStepName = string("");
+		ui->deleteButton->setEnabled(false);
+	} else {
+		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+	}
 
-	// ensure configuration widgets are empty
-	resetModule();
-	resetParams();
-	resetInputs();
+	// refresh configuration widgets
+	refreshCategoryAndModule();
+	refreshInputs();
+	refreshParams();
+    // update the graphview
+    refreshGraph();
 }
 
 
 // gets called when a processing step is selected
 void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
 {
+	ui->deleteButton->setEnabled(true);
 	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 
 	// refresh configuration widgets
-	refreshModule();
+	refreshCategoryAndModule();
 	refreshParams();
 	refreshInputs();
+}
+
+void MainWindow::on_comboCategory_currentIndexChanged(int index)
+{
+	// only update if a step is selected
+	if (!currentStepName.empty()) {
+
+		string category = ui->comboCategory->itemData(index).toString().toStdString();
+
+		map<string, MetaData> modules = mm_.getAllModuleMetaData();
+
+		// fill module dropdown
+		ui->comboModule->setEnabled(false);
+		ui->comboModule->clear();
+		vector<string> modulesOfSameCategory = categories_[category];
+		for (unsigned int i = 0; i < modulesOfSameCategory.size() ; i++) {
+			ui->comboModule->insertItem(i, QString(modulesOfSameCategory[i].c_str()), QString(modulesOfSameCategory[i].c_str()));
+		}
+		ui->comboModule->setCurrentIndex(-1);
+		ui->comboModule->setEnabled(true);
+	}
+
 }
 
 void MainWindow::on_comboModule_currentIndexChanged(int index)
 {
 	string module = ui->comboModule->itemData(index).toString().toStdString();
 
-	// only update if module exists, a step is selected and the module has actually changed
-	if (mm_.hasModule(module) && !currentStepName.empty() && conf_.getProcessingStep(currentStepName).module.compare(module) != 0) {
+	// only update if module exists, a step is selected and the module has actually changed and combo was enabled (ensure it was changed by user and not when filling the box)
+	if (mm_.hasModule(module) && !currentStepName.empty() && conf_.getProcessingStep(currentStepName).module.compare(module) != 0 && ui->comboModule->isEnabled()) {
 		beforeConfigChange();
 		conf_.setProcessingStepModule(currentStepName, module, mm_.getModuleMetaData(module));
 		refreshParams();
@@ -423,32 +505,55 @@ void MainWindow::on_paramChanged(std::string paramName, std::string value)
 	}
 }
 
+// react to input changes and store them in the config
+void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, std::string> value)
+{
+	if (!currentStepName.empty()) {
+		beforeConfigChange();
+		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
+		inputs[inputName] = value;
+		//cout << "input " << inputName << " changed: " << value.first << "." << value.second << endl;
+		conf_.setProcessingStepInputs(currentStepName, inputs);
+
+		refreshInputs();
+		refreshGraph();
+	}
+}
 
 
 // menu click File -> New
-void MainWindow::new_Data_Flow()
-{
-	if (currentFileHasChanged) {
-		// TODO confirm if the current data should really be dropped
+void MainWindow::new_Data_Flow() {
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
+
+	ui->deleteButton->setEnabled(false);
+	currentFileHasChanged = false;
+	unknownFile = true;
+
+	// when new dataflow, both stacks become empty and the buttons will be deactivated
+	while(! redoStack.empty()){
+		redoStack.pop();
 	}
+	while(! undoStack.empty()){
+		undoStack.pop();
+	}
+	redoAct->setEnabled(false);
+	undoAct->setEnabled(false);
 
 	// save is not activated
 	saveAct->setEnabled(false);
 
 	currentFileName = "newFile";
-    setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
+	setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
 
-    // configuration changed
-	beforeConfigChange();
+	Configuration conf;
+	conf_ = conf;
 
-    Configuration conf;
-    conf_ = conf;
-
-    QStringList list;
+	QStringList list;
 	modelStep->setStringList(list);
 
 	// reset other models
-	resetModule();
+	resetCategoryAndModule();
 	resetParams();
 	resetInputs();
 	// update the graphview
@@ -458,12 +563,12 @@ void MainWindow::new_Data_Flow()
 
 void MainWindow::load_Data_Flow()
 {
-	if (currentFileHasChanged) {
-		// TODO confirm if the current data should really be dropped
-	}
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
 
 	QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."), QString(), tr("YAML-Files (*.yaml);;All Files (*)"));
-	// abort button has been pressed
+
+	// if abort button has been pressed
 	if (fn.isEmpty()) {
 		return;
 	}
@@ -471,10 +576,35 @@ void MainWindow::load_Data_Flow()
 	loadDataFlow(fn.toStdString());
 }
 
+// when unsaved changes occure, give the user the possibility to save them
+bool MainWindow::okToContinue() {
+
+    if (currentFileHasChanged) {
+        int r = QMessageBox::warning(this, tr("Spreadsheet"),
+                        tr("The document has been modified.\n"
+                           "Do you want to save your changes?"),
+                        QMessageBox::Yes | QMessageBox::No
+                        | QMessageBox::Cancel);
+        if (r == QMessageBox::Yes) {
+			if (saveAct->isEnabled() ) save_Data_Flow();
+            else save_Data_Flow_as();
+            return true;
+        } else if (r == QMessageBox::Cancel) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 // only possible, if the configuration has already been stored in some file
 void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
+	unknownFile = false;
+	savedVersion = 0;
 	currentFileHasChanged = false;
+	saveAct->setEnabled(false);
+
 }
 
 // by default the name is the current name of the configuration file
@@ -490,14 +620,18 @@ void MainWindow::save_Data_Flow_as() {
 		return;
 	}
 
+
     if (! (fn.endsWith(".yaml", Qt::CaseInsensitive)) )
         fn += ".yaml"; // default
   	currentFileName = fn.toStdString();
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
-  	saveAct->setEnabled(true);
-	currentFileHasChanged = false;
 
-	conf_.store(fn.toStdString());
+	conf_.store(currentFileName);
+
+	saveAct->setEnabled(false);
+	currentFileHasChanged = false;
+	unknownFile = false;
+	savedVersion = 0;
 }
 
 void MainWindow::about() {
@@ -508,12 +642,23 @@ void MainWindow::about() {
 // sets the current configuration to the previous one
 void MainWindow::undo() {
 	if(!undoStack.empty()){
+
+		if (!unknownFile) saveAct->setEnabled(true);
+
+		savedVersion--;
+		if (!unknownFile && savedVersion == 0){
+			currentFileHasChanged = false;
+			saveAct->setEnabled(false);
+		}
+
+
 		// move the current config to the redo stack
 		redoStack.push(conf_);
 		// get the last config stored in undo stack
 		conf_ = undoStack.top();
 		// delete the last config from the undo stack
 		undoStack.pop();
+
 
 		// set the names of the processing steps:
 		QStringList list;
@@ -522,6 +667,12 @@ void MainWindow::undo() {
 			list << it->first.c_str();
 		}
 		modelStep->setStringList(list);
+
+		// reset current step if necessary
+		if (!conf_.hasProcessingStep(currentStepName)) {
+			currentStepName = string("");
+			ui->deleteButton->setEnabled(false);
+		}
 
 		// set the undo/redo in the menu bar gray if inactive or black, if active
 		redoAct->setEnabled(true);
@@ -532,7 +683,7 @@ void MainWindow::undo() {
 		}
 
 		// refresh configuration widgets
-		refreshModule();
+		refreshCategoryAndModule();
 		refreshInputs();
 		refreshParams();
 		// update the graphview
@@ -542,7 +693,17 @@ void MainWindow::undo() {
 
 // sets the current configuration back to the next one
 void MainWindow::redo() {
+
 	if(!redoStack.empty()){
+
+		if (!unknownFile) saveAct->setEnabled(true);
+
+		savedVersion++;
+		if (!unknownFile && savedVersion == 0){
+			currentFileHasChanged = false;
+			saveAct->setEnabled(false);
+		}
+
 		// move the current config to the undo stack
 		undoStack.push(conf_);
 		// get the last config stored in redo stack
@@ -558,6 +719,12 @@ void MainWindow::redo() {
 		}
 		modelStep->setStringList(list);
 
+		// reset current step if necessary
+		if (!conf_.hasProcessingStep(currentStepName)) {
+			currentStepName = string("");
+			ui->deleteButton->setEnabled(false);
+		}
+
 		// set the undo/redo in the menu bar gray if inactive or black, if active
 		undoAct->setEnabled(true);
 		if(!redoStack.empty()){
@@ -567,7 +734,7 @@ void MainWindow::redo() {
 		}
 
 		// refresh configuration widgets
-		refreshModule();
+		refreshCategoryAndModule();
 		refreshInputs();
 		refreshParams();
 		// update the graphview
@@ -580,6 +747,8 @@ void MainWindow::redo() {
 void MainWindow::beforeConfigChange(){
 	// configuration changed
 	currentFileHasChanged = true;
+	savedVersion++;
+	if (!unknownFile) saveAct->setEnabled(true);
 
 	undoStack.push(conf_);
 	while(! redoStack.empty()){
@@ -740,3 +909,4 @@ void MainWindow::createMenus() {
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
 }
+

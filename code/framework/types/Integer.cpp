@@ -2,7 +2,6 @@
 
 using namespace uipf;
 
-
 // returns the value of the integer
 int Integer::getContent(){
 	return i_;

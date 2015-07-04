@@ -1,6 +1,5 @@
 #include "Float.hpp"
 
-using namespace std;
 using namespace uipf;
 
 // returns the value of the float

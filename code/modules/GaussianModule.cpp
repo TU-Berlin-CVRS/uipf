@@ -50,6 +50,7 @@ MetaData GaussianModule::getMetaData() const
 
 	return MetaData(
 		"Applies Gaussian blurring to an image.",
+		"Image Processing",
 		input,
 		output,
 		params

@@ -25,7 +25,5 @@ std::string ModuleBase::name() const
 }
 
 
-
-
-}
+} // namespace
 

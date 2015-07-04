@@ -7,6 +7,7 @@
 #include <QStringListModel>
 #include <QAbstractItemView>
 #include <QListWidgetItem>
+#include <QStandardItemModel>
 
 #include <QDialog>
 #include <QLabel>
@@ -14,21 +15,21 @@
 #include <QContextMenuEvent>
 #include <QFileDialog>
 #include <QMessageBox>
+
 #include <stack>
 
-#include "ProcessingStepParams.hpp"
-#include "ProcessingStepInputs.hpp"
-#include "ComboBoxSourceStep.hpp"
-#include "ComboBoxSourceOutput.hpp"
+#include "models/ParamsModel.hpp"
+#include "models/InputsDelegate.hpp"
+
 #include "RunWorkerThread.h"
 
 #include "../framework/Configuration.hpp"
 #include "../framework/Logger.hpp"
 #include "../framework/ProcessingStep.hpp"
 #include "../framework/ModuleManager.hpp"
-#include "graph/graphwidget.h"
+#include "../framework/GUIEventDispatcher.hpp"
 
-#include <QStandardItemModel>
+#include "graph/graphwidget.h"
 
 
 namespace Ui {
@@ -69,8 +70,12 @@ private slots:
 	// change of module dropdown
 	void on_comboModule_currentIndexChanged(int);
 
+	// change of module category dropdown
+	void on_comboCategory_currentIndexChanged(int);
+
 	// change in the params table
 	void on_paramChanged(std::string, std::string);
+	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
 	void on_createWindow(const std::string strTitle, const cv::Mat& oMat);
 	// menu bar
@@ -101,17 +106,27 @@ private:
 	// model for the listView of processing steps
     QStringListModel *modelStep;
 	// model for the params editor table
-    ProcessingStepParams *modelTableParams;
+    ParamsModel *modelTableParams;
 	// models for the input editor table
     QStandardItemModel *modelTableInputs;
-	ComboBoxSourceOutput* modelSourceOutput;
-	ComboBoxSourceStep* modelSourceStep;
+    // model delegate for the input editor table
+	InputsDelegate *delegateTableInputs;
 
 	// the file name of the currently loaded configuration
 	std::string currentFileName;
 	bool currentFileHasChanged = false;
+	// asks the user, whether he wants to save the file
+	bool okToContinue();
 	// the currently loaded configuration represented in the window
    	Configuration conf_;
+
+	// map of all available categories
+	std::map<std::string, std::vector<std::string> > categories_;
+
+	// counts the undo/redo, when = 0, it is the saved version
+	int savedVersion = 0;
+	// is true if file was at least one time saved
+	bool unknownFile = true;
 
 	// current name of a precessing step
 	std::string currentStepName;
@@ -123,13 +138,13 @@ private:
 	void beforeConfigChange();
 
 	// refresh UI triggers
-	void refreshModule();
+	void refreshCategoryAndModule();
 	void refreshParams();
 	void refreshInputs();
 	void refreshGraph();
 
 	// reset UI triggers
-	void resetModule();
+	void resetCategoryAndModule();
 	void resetParams();
 	void resetInputs();
 
@@ -168,6 +183,6 @@ private:
     RunWorkerThread* workerThread_;
 };
 
-}; // namespace
+} // namespace
 
 #endif // MAINWINDOW_H

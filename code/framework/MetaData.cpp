@@ -4,23 +4,32 @@
 using namespace uipf;
 using namespace std;
 
-MetaData::MetaData(string description, map<string, DataDescription> inputs, map<string, DataDescription> outputs, map<string, ParamDescription> params)
-: Description(description)
+MetaData::MetaData(string description, string category, map<string, DataDescription> inputs, map<string, DataDescription> outputs, map<string, ParamDescription> params)
 {
 	inputs_ = inputs;
 	outputs_ = outputs;
 	params_ = params;
+	description_ = description;
+	category_ = category;
 }
 
-map<string, DataDescription> MetaData::getInputs(){
+string MetaData::getCategory() const {
+	return category_;
+}
+
+string MetaData::getDescription() const {
+	return description_;
+}
+
+map<string, DataDescription> MetaData::getInputs() const {
 	return inputs_;
 }
 
-map<string, DataDescription> MetaData::getOutputs(){
+map<string, DataDescription> MetaData::getOutputs() const {
 	return outputs_;
 }
 
-map<string, ParamDescription> MetaData::getParams(){
+map<string, ParamDescription> MetaData::getParams() const {
 	return params_;
 }
 
@@ -34,6 +43,7 @@ DataDescription MetaData::getInput(const std::string& strName) const
 
 	throw InvalidConfigException(std::string("input data '") + strName + std::string("' not found in Metadata!"));
 }
+
 // get output by name
 DataDescription MetaData::getOutput(const std::string& strName) const
 {
@@ -42,8 +52,8 @@ DataDescription MetaData::getOutput(const std::string& strName) const
 		return res->second;
 
 	throw InvalidConfigException(std::string("output data '") + strName + std::string("' not found in Metadata!"));
-
 }
+
 // get param by name
 ParamDescription MetaData::getParam(const std::string& strName) const
 {

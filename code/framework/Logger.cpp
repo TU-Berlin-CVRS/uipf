@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
-#include "GUIEventDispatcher.h"
+#include "GUIEventDispatcher.hpp"
 
 namespace uipf
 {
@@ -32,7 +32,7 @@ void Logger::Error(const std::string& strMessage)
 {
 	std::stringstream output;
 
-	output << "\033[1;31m[ERROR] " << strMessage << "\033[0m" << std::endl;//output in red using ANSI codes (linux only): 
+	output << "\033[1;31m[ERROR] " << strMessage << "\033[0m" << std::endl;//output in red using ANSI codes (linux only):
 									       //http://en.wikipedia.org/wiki/ANSI_escape_code
 	print(output);
 
@@ -56,5 +56,4 @@ void Logger::print(const std::stringstream& what)
 	std::cout << what.str();
 }
 
-}
-
+} // namespace

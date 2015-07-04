@@ -1,13 +1,14 @@
-#ifndef COMBOBOXSOURCEOUTPUT_H
-#define COMBOBOXSOURCEOUTPUT_H
+#ifndef InputsDelegate_H
+#define InputsDelegate_H
 
 #include <string>
 #include <vector>
+
+#include <QItemDelegate>
+
 #include <../framework/Configuration.hpp>
 #include <../framework/ModuleManager.hpp>
 #include <../framework/MetaData.hpp>
-
-#include <QItemDelegate>
 
 class QModelIndex;
 class QWidget;
@@ -15,11 +16,11 @@ class QVariant;
 
 namespace uipf {
 
-class ComboBoxSourceOutput : public QItemDelegate
+class InputsDelegate : public QItemDelegate
 {
 Q_OBJECT
 public:
-	ComboBoxSourceOutput(ModuleManager&, QObject *parent = 0);
+	InputsDelegate(ModuleManager&, QObject *parent = 0);
 
 	// create editor widget
 	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -29,23 +30,25 @@ public:
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 
 	// updates the model by setting the current configuration
-	void setConfiguration(Configuration, std::string);
+	void setConfiguration(const Configuration&, const std::string&, std::vector<std::string>);
+
+signals:
+	void inputChanged(std::string, std::pair<std::string, std::string>) const;
 
 private:
 	ModuleManager& mm_;
 
-	// available options for the dropdown box
-	std::vector< std::vector<std::string> > items_;
+	// available options for the step dropdown box
+	std::vector<std::string> stepItems_;
 
-	// currently selected reference steps
-	std::vector<std::string> selected_;
+	// available options for the output dropdown box
+	std::vector< std::vector<std::string> > outputItems_;
 
-  	// the currently loaded configuration represented in the window
-   	Configuration conf_;
-  	// current name of a precessing step
-	std::string currentStepName;
+	// reference to input names, row index => input name
+	std::vector<std::string> inputNames_;
+
 };
 
-}
-#endif
+} // namespace
 
+#endif

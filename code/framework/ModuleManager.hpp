@@ -38,10 +38,11 @@ class ModuleManager{
 		void setHaveGUI(){context_.bHaveGUI_=true;}
 
 	private:
-		// module chain
 
+		// instantiate a named module
 		ModuleInterface* loadModule(const std::string& name);
 
+		// check which modules exist and populate  plugins_
 		void initModules();
 
 		// map: module name -> plugin loader instance which can instantiate a module
@@ -50,7 +51,6 @@ class ModuleManager{
 		Context context_;
 };
 
-}
+} // namespace
 
 #endif
-

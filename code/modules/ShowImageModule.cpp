@@ -14,7 +14,13 @@ void ShowImageModule::run( DataManager& data) const
 
 	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
 	if (oMatrix) {
-		context_->displayImage(data.getParam<std::string>("title","view image"), *oMatrix,data.getParam<bool>("blocking",true));
+		string title = data.getParam<std::string>("title", "");
+		if (title.empty()) {
+			title = context_->getProcessingStepName();
+		}
+		context_->displayImage(title, *oMatrix, data.getParam<bool>("blocking",true));
+	} else {
+		LOG_E("Failed to show image");
 	}
 }
 
@@ -25,12 +31,13 @@ MetaData ShowImageModule::getMetaData() const
 
 	};
 	map<string, ParamDescription> params = {
-		{"title", ParamDescription("the title of the window.") },
+		{"title", ParamDescription("the title of the window, defaults to the current processing step name", true) },
 		{"blocking", ParamDescription("'true' or 'false' determines if the processing chain has to wait for this window to close or not.",true) }
 	};
 
 	return MetaData(
 		"Show an image by opening a window.",
+		"I/O",
 		input,
 		map<string, DataDescription>(), // no outputs
 		params

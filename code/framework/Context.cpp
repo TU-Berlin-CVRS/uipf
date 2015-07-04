@@ -20,3 +20,5 @@ void Context::displayImage(const std::string strTitle, const Matrix& oMat, bool 
 			waitKey(-1);
 	}
 }
+
+// TODO maybe implement logger here?

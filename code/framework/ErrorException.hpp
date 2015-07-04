@@ -1,9 +1,8 @@
 #ifndef ERROREXCEPTION_H
 #define ERROREXCEPTION_H
 
+#include <exception>
 #include <string>
-#include <map>
-#include "types/Data.hpp"
 
 namespace uipf {
 
@@ -24,4 +23,3 @@ class ErrorException : public std::exception{
 }; // namespace
 
 #endif
-

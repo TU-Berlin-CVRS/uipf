@@ -22,7 +22,6 @@ struct ProcessingStep{
 
 };
 
-}
+} // namespace
 
 #endif
-

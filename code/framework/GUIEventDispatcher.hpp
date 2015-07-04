@@ -8,30 +8,33 @@
 namespace uipf
 {
 
-//A class that handles communication between QTGUI components and model-classes
+//A class that handles communication between QTGUI components and module-classes
 //by exposing signals.
-//so model classes can trigger the GUI without the need of implementing QObject
+//so module classes can trigger the GUI without the need of implementing QObject
 class GUIEventDispatcher : public QObject
 {
 Q_OBJECT
 
 public:
-      static GUIEventDispatcher* instance();
+	static GUIEventDispatcher* instance();
 
-	   private:
-	     static GUIEventDispatcher *instance_;
-	     GUIEventDispatcher();
-	     GUIEventDispatcher( const GUIEventDispatcher& );
+private:
+	// holds the singleton instance of the logger
+	static GUIEventDispatcher *instance_;
+	GUIEventDispatcher();
+	GUIEventDispatcher( const GUIEventDispatcher& );
 
-	     ~GUIEventDispatcher();
+	~GUIEventDispatcher();
 
-	 	class Guard {
-			 public: ~Guard() {
-			   if( GUIEventDispatcher::instance_ != 0 )
-			     delete GUIEventDispatcher::instance_;
-			 }
-		     };
-     		friend class Guard;
+	// helper class to ensure logger gets deleted when the context is gone
+	class Guard {
+		public: ~Guard() {
+			if( GUIEventDispatcher::instance_ != 0 ) {
+				delete GUIEventDispatcher::instance_;
+			}
+		}
+	};
+	friend class Guard;
 
 signals: //for QT to connect
 	void reportProgressEvent(const float& val);
@@ -44,7 +47,6 @@ public: //methods for model to call and trigger GUI
 	void triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat);
 };
 
-
-
 } //namespace
+
 #endif /* GUIEVENTDISPATCHER_H_ */

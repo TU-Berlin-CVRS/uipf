@@ -10,7 +10,7 @@ using namespace uipf;
 */
 void LongRunningDummyModule::run( DataManager& data) const
 {
-	unsigned int uiCounter = 100;
+	unsigned int uiCounter = 10;
 	while(uiCounter-->0)
 	{
 		LOG_I("I am soo busy!");
@@ -30,6 +30,7 @@ MetaData LongRunningDummyModule::getMetaData() const
 {
 	return MetaData(
 		"A dummy module for testing long running tasks",
+		"Dummy",
 		map<string, DataDescription>(),
 		map<string, DataDescription>(),
 		map<string, ParamDescription>()

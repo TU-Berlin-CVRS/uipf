@@ -7,7 +7,7 @@ using namespace uipf;
 /*
 oMat	the content of the matrix	(matrix_ = oMat)
 */
-Matrix::Matrix(cv::Mat& oMat) :matrix_(oMat){
+Matrix::Matrix(Mat& oMat) :matrix_(oMat){
 }
 
 

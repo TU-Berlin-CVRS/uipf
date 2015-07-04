@@ -1,7 +1,6 @@
 #ifndef FLOAT_H
 #define FLOAT_H
 
-#include "../StdIncl.hpp"
 #include "Data.hpp"
 
 namespace uipf{
@@ -32,6 +31,6 @@ class Float : public Data {
 		float f_;
 };
 
-}
+} // namespace
 
 #endif

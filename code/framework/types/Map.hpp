@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include <map>
+#include "Data.hpp"
 
 namespace uipf{
 
@@ -60,5 +61,6 @@ Type Map<K,V>::getType(){
 	return MAP;
 }
 
-}
+} // namespace
+
 #endif
