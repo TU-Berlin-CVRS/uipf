@@ -16,8 +16,11 @@ void Context::displayImage(const std::string strTitle, const Matrix& oMat, bool 
 		namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
 		imshow( strTitle.c_str(), oMat.getContent() );
 
-		if (bBlocking)
+		if (bBlocking) {
 			waitKey(-1);
+		} else {
+			waitKey(1);
+		}
 	}
 }
 

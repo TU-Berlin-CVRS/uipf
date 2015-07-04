@@ -1,0 +1,20 @@
+in:
+  module: loadImage
+  filename: input.jpg
+  mode: ""
+new step 1:
+  module: showImageList
+  input:
+    imageList: split.channels
+  title: ""
+  blocking: true
+new step 2:
+  module: showImage
+  input:
+    image: in.image
+  blocking: true
+  title: ""
+split:
+  module: splitChannel
+  input:
+    image: in.image
