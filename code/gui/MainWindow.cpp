@@ -34,7 +34,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modelTableInputs = new QStandardItemModel(this);
 	modelTableInputs->setColumnCount(2);
 	QStandardItem* item0 = new QStandardItem("From Step:");
+	item0->setToolTip(QString("Select here the processing step, which provides the needed input"));
 	QStandardItem* item1 = new QStandardItem("Output Name:");
+	item1->setToolTip(QString("Select here the output of the selected processing step, which is needed as input"));
 	modelTableInputs->setHorizontalHeaderItem(0, item0);
 	modelTableInputs->setHorizontalHeaderItem(1, item1);
 	delegateTableInputs = new InputsDelegate(mm_, this);
@@ -259,7 +261,10 @@ void MainWindow::refreshInputs()
 	vector<string> inputNames(inputs.size());
 	int row = 0;
 	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
-		modelTableInputs->setVerticalHeaderItem(row, new QStandardItem((it->first).c_str()));
+		QStandardItem* item = new QStandardItem((it->first).c_str());
+		string str = mm_.getModuleMetaData(step.module).getInput(it->first).getDescription();
+		item->setToolTip(QString(str.c_str()));
+		modelTableInputs->setVerticalHeaderItem(row, item);
 		inputNames[row] = it->first;
 		modelTableInputs->setItem(row, 0, new QStandardItem((it->second.first).c_str()));
 		modelTableInputs->setItem(row, 1, new QStandardItem((it->second.second).c_str()));
