@@ -17,7 +17,6 @@ class List : public Data {
 
 	public:
 		// constructor
-		List(void){};
 		List(std::list<typename T::ptr>& l) : list_(l) {};
 		// destructor
 		~List(void){};

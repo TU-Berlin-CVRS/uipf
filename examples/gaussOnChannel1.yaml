@@ -1,0 +1,67 @@
+gaussian:
+  module: gaussian
+  input:
+    image: select ch1.image
+  sigmaX: 10
+  sigmaY: ""
+  windowSize: ""
+load:
+  module: loadImage
+  filename: input.png
+  mode: ""
+merge ch0:
+  module: addListItem
+  input:
+    bool: .
+    float: .
+    image: select ch0.image
+    integer: .
+    list: .
+    string: .
+merge ch1:
+  module: addListItem
+  input:
+    bool: .
+    float: .
+    image: gaussian.image
+    integer: .
+    list: merge ch0.list
+    string: .
+merge ch2:
+  module: addListItem
+  input:
+    bool: .
+    float: .
+    image: select ch2.image
+    integer: .
+    list: merge ch1.list
+    string: .
+merge channels:
+  module: mergeChannels
+  input:
+    channels: merge ch2.list
+select ch0:
+  module: selectListItem
+  input:
+    list: split channels.channels
+  index: 0
+select ch1:
+  module: selectListItem
+  input:
+    list: split channels.channels
+  index: 1
+select ch2:
+  module: selectListItem
+  input:
+    list: split channels.channels
+  index: 2
+show result:
+  module: showImage
+  input:
+    image: merge channels.image
+  blocking: ""
+  title: ""
+split channels:
+  module: splitChannels
+  input:
+    image: load.image

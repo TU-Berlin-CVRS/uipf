@@ -37,10 +37,11 @@ add_library(uipf-framework SHARED
 	framework/MetaData.cpp
 
 	framework/DataManager.cpp
-	framework/types/Matrix.cpp
 	framework/types/String.cpp
 	framework/types/Float.cpp
 	framework/types/Integer.cpp
+	framework/types/Bool.cpp
+	framework/types/Matrix.cpp
 
     framework/Utils.cpp
 )
@@ -134,6 +135,15 @@ add_library(MergeChannelsModule SHARED modules/improc/MergeChannelsModule.cpp)
 qt5_use_modules(MergeChannelsModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(MergeChannelsModule opencv_core opencv_imgproc ModuleBase)
 
+
+# Data structures
+add_library(SelectListItemModule SHARED modules/data/SelectListItemModule.cpp)
+qt5_use_modules(SelectListItemModule Core ) #QtCore is needed for <QPlugin>
+target_link_libraries(SelectListItemModule opencv_core opencv_imgproc ModuleBase)
+
+add_library(AddListItemModule SHARED modules/data/AddListItemModule.cpp)
+qt5_use_modules(AddListItemModule Core ) #QtCore is needed for <QPlugin>
+target_link_libraries(AddListItemModule opencv_core opencv_imgproc ModuleBase)
 
 
 #

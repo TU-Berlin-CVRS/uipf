@@ -2,9 +2,7 @@
 #include "Logger.hpp"
 
 using namespace std;
-
-namespace uipf
-{
+using namespace uipf;
 
 void DataManager::listParams( ) const
 {
@@ -17,5 +15,8 @@ void DataManager::listParams( ) const
   }
 }
 
-
+// check whether named input data is given
+bool DataManager::hasInputData( const std::string& strName) const {
+	return input_.find(strName) != input_.end();
 }
+

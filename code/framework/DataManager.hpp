@@ -24,6 +24,9 @@ class DataManager
 		// destructor
 		~DataManager() {};
 
+		// check whether named input data is given
+		bool hasInputData( const std::string& strName) const;
+
 		// returns a typesafe readonly smartpointer to input data by name if it is available
 		template <typename T>
 		const typename T::ptr getInputData( const std::string& strName) const;
