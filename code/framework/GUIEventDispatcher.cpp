@@ -1,4 +1,4 @@
-#include "GUIEventDispatcher.h"
+#include "GUIEventDispatcher.hpp"
 
 //Register Types for interthreadcommunication. qRegisterMetaType() needs to be called too -> ctr()
 Q_DECLARE_METATYPE(uipf::Logger::LogType)

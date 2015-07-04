@@ -1,5 +1,5 @@
 #include "Context.hpp"
-#include "GUIEventDispatcher.h"
+#include "GUIEventDispatcher.hpp"
 
 using namespace uipf;
 

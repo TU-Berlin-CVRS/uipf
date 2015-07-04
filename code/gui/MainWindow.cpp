@@ -10,7 +10,7 @@
 
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-#include "../framework/GUIEventDispatcher.h"
+#include "../framework/GUIEventDispatcher.hpp"
 #include "RunWorkerThread.h"
 
 using namespace std;
