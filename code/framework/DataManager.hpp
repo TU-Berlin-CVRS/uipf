@@ -95,6 +95,7 @@ void DataManager::setOutputData( const std::string& strName, T* outputData)
 	output_.insert (std::pair < std::string, Data::ptr >(strName, typename T::ptr(outputData)));
 }
 
+
 template <typename T>
 T DataManager::getParam( const std::string& strName, T defaultValue) const
 {
@@ -111,7 +112,7 @@ T DataManager::getParam( const std::string& strName, T defaultValue) const
 template <>
 inline int DataManager::getParam( const std::string& strName, int defaultValue) const
 {
-	if (params_.find(strName) != params_.end())
+	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
 		return atoi(params_[strName].c_str());
 	}
@@ -124,7 +125,7 @@ inline int DataManager::getParam( const std::string& strName, int defaultValue) 
 template <>
 inline float DataManager::getParam(const std::string& strName, float defaultValue) const
 {
-	if (params_.find(strName) != params_.end())
+	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
 		return atof(params_[strName].c_str());
 	}
@@ -137,7 +138,7 @@ inline float DataManager::getParam(const std::string& strName, float defaultValu
 template <>
 inline double DataManager::getParam( const std::string& strName, double defaultValue) const
 {
-	if (params_.find(strName) != params_.end())
+	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
 		return atof(params_[strName].c_str());
 	}
@@ -150,9 +151,14 @@ inline double DataManager::getParam( const std::string& strName, double defaultV
 template <>
 inline bool DataManager::getParam( const std::string& strName, bool defaultValue) const
 {
-	if (params_.find(strName) != params_.end())
+	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
-		return (utils::toLower(params_[strName]).compare("true")==0);
+		std::string lower = utils::toLower(params_[strName]);
+		return lower.compare("true") == 0
+			|| lower.compare("yes") == 0
+			|| lower.compare("y") == 0
+			|| lower.compare("t") == 0
+			|| lower.compare("1") == 0;
 	}
 	else
 	{

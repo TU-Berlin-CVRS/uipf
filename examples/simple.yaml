@@ -16,7 +16,7 @@ sourceImage:
 process:
   module: gaussian
   windowSize: 5
-  sigma: 10.5
+  sigmaX: 10.5
   input:
     image: sourceImage.image
 
