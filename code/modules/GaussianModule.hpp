@@ -6,7 +6,8 @@
 
 namespace uipf{
 
-
+// Applies Gaussian blurring to an image using openCV.
+// See http://docs.opencv.org/modules/imgproc/doc/filtering.html#gaussianblur
 class GaussianModule :  public QObject, ModuleBase
 {
 Q_OBJECT

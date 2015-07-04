@@ -3,6 +3,7 @@
 //Register Types for interthreadcommunication. qRegisterMetaType() needs to be called too -> ctr()
 Q_DECLARE_METATYPE(uipf::Logger::LogType)
 Q_DECLARE_METATYPE(std::string)
+Q_DECLARE_METATYPE(cv::Mat)
 
 namespace uipf
 {
@@ -21,8 +22,10 @@ GUIEventDispatcher::GUIEventDispatcher()
 {
 	//All custom types (even that from std::), that should be used in signals and slots that are invoked from different threads
 	//have to be registered for QT in their Typesystem
+	//Q_DECLARE_METATYPE(...) has to be called in advance
 	qRegisterMetaType<uipf::Logger::LogType>("Logger::LogType");
 	qRegisterMetaType<std::string>("std::string");
+	qRegisterMetaType<cv::Mat>("cv::Mat");
 }
 
 GUIEventDispatcher::~GUIEventDispatcher() {}
@@ -40,4 +43,10 @@ void GUIEventDispatcher::triggerLogEvent(const Logger::LogType& eLogType, const 
 	emit logEvent(eLogType,strMessage);
 }
 
-} // namespace
+void GUIEventDispatcher::triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat)
+{
+	//send signal to GUI
+	emit createWindow(strTitle,oMat);
+}
+
+} //namespace

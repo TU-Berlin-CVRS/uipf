@@ -4,9 +4,14 @@
 #include <QStandardItemModel>
 #include <QThread>
 #include <iostream>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
+#include "../framework/GUIEventDispatcher.hpp"
+#include "RunWorkerThread.h"
 
 using namespace std;
 using namespace uipf;
@@ -15,6 +20,8 @@ using namespace uipf;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),workerThread_(nullptr) {
 
     ui->setupUi(this);
+
+    mm_.setHaveGUI();
 
     // Create models
 
@@ -83,6 +90,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(GUIEventDispatcher::instance(), SIGNAL (reportProgressEvent(const float&)),
     			this, SLOT (on_reportProgress(const float&)));
 
+    // Window creation
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& )),
+      			this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
+
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
 	for (auto it = modules.begin(); it!=modules.end(); ++it) {
@@ -132,7 +143,6 @@ MainWindow::~MainWindow() {
 
     deleteActions();
 }
-
 
 // loads a new configuration from file
 void MainWindow::loadDataFlow(string filename)
@@ -301,6 +311,13 @@ void MainWindow::resetInputs()
 
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
+
+void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
+{
+	using namespace cv;
+	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
+	imshow( strTitle.c_str(), oMat);
+}
 
 // append messages from our logger to the log-textview
 void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
@@ -763,6 +780,8 @@ void MainWindow::run() {
 	stopAct->setEnabled(true);
 	runAct->setEnabled(false);
 
+	if (workerThread_ != nullptr) return; //should not happen, because GUI prevents it. we only allow one chain to be processed by a thread
+
 	workerThread_ = new RunWorkerThread(mm_,conf_);
 
 	// Setup callback for cleanup when it finishes
@@ -771,6 +790,7 @@ void MainWindow::run() {
 	workerThread_->start(); // This invokes WorkerThread::run in a new thread
 }
 
+//this gets called from Backgroundthread when its work is finished or when it gets terminated by stop()
 void MainWindow::on_backgroundWorkerFinished()
 {
 	// run is now activated and stop unactivated
@@ -782,19 +802,18 @@ void MainWindow::on_backgroundWorkerFinished()
 
 void MainWindow::stop() {
 
-	if (workerThread_ != nullptr)
-	{
-		workerThread_->stop();
-		workerThread_->wait(1000);
-		workerThread_->terminate();
-		delete workerThread_;
-		workerThread_ = nullptr;
-	}
+	if (workerThread_ == nullptr) return;
 
+	//signal modules to stop
+	workerThread_->stop();
+	//give them some time
+	workerThread_->wait(1000);
+	//kill if not ready yet
+	workerThread_->terminate();
+	//not need to delete -> finished()
 
-	stopAct->setEnabled(false);
-	runAct->setEnabled(true);
 }
+
 // Up to here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
 

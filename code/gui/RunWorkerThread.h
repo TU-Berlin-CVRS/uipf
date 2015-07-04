@@ -24,11 +24,6 @@ public:
 	//tell modules to stop work now
 	void stop();
 
-	// Define signal:
- signals:
- 	 //processing has finished -> tell GUI
-	void finished();
-
 private:
 
 	uipf::ModuleManager& mm_;

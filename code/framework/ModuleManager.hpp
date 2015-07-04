@@ -2,12 +2,12 @@
 #define MODULEMANAGER_H
 
 #include <opencv2/opencv.hpp>
+#include <map>
+#include <QPluginLoader>
+
 #include "Configuration.hpp"
 #include "ModuleInterface.hpp"
 #include "MetaData.hpp"
-#include <QObjectList>
-#include <QPluginLoader>
-#include <map>
 
 namespace uipf{
 
@@ -33,6 +33,9 @@ class ModuleManager{
 
 		//if set modules should finish their work
 		void requestStop(){context_.bStopRequested_=true;}
+
+		//tell modules that we have a GUI
+		void setHaveGUI(){context_.bHaveGUI_=true;}
 
 	private:
 

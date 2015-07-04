@@ -64,7 +64,7 @@ private slots:
     // moves the progressbar on every step of the processing chain
     void on_reportProgress(const float& );
 
-    // handles when run from other thread ends
+    //this gets called from Backgroundthread when its work is finished or when it gets terminated by stop()
     void on_backgroundWorkerFinished();
 
 	// change of module dropdown
@@ -77,6 +77,7 @@ private slots:
 	void on_paramChanged(std::string, std::string);
 	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
+	void on_createWindow(const std::string strTitle, const cv::Mat& oMat);
 	// menu bar
 	// File
 	void new_Data_Flow();

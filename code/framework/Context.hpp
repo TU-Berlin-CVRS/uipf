@@ -10,8 +10,9 @@ namespace uipf{
 // context 	is a container providing access to the current environment, allowing to open windows, write to logger etc...
 class Context {
 	public:
-		// constructor
-		Context(void) : bStopRequested_(false) {};
+		// constructor (can't be virtual!)
+		Context(void):bStopRequested_(false),bHaveGUI_(false){};
+		
 		// destructor
 		~Context(void){};
 
@@ -23,6 +24,9 @@ class Context {
 		//otherwise they get killed automatically after a grace period
 		volatile bool bStopRequested_;
 
+		//flag that communicates if the Application is run from Command line or with GUI
+		bool bHaveGUI_;
+		
 		// returns the current processing step name
 		// can be useful to provide default settings for parameters like filenames and the like
 		std::string getProcessingStepName() const { return processingStepName_; };

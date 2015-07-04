@@ -19,5 +19,4 @@ void RunWorkerThread::stop()
 void RunWorkerThread::run()
 {
 	mm_.run(config_);
-	emit finished();
 }

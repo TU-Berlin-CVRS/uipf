@@ -1,6 +1,7 @@
 #ifndef GUIEVENTDISPATCHER_H_
 #define GUIEVENTDISPATCHER_H_
 
+#include "StdIncl.hpp"
 #include <QObject>
 #include "Logger.hpp"
 
@@ -38,10 +39,12 @@ private:
 signals: //for QT to connect
 	void reportProgressEvent(const float& val);
 	void logEvent(const Logger::LogType& eType, const std::string& strMessage);
+	int  createWindow(const std::string strTitle, const cv::Mat& oMat);
 
 public: //methods for model to call and trigger GUI
 	void triggerReportProgress(const float& );
 	void triggerLogEvent(const Logger::LogType& eType, const std::string& strMessage);
+	void triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat);
 };
 
 } //namespace

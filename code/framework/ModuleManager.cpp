@@ -1,13 +1,12 @@
 #include "ModuleManager.hpp"
 
 
-#include <QPluginLoader>
 #include <QApplication>
 #include <QObject>
 #include <QDir>
-#include <QObjectList>
-#include <QStringList>
+#include <QString>
 #include <string>
+
 #include "Logger.hpp"
 #include "ModuleBase.hpp"
 #include "ModuleInterface.hpp"
@@ -158,6 +157,36 @@ void ModuleManager::run(Configuration config){
 		stepsOutputs.insert(pair<string, map<string, Data::ptr>* > (proSt.name, outputs));
 
 		// TODO delete module, check for side effects with the data pointers first
+
+		// free some outputs that are not needed anymore
+		map<string, map<string, Data::ptr>* >::iterator osit = stepsOutputs.begin();
+		for (; osit!=stepsOutputs.end(); ++osit) {
+
+			string outputStep = osit->first;
+
+			for (auto oit = osit->second->begin(); oit!=osit->second->end(); ++oit) {
+
+				string outputName = oit->first;
+
+				// iterate over the future steps to see if this output is requested
+				bool requested = false;
+				for (unsigned int s = i + 1; s<sortedChain.size() && !requested; s++){
+
+					ProcessingStep fstep = chain[sortedChain[s]];
+					for (auto iit=fstep.inputs.cbegin(); iit != fstep.inputs.end(); ++iit) {
+						if (outputStep.compare(iit->second.first) == 0 && outputName.compare(iit->second.second) == 0) {
+							requested = true;
+							break;
+						}
+					}
+				}
+				if (!requested) {
+					// output is not requested in any further step, delete it
+					LOG_I(string("deleted ") + outputStep + string(".") + outputName);
+					oit = osit->second->erase(oit);
+				}
+			}
+		}
 	}
 
 	// delete the ouput map

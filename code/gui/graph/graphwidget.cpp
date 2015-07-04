@@ -96,8 +96,8 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	}
 
 	//calculate graph layout with boosts fruchterman_reingold algo
-	double width = 300; //fixed size (2DO: make relative)
-	double height = 300;
+	double width = scene->width(); //fixed size (2DO: make relative)
+	double height = scene->height();
 
 	typedef std::vector<point_type> PositionVec;
 	PositionVec position_vec(num_vertices(g));
@@ -121,6 +121,19 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 
 }
 
+void GraphWidget::wheelEvent(QWheelEvent *event)
+{
+    scaleView(pow((double)2, -event->delta() / 240.0));
+}
+
+void GraphWidget::scaleView(qreal scaleFactor)
+{
+    qreal factor = transform().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
+    if (factor < 0.07 || factor > 100)
+        return;
+
+    scale(scaleFactor, scaleFactor);
+}
 
 }//gui
 }//uipf

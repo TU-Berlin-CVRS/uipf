@@ -1,6 +1,4 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
+#include "../framework/StdIncl.hpp"
 #include "ShowImageModule.hpp"
 #include "../framework/types/Matrix.hpp"
 
