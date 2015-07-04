@@ -204,7 +204,7 @@ void MainWindow::refreshCategoryAndModule()
     ui->comboModule->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
-	if (step.module.empty()){
+	if (step.module.empty() || !mm_.hasModule(step.module)){
 		resetCategoryAndModule();
 		ui->comboCategory->setEnabled(true);
 		return;
@@ -262,8 +262,10 @@ void MainWindow::refreshInputs()
 	int row = 0;
 	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
 		QStandardItem* item = new QStandardItem((it->first).c_str());
-		string str = mm_.getModuleMetaData(step.module).getInput(it->first).getDescription();
-		item->setToolTip(QString(str.c_str()));
+		if (mm_.hasModule(step.module)) {
+			string str = mm_.getModuleMetaData(step.module).getInput(it->first).getDescription();
+			item->setToolTip(QString(str.c_str()));
+		}
 		modelTableInputs->setVerticalHeaderItem(row, item);
 		inputNames[row] = it->first;
 		modelTableInputs->setItem(row, 0, new QStandardItem((it->second.first).c_str()));
