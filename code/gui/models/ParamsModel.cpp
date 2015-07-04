@@ -1,27 +1,27 @@
-#include "ProcessingStepParams.hpp"
+#include "ParamsModel.hpp"
 
 using namespace std;
 using namespace uipf;
 
 // constructor
-ProcessingStepParams::ProcessingStepParams(QObject *parent) : QAbstractTableModel(parent)
+ParamsModel::ParamsModel(QObject *parent) : QAbstractTableModel(parent)
 {
 }
 
 // sets the number of rows for the widget
-int ProcessingStepParams::rowCount(const QModelIndex & /*parent*/) const
+int ParamsModel::rowCount(const QModelIndex & /*parent*/) const
 {
 	return paramNames_.size();
 }
 
 // sets the number of columns for the widget
-int ProcessingStepParams::columnCount(const QModelIndex & /*parent*/) const
+int ParamsModel::columnCount(const QModelIndex & /*parent*/) const
 {
 	return 1;
 }
 
 // this method is triggered when a parameter has been edited
-bool ProcessingStepParams::setData(const QModelIndex &index, const QVariant &value, int role)
+bool ParamsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && role == Qt::EditRole) {
         if (value.toString().isEmpty()) {
@@ -42,7 +42,7 @@ bool ProcessingStepParams::setData(const QModelIndex &index, const QVariant &val
 }
 
 // describes the data that is displayed in the widget
-QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const
+QVariant ParamsModel::data(const QModelIndex &index, int role) const
 {
 	map<string, string> para = step_.params;
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
@@ -55,7 +55,7 @@ QVariant ProcessingStepParams::data(const QModelIndex &index, int role) const
 }
 
 // describes what is displayed in the headers of the table
-QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant ParamsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (role == Qt::DisplayRole) {
 		if (orientation == Qt::Horizontal) {
@@ -74,7 +74,7 @@ QVariant ProcessingStepParams::headerData(int section, Qt::Orientation orientati
 }
 
 // sets the processing step this widget represents and updates the content
-void ProcessingStepParams::setProcessingStep(ProcessingStep proSt)
+void ParamsModel::setProcessingStep(ProcessingStep proSt)
 {
 	beginResetModel();
 
@@ -90,7 +90,7 @@ void ProcessingStepParams::setProcessingStep(ProcessingStep proSt)
 }
 
 // set flags for the fields, allows them to be editable
-Qt::ItemFlags ProcessingStepParams::flags(const QModelIndex &index) const
+Qt::ItemFlags ParamsModel::flags(const QModelIndex &index) const
 {
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }

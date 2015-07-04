@@ -18,10 +18,9 @@
 
 #include <stack>
 
-#include "ProcessingStepParams.hpp"
-#include "ProcessingStepInputs.hpp"
-#include "ComboBoxSourceStep.hpp"
-#include "ComboBoxSourceOutput.hpp"
+#include "models/ParamsModel.hpp"
+#include "models/InputsDelegate.hpp"
+
 #include "RunWorkerThread.h"
 
 #include "../framework/Configuration.hpp"
@@ -103,11 +102,11 @@ private:
 	// model for the listView of processing steps
     QStringListModel *modelStep;
 	// model for the params editor table
-    ProcessingStepParams *modelTableParams;
+    ParamsModel *modelTableParams;
 	// models for the input editor table
     QStandardItemModel *modelTableInputs;
-	ComboBoxSourceOutput* modelSourceOutput;
-	ComboBoxSourceStep* modelSourceStep;
+    // model delegate for the input editor table
+	InputsDelegate *delegateTableInputs;
 
 	// the file name of the currently loaded configuration
 	std::string currentFileName;

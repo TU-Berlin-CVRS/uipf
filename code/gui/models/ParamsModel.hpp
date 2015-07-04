@@ -1,5 +1,5 @@
-#ifndef PROCESSINGSTEPPARAMS_H
-#define PROCESSINGSTEPPARAMS_H
+#ifndef ParamsModel_H
+#define ParamsModel_H
 
 #include <QAbstractTableModel>
 #include <QStyleOptionViewItem>
@@ -8,13 +8,13 @@
 
 namespace uipf {
 
-class ProcessingStepParams : public QAbstractTableModel
+class ParamsModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
 	// constructor
-    ProcessingStepParams(QObject *parent);
+    ParamsModel(QObject *parent);
 
     // sets the number of rows for the widget
     int rowCount(const QModelIndex &parent = QModelIndex()) const ;
@@ -49,4 +49,4 @@ private:
 
 } // namespace
 
-#endif // PROCESSINGSTEPPARAMS_H
+#endif // ParamsModel_H

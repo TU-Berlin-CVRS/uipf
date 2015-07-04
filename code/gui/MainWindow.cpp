@@ -17,16 +17,32 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     // Create models
+
+    // create model for step list
     modelStep = new QStringListModel(this);
-    modelTableParams = new ProcessingStepParams(this);
+    // create model for params list
+    modelTableParams = new ParamsModel(this);
+
+    // create model for inputs list
     modelTableInputs = new QStandardItemModel(this);
-	modelSourceStep = new ComboBoxSourceStep(this);
-	modelSourceOutput = new ComboBoxSourceOutput(mm_, this);
+	modelTableInputs->setColumnCount(2);
+	QStandardItem* item0 = new QStandardItem("From Step:");
+	QStandardItem* item1 = new QStandardItem("Output Name:");
+	modelTableInputs->setHorizontalHeaderItem(0, item0);
+	modelTableInputs->setHorizontalHeaderItem(1, item1);
+	delegateTableInputs = new InputsDelegate(mm_, this);
 
     // Glue model and view together
     ui->listProcessingSteps->setModel(modelStep);
     ui->tableParams->setModel(modelTableParams);
     ui->tableInputs->setModel(modelTableInputs);
+	ui->tableInputs->setItemDelegateForColumn(0, delegateTableInputs);
+	ui->tableInputs->setItemDelegateForColumn(1, delegateTableInputs);
+	// ensure size of the columns match the widget
+	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
+		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
+	}
+	ui->tableInputs->setEditTriggers(QAbstractItemView::AllEditTriggers); // http://doc.qt.io/qt-5/qabstractitemview.html#EditTrigger-enum
 
 	//create and add the graphwidget to the gui
 	graphView_ = new gui::GraphWidget();
@@ -54,9 +70,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(modelTableParams, SIGNAL(paramChanged(std::string, std::string)),
 			this, SLOT(on_paramChanged(std::string, std::string)));
 	// react to changes in the inputs
-    connect(modelSourceStep, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
-			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
-    connect(modelSourceOutput, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
+    connect(delegateTableInputs, SIGNAL(inputChanged(std::string, std::pair<std::string, std::string>)),
 			this, SLOT(on_inputChanged(std::string, std::pair<std::string, std::string>)));
     // logger
     connect(GUIEventDispatcher::instance(), SIGNAL (logEvent(const Logger::LogType&,const std::string&)),
@@ -219,49 +233,21 @@ void MainWindow::refreshInputs()
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
 
-	modelTableInputs->clear();
+	// clear all data rows
+	modelTableInputs->setRowCount(0);
 
-	map<string, pair<string, string> > inp = step.inputs;
-	int rowCount = 0;
-	vector<QStandardItem*> items;
-	for (auto it = inp.begin(); it!=inp.end(); ++it) {
-		items.push_back(new QStandardItem((it->first).c_str()));
-		rowCount++;
+	map<string, pair<string, string> > inputs = step.inputs;
+	vector<string> inputNames(inputs.size());
+	int row = 0;
+	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
+		modelTableInputs->setVerticalHeaderItem(row, new QStandardItem((it->first).c_str()));
+		inputNames[row] = it->first;
+		modelTableInputs->setItem(row, 0, new QStandardItem((it->second.first).c_str()));
+		modelTableInputs->setItem(row, 1, new QStandardItem((it->second.second).c_str()));
+		row++;
 	}
 
-	modelTableInputs->setRowCount(rowCount);
-
-	// TODO this could be constant somewhere
-	modelTableInputs->setColumnCount(2);
-	QStandardItem* item0 = new QStandardItem("From Step:");
-	QStandardItem* item1 = new QStandardItem("Output Name:");
-	modelTableInputs->setHorizontalHeaderItem(0, item0);
-	modelTableInputs->setHorizontalHeaderItem(1, item1);
-	// TODO until here
-
-	for (unsigned int i = 0; i<items.size(); i++){
-		modelTableInputs->setVerticalHeaderItem(i, items[i]);
-	}
-
-	//~ ui->tableInputs->repaint();
-
-	modelSourceStep->setConfiguration(conf_, currentStepName);
-	modelSourceOutput->setConfiguration(conf_, currentStepName);
-
-
-	ui->tableInputs->setItemDelegateForColumn(0, modelSourceStep);
-	ui->tableInputs->setItemDelegateForColumn(1, modelSourceOutput);
-
-	// Make the combo boxes always displayed.
-	for ( int i = 0; i < modelTableInputs->rowCount(); ++i ) {
-		ui->tableInputs->openPersistentEditor( modelTableInputs->index(i, 1) );
-		ui->tableInputs->openPersistentEditor( modelTableInputs->index(i, 0) );
-	}
-
-	// ensure size of the columns match the widget
-	for (int c = 0; c < ui->tableInputs->horizontalHeader()->count(); ++c) {
-		ui->tableInputs->horizontalHeader()->setSectionResizeMode(c, QHeaderView::Stretch);
-	}
+	delegateTableInputs->setConfiguration(conf_, currentStepName, inputNames);
 }
 
 // refresh the graph view
@@ -295,7 +281,8 @@ void MainWindow::resetParams()
 void MainWindow::resetInputs()
 {
 	ProcessingStep step;
-	modelTableInputs->clear();
+	// clear all data rows
+	modelTableInputs->setRowCount(0);
 	ui->tableInputs->setEnabled(false);
 }
 
@@ -474,7 +461,10 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 		beforeConfigChange();
 		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
 		inputs[inputName] = value;
+		//cout << "input " << inputName << " changed: " << value.first << "." << value.second << endl;
 		conf_.setProcessingStepInputs(currentStepName, inputs);
+
+		refreshInputs();
 	}
 }
 
