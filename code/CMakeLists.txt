@@ -92,32 +92,35 @@ qt5_use_modules(ModuleBase Core )
 #
 
 # dummy
-add_library(DummyModule SHARED modules/DummyModule.cpp)
+add_library(DummyModule SHARED modules/dummy/DummyModule.cpp)
 qt5_use_modules(DummyModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(DummyModule ModuleBase)
 
-add_library(LongRunningDummyModule SHARED modules/LongRunningDummyModule.cpp)
+add_library(LongRunningDummyModule SHARED modules/dummy/LongRunningDummyModule.cpp)
 qt5_use_modules(LongRunningDummyModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(LongRunningDummyModule ModuleBase)
 
 # I/O
-add_library(LoadImageModule SHARED modules/LoadImageModule.cpp)
+add_library(LoadImageModule SHARED modules/io/LoadImageModule.cpp)
 qt5_use_modules(LoadImageModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(LoadImageModule opencv_core ModuleBase)
 
-add_library(StoreImageModule SHARED modules/StoreImageModule.cpp)
+add_library(StoreImageModule SHARED modules/io/StoreImageModule.cpp)
 qt5_use_modules(StoreImageModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(StoreImageModule opencv_core ModuleBase)
 
-add_library(ShowImageModule SHARED modules/ShowImageModule.cpp)
+add_library(ShowImageModule SHARED modules/io/ShowImageModule.cpp)
 qt5_use_modules(ShowImageModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
 
 # Image Processing
-add_library(GaussianModule SHARED modules/GaussianModule.cpp)
+add_library(GaussianModule SHARED modules/improc/GaussianModule.cpp)
 qt5_use_modules(GaussianModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(GaussianModule opencv_core opencv_imgproc ModuleBase)
 
+add_library(ConvolutionModule SHARED modules/improc/ConvolutionModule.cpp)
+qt5_use_modules(ConvolutionModule Core ) #QtCore is needed for <QPlugin>
+target_link_libraries(ConvolutionModule opencv_core opencv_imgproc ModuleBase)
 
 
 

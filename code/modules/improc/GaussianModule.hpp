@@ -1,8 +1,8 @@
 #ifndef _GAUSSIANMODULE_
 #define _GAUSSIANMODULE_
 
-#include "../framework/ModuleInterface.hpp"
-#include "../framework/ModuleBase.hpp"
+#include "../../framework/ModuleInterface.hpp"
+#include "../../framework/ModuleBase.hpp"
 
 namespace uipf{
 

@@ -169,7 +169,7 @@ void MainWindow::loadDataFlow(string filename)
 	conf_.load(currentFileName);
 
     // only for debug, print the loaded config
-	conf_.print();
+	//conf_.print();
 
 	// save is now activated
 	saveAct->setEnabled(false);

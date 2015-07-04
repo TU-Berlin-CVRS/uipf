@@ -1,10 +1,8 @@
 #ifndef _LONGRUNNIGDUMMYMODULE_
 #define _LONGRUNNIGDUMMYMODULE_
 
-#include "../framework/ModuleInterface.hpp"
-#include "../framework/ModuleBase.hpp"
-#include <QObject>
-#include <QtPlugin>
+#include "../../framework/ModuleInterface.hpp"
+#include "../../framework/ModuleBase.hpp"
 
 namespace uipf{
 

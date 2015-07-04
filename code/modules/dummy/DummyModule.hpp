@@ -1,15 +1,13 @@
-#ifndef _STOREIMAGEMODULE_
-#define _STOREIMAGEMODULE_
+#ifndef _DUMMYMODULE_
+#define _DUMMYMODULE_
 
-#include "../framework/ModuleInterface.hpp"
-#include "../framework/ModuleBase.hpp"
-#include <QObject>
-#include <QtPlugin>
+#include "../../framework/ModuleInterface.hpp"
+#include "../../framework/ModuleBase.hpp"
 
 namespace uipf{
 
 
-class StoreImageModule :  public QObject, ModuleBase
+class DummyModule :  public QObject,ModuleBase
 {
 Q_OBJECT
 Q_PLUGIN_METADATA(IID "org.tu-berlin.uipf.ModuleInterface" )
@@ -17,12 +15,11 @@ Q_INTERFACES(uipf::ModuleInterface)
 
 	public:
 		// constructor tells ModuleBase our name so we don't need to implement name()
-		StoreImageModule(void): ModuleBase("storeImage"){};
+		DummyModule(void):ModuleBase("dummyModule"){};
 
 		// destructor needs to be virtual otherwise it not called due polymorphism
-		virtual ~StoreImageModule(void){};
+		virtual ~DummyModule(void){};
 
-		// runs the module chain with the params
 		void run( DataManager& data ) const Q_DECL_OVERRIDE;
 
 		uipf::MetaData getMetaData() const Q_DECL_OVERRIDE;
@@ -30,4 +27,4 @@ Q_INTERFACES(uipf::ModuleInterface)
 
 }
 
-#endif //STOREIMAGEMODULE
+#endif //DUMMYMODULE

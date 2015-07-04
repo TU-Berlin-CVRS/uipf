@@ -1,0 +1,40 @@
+convolution:
+  module: convolution
+  input:
+    image: image.image
+    kernel: kernel.image
+  anchorX: ""
+  anchorY: ""
+  delta: -500
+image:
+  module: loadImage
+  filename: input.jpg
+  mode: ""
+kernel:
+  module: loadImage
+  filename: kernel.png
+  mode: grayscale
+result:
+  module: storeImage
+  input:
+    image: convolution.image
+  filename: ouput.png
+  quality: ""
+show image:
+  module: showImage
+  input:
+    image: image.image
+  blocking: ""
+  title: ""
+show kernel:
+  module: showImage
+  input:
+    image: kernel.image
+  blocking: ""
+  title: ""
+show result:
+  module: showImage
+  input:
+    image: convolution.image
+  blocking: ""
+  title: ""

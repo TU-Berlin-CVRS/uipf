@@ -1,6 +1,4 @@
-#include "../framework/StdIncl.hpp"
 #include "ShowImageModule.hpp"
-#include "../framework/types/Matrix.hpp"
 
 using namespace std;
 using namespace uipf;

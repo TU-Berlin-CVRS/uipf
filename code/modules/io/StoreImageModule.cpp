@@ -2,6 +2,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <stdexcept>
+
 #include "StoreImageModule.hpp"
 
 using namespace std;
@@ -35,13 +36,16 @@ void StoreImageModule::run( DataManager& data) const
 
 			try {
 				imwrite(strFilename.c_str(), oMatrix->getContent(), compression_params);
+				LOG_I( "Image written to file " + strFilename );
 			}
 			catch (runtime_error& ex) {
 				LOG_E( "Exception converting image");
-
+				return;
 			}
+		} else {
+			imwrite( strFilename.c_str(), oMatrix->getContent() );
+			LOG_I( "Image written to file " + strFilename );
 		}
-		imwrite( strFilename.c_str(), oMatrix->getContent() );
 	}
 }
 
