@@ -2,12 +2,12 @@
 #define MODULEMANAGER_H
 
 #include <opencv2/opencv.hpp>
+#include <map>
+#include <QPluginLoader>
+
 #include "Configuration.hpp"
 #include "ModuleInterface.hpp"
 #include "MetaData.hpp"
-#include <QObjectList>
-#include <QPluginLoader>
-#include <map>
 
 namespace uipf{
 

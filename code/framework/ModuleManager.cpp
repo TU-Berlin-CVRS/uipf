@@ -1,13 +1,12 @@
 #include "ModuleManager.hpp"
 
 
-#include <QPluginLoader>
 #include <QApplication>
 #include <QObject>
 #include <QDir>
-#include <QObjectList>
-#include <QStringList>
+#include <QString>
 #include <string>
+
 #include "Logger.hpp"
 #include "ModuleBase.hpp"
 #include "ModuleInterface.hpp"
