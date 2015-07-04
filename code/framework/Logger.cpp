@@ -50,6 +50,19 @@ void Logger::Info(const std::string& strMessage)
 	GUIEventDispatcher::instance()->triggerLogEvent(INFO,strMessage);
 }
 
+void Logger::Debug(const std::string& strMessage)
+{
+	//if CMAKE_BUILD_TYPE = Release -> NDEBUG is defined
+#ifndef NDEBUG
+	std::stringstream output;
+	output << "[DEBUG] " << strMessage << std::endl;
+	print(output);
+
+	//send signal to GUI
+	GUIEventDispatcher::instance()->triggerLogEvent(DEBUG,strMessage);
+#endif
+}
+
 void Logger::print(const std::stringstream& what)
 {
 

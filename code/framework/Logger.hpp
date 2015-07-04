@@ -6,19 +6,22 @@
 #define LOG_E(message) Logger::instance()->Error(message)
 #define LOG_I(message) Logger::instance()->Info(message)
 #define LOG_W(message) Logger::instance()->Warn(message)
+#define LOG_D(message) Logger::instance()->Debug(message)
 
 #include <sstream>
 
 namespace uipf
 {
 
-//This is a very simple Logger implemented as singleton, that writes to console
+//This is a simple Logger implemented as singleton, that writes to console and sends messages to the GUI.
+//Herefore it uses the GUIEventDispatcher.
+//Messages are logged threadsafe. So it does not matter if e.g. LOG_I() is called in a GUI-Thread or from a Backgroundworker.
 class Logger
 {
 	public:
 		enum LogType
 		{
-			INFO,WARNING,ERROR
+			INFO,WARNING,ERROR,DEBUG
 		};
 	public:
 		static Logger* instance();
@@ -42,10 +45,14 @@ class Logger
 		friend class Guard;
 
 	public:
-
+		//Warnings are colored blue in the GUI
 		void Warn(const std::string& strMessage);
+		//Errors are colored red in the GUI
 		void Error(const std::string& strMessage);
+		//Info are colored green in the GUI
 		void Info(const std::string& strMessage);
+		//Debugmessages can be used internally. They are shown when the project is built with CMAKE_BUILD_TYPE=Debug
+		void Debug(const std::string& strMessage);
 
 	private:
 
