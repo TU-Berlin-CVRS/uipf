@@ -77,7 +77,7 @@ private slots:
 	void on_paramChanged(std::string, std::string);
 	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
-	void on_createWindow(const std::string strTitle, const cv::Mat& oMat);
+	void on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking);
 	// menu bar
 	// File
 	void new_Data_Flow();

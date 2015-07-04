@@ -93,8 +93,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     			this, SLOT (on_reportProgress(const float&)));
 
     // Window creation
-    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& )),
-      			this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& , bool )),
+				this, SLOT (on_createWindow(const std::string , const cv::Mat&, bool )));
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -317,11 +317,15 @@ void MainWindow::resetInputs()
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
+void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking)
 {
 	using namespace cv;
 	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
 	imshow( strTitle.c_str(), oMat);
+
+	if (blocking) {
+		waitKey(-1);
+	}
 }
 
 // append messages from our logger to the log-textview
