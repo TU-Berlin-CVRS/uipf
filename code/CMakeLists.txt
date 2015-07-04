@@ -126,9 +126,13 @@ add_library(ConvolutionModule SHARED modules/improc/ConvolutionModule.cpp)
 qt5_use_modules(ConvolutionModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(ConvolutionModule opencv_core opencv_imgproc ModuleBase)
 
-add_library(SplitChannelModule SHARED modules/improc/SplitChannelModule.cpp)
-qt5_use_modules(SplitChannelModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(SplitChannelModule opencv_core opencv_imgproc ModuleBase)
+add_library(SplitChannelsModule SHARED modules/improc/SplitChannelsModule.cpp)
+qt5_use_modules(SplitChannelsModule Core ) #QtCore is needed for <QPlugin>
+target_link_libraries(SplitChannelsModule opencv_core opencv_imgproc ModuleBase)
+
+add_library(MergeChannelsModule SHARED modules/improc/MergeChannelsModule.cpp)
+qt5_use_modules(MergeChannelsModule Core ) #QtCore is needed for <QPlugin>
+target_link_libraries(MergeChannelsModule opencv_core opencv_imgproc ModuleBase)
 
 
 

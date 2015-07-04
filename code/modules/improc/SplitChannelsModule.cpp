@@ -1,4 +1,4 @@
-#include "SplitChannelModule.hpp"
+#include "SplitChannelsModule.hpp"
 #include "../../framework/types/List.hpp"
 
 using namespace std;
@@ -9,7 +9,7 @@ using namespace uipf;
 /*
 data	DataManager handles the input and ouput of this module
 */
-void SplitChannelModule::run( DataManager& data) const
+void SplitChannelsModule::run( DataManager& data) const
 {
 	using namespace cv;
 
@@ -34,7 +34,7 @@ void SplitChannelModule::run( DataManager& data) const
 }
 
 // returns the meta data of this module
-MetaData SplitChannelModule::getMetaData() const
+MetaData SplitChannelsModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
 		{"image", DataDescription(MATRIX, "the image to split.") }
