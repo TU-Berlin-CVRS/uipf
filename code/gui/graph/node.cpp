@@ -21,6 +21,14 @@ Node::Node(GraphWidget *graphWidget,QString name)
     setFlag(ItemSendsGeometryChanges);
     setCacheMode(DeviceCoordinateCache);
     setZValue(-1);
+
+    QFont font("times", 24);
+    font.setBold(false);
+    font.setPointSize(14);
+    QFontMetrics fm(font);
+    int pixelsWide = fm.width(name_)+3;
+    int pixelsHigh = fm.height();
+    boundingRect_ = QRectF (-15, -15, pixelsWide, pixelsHigh);
 }
 
 
@@ -37,34 +45,35 @@ QList<Edge *> Node::edges() const
 
 QRectF Node::boundingRect() const
 {
-    qreal adjust = 2;
-    return QRectF( -10 - adjust, -10 - adjust, 300 + adjust, 23 + adjust);
+    return boundingRect_;
 }
 
 QPainterPath Node::shape() const
 {
     QPainterPath path;
-    path.addEllipse(-10, -10, 50, 20);
+    path.addEllipse(-10, -10, 500, 20);
     return path;
 }
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::darkGray);
+    //painter->setBrush(Qt::darkGray);
 
     painter->setPen(QPen(Qt::black, 0));
 
-    QRectF textRect(-15, -15, 500, 500);
-
-    QFont font = painter->font();
+    QFont font("times", 24);
     font.setBold(false);
     font.setPointSize(14);
+
+
+    painter->drawRect(boundingRect_);
     painter->setFont(font);
-    painter->setPen(Qt::lightGray);
-    painter->drawText(textRect.translated(2, 2), name_);
+    //painter->setPen(Qt::lightGray);
+   // painter->drawText(boundingRect_.translated(2, 2), name_);
     painter->setPen(Qt::black);
-    painter->drawText(textRect, name_);
+    painter->drawText(boundingRect_.translated(2, 0), name_);
+
 }
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)

@@ -38,6 +38,7 @@ private:
     QPointF newPos;
     GraphWidget *graph;
     QString name_;
+    QRectF boundingRect_;
 };
 
 }//gui
