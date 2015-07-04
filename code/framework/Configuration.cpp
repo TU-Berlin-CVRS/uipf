@@ -251,12 +251,66 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 			}
 		}
 		if(!elemWasAdded){
-			auto it = chainTmp.begin();
+
+			// detect only the concrete circle, and not also all the steps, which depend on it
+
+			// find out, which modules belong directly to the chain, and don't only get inputs from it
+			map<string, ProcessingStep> chainCircle;
+			chainCircle.insert(chainTmp.begin(), chainTmp.end());
+
+			// contains the names of the processing steps, which don't belong to the circle, but only point on it
+			vector<string> restChain;
+
+			bool elemWasAdded2 = true;
+			// iterate over all processing steps and move all, which don't belong to the chain into restChain
+			while(elemWasAdded2){
+				// initially set to false
+				elemWasAdded2 = false;
+
+				// list, which contains all modules, which provide a used output
+				list<string> modulesProvideOutput;
+
+				map<string, ProcessingStep>::iterator itProSt = chainCircle.begin();
+				for(;itProSt!=chainCircle.end();++itProSt) {
+					// Input-Map of current Step in the circle chain
+					map<string, pair<string, string> > tempInp = itProSt->second.inputs;
+					map<string, pair<string, string> >::iterator itInp = tempInp.begin();
+					for(;itInp!=tempInp.end();++itInp) {
+						modulesProvideOutput.push_front(itInp->second.first);
+					}
+				}
+				modulesProvideOutput.sort();
+				modulesProvideOutput.unique();
+
+				itProSt = chainCircle.begin();
+				while(itProSt!=chainCircle.end()) {
+					// check, whether a module does not appear in the list (module does not have an output, or it is unused)
+					list<string> help = modulesProvideOutput;
+					help.push_front(itProSt->first);
+					help.sort();
+					help.unique();
+					if(help.size() > modulesProvideOutput.size()) {
+						restChain.push_back(itProSt->first);
+						// delete and set pointer to next element
+						itProSt = chainCircle.erase(itProSt);
+						// an elem was added
+						elemWasAdded2 = true;
+					} else {
+					// try next element
+						++itProSt;
+					}
+				}
+			}
+
+			// TODO divide the circles, when there are many
+
+			auto it = chainCircle.begin();
 			string stepNames = it->first;
 			++it;
-			for (; it!=chainTmp.end(); ++it) {
+			for (; it!=chainCircle.end(); ++it) {
 				stepNames += string(", ") + it->first;
 			}
+
 			errors.push_back( string("Circular dependency detected between the following configuration steps: ") + stepNames);
 			break;
 		}

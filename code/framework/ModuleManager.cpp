@@ -1,13 +1,12 @@
 #include "ModuleManager.hpp"
 
 
-#include <QPluginLoader>
 #include <QApplication>
 #include <QObject>
 #include <QDir>
-#include <QObjectList>
-#include <QStringList>
+#include <QString>
 #include <string>
+
 #include "Logger.hpp"
 #include "ModuleBase.hpp"
 #include "ModuleInterface.hpp"
@@ -165,7 +164,7 @@ void ModuleManager::run(Configuration config){
 
 			string outputStep = osit->first;
 
-			for (auto oit = osit->second->begin(); oit!=osit->second->end(); ++oit) {
+			for (auto oit = osit->second->begin(); oit!=osit->second->end(); ) {
 
 				string outputName = oit->first;
 
@@ -185,6 +184,8 @@ void ModuleManager::run(Configuration config){
 					// output is not requested in any further step, delete it
 					LOG_I(string("deleted ") + outputStep + string(".") + outputName);
 					oit = osit->second->erase(oit);
+				} else {
+					++oit;
 				}
 			}
 		}
