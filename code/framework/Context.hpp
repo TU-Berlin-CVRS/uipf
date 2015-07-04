@@ -11,7 +11,7 @@ namespace uipf{
 class Context {
 	public:
 		// constructor (can't be virtual!)
-		Context(void):bStopRequested_(false){};
+		Context(void):bStopRequested_(false),bHaveGUI_(false){};
 		// destructor
 		~Context(void){};
 		
@@ -22,6 +22,9 @@ class Context {
 		//it is their responsibility to check this flag periodically.
 		//otherwise they get killed automatically after a grace period
 		volatile bool bStopRequested_;
+
+		//flag that communicates if the Application is run from Command line or with GUI
+		bool bHaveGUI_;
 };
 
 }
