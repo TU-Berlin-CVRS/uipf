@@ -2,19 +2,29 @@ in:
   module: loadImage
   filename: input.jpg
   mode: ""
-new step 1:
+merge:
+  module: mergeChannels
+  input:
+    channels: split.channels
+show channels:
   module: showImageList
   input:
     imageList: split.channels
-  title: ""
   blocking: true
-new step 2:
+  title: ""
+show input:
   module: showImage
   input:
     image: in.image
   blocking: true
   title: ""
+show merge:
+  module: showImage
+  input:
+    image: merge.image
+  blocking: ""
+  title: ""
 split:
-  module: splitChannel
+  module: splitChannels
   input:
     image: in.image
