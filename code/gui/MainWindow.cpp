@@ -63,6 +63,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(on_stepNameChanged()));
+    // react to changes in the module category
+    connect(ui->comboCategory, SIGNAL(currentIndexChanged(int)),
+			this, SLOT(on_comboCategory_currentIndexChanged(int)));
     // react to changes in the module
     connect(ui->comboModule, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(on_comboModule_currentIndexChanged(int)));
@@ -82,28 +85,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
-	map<string, vector<string> > categories;
 	for (auto it = modules.begin(); it!=modules.end(); ++it) {
-		if(categories.count(it->second.getCategory()) == 0){
+		if(categories_.count(it->second.getCategory()) == 0){
 			vector<string> temp;
 			temp.push_back(it->first);
-			categories.insert( pair<string, vector<string> > (it->second.getCategory(), temp));
+			categories_.insert( pair<string, vector<string> > (it->second.getCategory(), temp));
 		} else {
-			categories[it->second.getCategory()].push_back(it->first);
+			categories_[it->second.getCategory()].push_back(it->first);
 		}
 	}
 	int mi = 0;
-	for (auto it = categories.begin(); it!=categories.end(); ++it) {
+	for (auto it = categories_.begin(); it!=categories_.end(); ++it) {
 		ui->comboCategory->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
 	}
 	ui->comboCategory->setCurrentIndex(-1);
-
-	// fill module dropdown
-	mi = 0;
-	for (auto it = modules.begin(); it!=modules.end(); ++it) {
-		ui->comboModule->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
-	}
-	ui->comboModule->setCurrentIndex(-1);
 
     // commands for menu bar
     createActions();
@@ -117,6 +112,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // set initial state
 	currentFileName = "newFile";
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
+    ui->comboCategory->setEnabled(false);
     ui->comboModule->setEnabled(false);
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
@@ -177,28 +173,41 @@ void MainWindow::loadDataFlow(string filename)
 	modelStep->setStringList(list);
 
 	// reset other models
-	resetModule();
+	resetCategoryAndModule();
 	resetParams();
 	resetInputs();
 	//update the graphview
 	refreshGraph();
 }
 
-// refresh module dropdown
-void MainWindow::refreshModule()
+// refresh module category dropdown and module dropdown
+void MainWindow::refreshCategoryAndModule()
 {
     if (currentStepName.empty()){
-		resetModule();
+		resetCategoryAndModule();
 		return;
 	}
 
+    ui->comboCategory->setEnabled(true);
     ui->comboModule->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
+	if (step.module.empty()){
+		resetCategoryAndModule();
+		ui->comboCategory->setEnabled(true);
+		return;
+	}
+	int modIndex = ui->comboModule->findData(QString(step.module.c_str()));
+
+	// set the selection of the module category dropdown
+	int catIndex = ui->comboCategory->findData(QString(mm_.getModuleMetaData(step.module).getCategory().c_str()));
+	ui->comboCategory->setCurrentIndex(catIndex);
+	on_comboCategory_currentIndexChanged(catIndex);
 
 	// set the selection of the module dropdown
-	int modIndex = ui->comboModule->findData(QString(step.module.c_str()));
+	modIndex = ui->comboModule->findData(QString(step.module.c_str()));
 	ui->comboModule->setCurrentIndex(modIndex);
+
 }
 
 // refresh params table
@@ -256,9 +265,12 @@ void MainWindow::refreshGraph()
     graphView_->renderConfig(conf_);
 }
 
-// resets the module dropdown to empty
-void MainWindow::resetModule()
+// resets the category dropdown and the module dropdown to empty
+void MainWindow::resetCategoryAndModule()
 {
+	ui->comboCategory->setCurrentIndex(-1);
+    ui->comboCategory->setEnabled(false);
+
 	ui->comboModule->setCurrentIndex(-1);
     ui->comboModule->setEnabled(false);
 }
@@ -354,7 +366,7 @@ void MainWindow::on_addButton_clicked() {
     ui->listProcessingSteps->edit(index);
 
 	// refresh configuration widgets
-	refreshModule();
+	refreshCategoryAndModule();
 	refreshInputs();
 	refreshParams();
     // update the graphview
@@ -410,7 +422,7 @@ void MainWindow::on_deleteButton_clicked() {
 	}
 
 	// refresh configuration widgets
-	refreshModule();
+	refreshCategoryAndModule();
 	refreshInputs();
 	refreshParams();
     // update the graphview
@@ -425,17 +437,39 @@ void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
 	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 
 	// refresh configuration widgets
-	refreshModule();
+	refreshCategoryAndModule();
 	refreshParams();
 	refreshInputs();
+}
+
+void MainWindow::on_comboCategory_currentIndexChanged(int index)
+{
+	// only update if a step is selected
+	if (!currentStepName.empty()) {
+
+		string category = ui->comboCategory->itemData(index).toString().toStdString();
+
+		map<string, MetaData> modules = mm_.getAllModuleMetaData();
+
+		// fill module dropdown
+		ui->comboModule->setEnabled(false);
+		ui->comboModule->clear();
+		vector<string> modulesOfSameCategory = categories_[category];
+		for (unsigned int i = 0; i < modulesOfSameCategory.size() ; i++) {
+			ui->comboModule->insertItem(i, QString(modulesOfSameCategory[i].c_str()), QString(modulesOfSameCategory[i].c_str()));
+		}
+		ui->comboModule->setCurrentIndex(-1);
+		ui->comboModule->setEnabled(true);
+	}
+
 }
 
 void MainWindow::on_comboModule_currentIndexChanged(int index)
 {
 	string module = ui->comboModule->itemData(index).toString().toStdString();
 
-	// only update if module exists, a step is selected and the module has actually changed
-	if (mm_.hasModule(module) && !currentStepName.empty() && conf_.getProcessingStep(currentStepName).module.compare(module) != 0) {
+	// only update if module exists, a step is selected and the module has actually changed and combo was enabled (ensure it was changed by user and not when filling the box)
+	if (mm_.hasModule(module) && !currentStepName.empty() && conf_.getProcessingStep(currentStepName).module.compare(module) != 0 && ui->comboModule->isEnabled()) {
 		beforeConfigChange();
 		conf_.setProcessingStepModule(currentStepName, module, mm_.getModuleMetaData(module));
 		refreshParams();
@@ -502,7 +536,7 @@ void MainWindow::new_Data_Flow() {
 	modelStep->setStringList(list);
 
 	// reset other models
-	resetModule();
+	resetCategoryAndModule();
 	resetParams();
 	resetInputs();
 	// update the graphview
@@ -632,7 +666,7 @@ void MainWindow::undo() {
 		}
 
 		// refresh configuration widgets
-		refreshModule();
+		refreshCategoryAndModule();
 		refreshInputs();
 		refreshParams();
 		// update the graphview
@@ -683,7 +717,7 @@ void MainWindow::redo() {
 		}
 
 		// refresh configuration widgets
-		refreshModule();
+		refreshCategoryAndModule();
 		refreshInputs();
 		refreshParams();
 		// update the graphview

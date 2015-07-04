@@ -70,6 +70,9 @@ private slots:
 	// change of module dropdown
 	void on_comboModule_currentIndexChanged(int);
 
+	// change of module category dropdown
+	void on_comboCategory_currentIndexChanged(int);
+
 	// change in the params table
 	void on_paramChanged(std::string, std::string);
 	void on_inputChanged(std::string, std::pair<std::string, std::string>);
@@ -116,9 +119,12 @@ private:
 	// the currently loaded configuration represented in the window
    	Configuration conf_;
 
+	// map of all available categories
+	std::map<std::string, std::vector<std::string> > categories_;
+
 	// counts the undo/redo, when = 0, it is the saved version
 	int savedVersion = 0;
-
+	// is true if file was at least one time saved
 	bool unknownFile = true;
 
 	// current name of a precessing step
@@ -131,13 +137,13 @@ private:
 	void beforeConfigChange();
 
 	// refresh UI triggers
-	void refreshModule();
+	void refreshCategoryAndModule();
 	void refreshParams();
 	void refreshInputs();
 	void refreshGraph();
 
 	// reset UI triggers
-	void resetModule();
+	void resetCategoryAndModule();
 	void resetParams();
 	void resetInputs();
 
