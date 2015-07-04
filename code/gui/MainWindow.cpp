@@ -34,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     modelTableInputs = new QStandardItemModel(this);
 	modelTableInputs->setColumnCount(2);
 	QStandardItem* item0 = new QStandardItem("From Step:");
-	item0->setToolTip(QString("Select here the processing step, which provides the needed input"));
 	QStandardItem* item1 = new QStandardItem("Output Name:");
+	item0->setToolTip(QString("Select here the processing step, which provides the needed input"));
 	item1->setToolTip(QString("Select here the output of the selected processing step, which is needed as input"));
 	modelTableInputs->setHorizontalHeaderItem(0, item0);
 	modelTableInputs->setHorizontalHeaderItem(1, item1);
@@ -479,6 +479,8 @@ void MainWindow::on_comboCategory_currentIndexChanged(int index)
 		vector<string> modulesOfSameCategory = categories_[category];
 		for (unsigned int i = 0; i < modulesOfSameCategory.size() ; i++) {
 			ui->comboModule->insertItem(i, QString(modulesOfSameCategory[i].c_str()), QString(modulesOfSameCategory[i].c_str()));
+			string str = mm_.getModuleMetaData(modulesOfSameCategory[i]).getDescription();
+			ui->comboModule->setItemData(i, QVariant(str.c_str()) , Qt::ToolTipRole);
 		}
 		ui->comboModule->setCurrentIndex(-1);
 		ui->comboModule->setEnabled(true);
