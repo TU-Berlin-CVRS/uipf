@@ -34,6 +34,9 @@ class ModuleManager{
 		//if set modules should finish their work
 		void requestStop(){context_.bStopRequested_=true;}
 
+		//tell modules that we have a GUI
+		void setHaveGUI(){context_.bHaveGUI_=true;}
+
 	private:
 		// module chain
 
