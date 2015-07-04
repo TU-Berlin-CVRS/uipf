@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // create model for step list
     modelStep = new QStringListModel(this);
     // create model for params list
-    modelTableParams = new ParamsModel(this);
+    modelTableParams = new ParamsModel(mm_,this);
 
     // create model for inputs list
     modelTableInputs = new QStandardItemModel(this);
