@@ -20,7 +20,6 @@ using namespace uipf;
 // argument is a configFile
 int main(int argc, char** argv){
 
-	// Declare three groups of options.
 	// Declare a group of options that will be allowed only on command line
 	po::options_description generic("Generic options");
 	generic.add_options()
@@ -28,9 +27,6 @@ int main(int argc, char** argv){
 		("help,h", "produce help message")
 		;
 
-	// Declare a group of options that will be
-	// allowed both on command line and in
-	// config file
 	po::options_description config("Program options");
 	config.add_options()
 		("configuration,c", po::value< string >(), "defines the path to an already created and stored chain configuration, written in yaml")
@@ -39,8 +35,7 @@ int main(int argc, char** argv){
 		("param,p",	po::value< vector<string> >()->composing(),	"defines a parameter, format:  name:value")
 		;
 
-	// Hidden options, will be allowed both on command line and
-	// in config file, but will not be shown to the user.
+	// Hidden options, will be allowed command line, but will not be shown to the user.
 	po::options_description hidden("Hidden options");
 	hidden.add_options()
 		("modulename,m", po::value< string>(), "defines the name of the module")
@@ -51,16 +46,16 @@ int main(int argc, char** argv){
 	p.add("modulename", -1);
 
 	// Declare an options description instance which will include all the options
-	po::options_description all("Allowed options");
-	all.add(generic).add(config).add(hidden);
+	po::options_description allOptions("Allowed options");
+	allOptions.add(generic).add(config).add(hidden);
 
 	// Declare an options description instance which will be shown to the user
-	po::options_description visible("Allowed options");
-	visible.add(generic).add(config);
+	po::options_description visibleOptions("Allowed options");
+	visibleOptions.add(generic).add(config);
 
-
+	// process input parameters and store the result in vm
 	po::variables_map vm;
-    store(po::command_line_parser(argc, argv).options(all).positional(p).run(), vm);
+	store(po::command_line_parser(argc, argv).options(allOptions).positional(p).run(), vm);
 	po::notify(vm);
 
 
@@ -72,7 +67,7 @@ int main(int argc, char** argv){
 		cout << argv[0] << " <moduleName> -i <input> [-p <params> -o <output>]	run a single module." << endl;
 		cout << "\n";
 		// show help
-		cout << visible;
+		cout << visibleOptions;
 		return 1;
 	}
 
@@ -105,7 +100,7 @@ int main(int argc, char** argv){
 			cout << argv[0] << " -c <path to configuration file>				run a processing chain from a config file." << endl;
 			cout << argv[0] << " <moduleName> -i <input> [-p <params> -o <output>]	run a single module." << endl;
 			cout << "\n";
-			cout << visible;
+			cout << visibleOptions;
 			return 0;
 		}
 
@@ -116,11 +111,15 @@ int main(int argc, char** argv){
 			cout << argv[0] << " <moduleName> -i <input> [-p <params> -o <output>]	run a single module." << endl;
 			cout << "\n";
 			// show help
-			cout << visible;
+			cout << visibleOptions;
 			return 1;
 		}
 
 		string modName = vm["modulename"].as<string>();
+		if (!mm.hasModule(modName)) {
+			LOG_E("Module " + modName + " does not exist!");
+			return 1;
+		}
 		MetaData md = mm.getModuleMetaData(modName);
 
 		ProcessingStep processModule;
