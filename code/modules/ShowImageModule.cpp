@@ -33,6 +33,7 @@ MetaData ShowImageModule::getMetaData() const
 
 	return MetaData(
 		"Show an image by opening a window.",
+		"I/O",
 		input,
 		map<string, DataDescription>(), // no outputs
 		params

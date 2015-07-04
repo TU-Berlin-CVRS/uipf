@@ -65,6 +65,7 @@ class MetaData {
 		// constructor
 		MetaData(
 			std::string, // general verbal description of the module
+			std::string, // category
 			std::map<std::string, DataDescription>, // input
 			std::map<std::string, DataDescription>, // output
 			std::map<std::string, ParamDescription> // params
@@ -76,6 +77,9 @@ class MetaData {
 
 		// general verbal description of the module
 		std::string getDescription() const;
+
+		// category the module belongs to
+		std::string getCategory() const;
 
 		// list of inputs  name => description details
 		std::map<std::string, DataDescription> getInputs() const;
@@ -97,6 +101,7 @@ class MetaData {
 	private:
 
 		std::string description_;
+		std::string category_;
 		std::map<std::string, DataDescription> inputs_;
 		std::map<std::string, DataDescription> outputs_;
 		std::map<std::string, ParamDescription> params_;

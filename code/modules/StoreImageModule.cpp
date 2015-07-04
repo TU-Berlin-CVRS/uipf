@@ -58,6 +58,7 @@ MetaData StoreImageModule::getMetaData() const
 
 	return MetaData(
 		"Store an image to a file.",
+		"I/O",
 		input,
 		map<string, DataDescription>(), // no outputs
 		params

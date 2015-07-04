@@ -47,6 +47,7 @@ MetaData LoadImageModule::getMetaData() const
 
 	return MetaData(
 		"Load an image from a file.",
+		"I/O",
 		map<string, DataDescription>(), // no inputs
 		output,
 		params

@@ -4,12 +4,17 @@
 using namespace uipf;
 using namespace std;
 
-MetaData::MetaData(string description, map<string, DataDescription> inputs, map<string, DataDescription> outputs, map<string, ParamDescription> params)
+MetaData::MetaData(string description, string category, map<string, DataDescription> inputs, map<string, DataDescription> outputs, map<string, ParamDescription> params)
 {
 	inputs_ = inputs;
 	outputs_ = outputs;
 	params_ = params;
 	description_ = description;
+	category_ = category;
+}
+
+string MetaData::getCategory() const {
+	return category_;
 }
 
 string MetaData::getDescription() const {

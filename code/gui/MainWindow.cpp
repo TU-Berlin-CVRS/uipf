@@ -66,9 +66,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(GUIEventDispatcher::instance(), SIGNAL (reportProgressEvent(const float&)),
     			this, SLOT (on_reportProgress(const float&)));
 
-	// fill module dropdown
+	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
+	map<string, vector<string> > categories;
+	for (auto it = modules.begin(); it!=modules.end(); ++it) {
+		if(categories.count(it->second.getCategory()) == 0){
+			vector<string> temp;
+			temp.push_back(it->first);
+			categories.insert( pair<string, vector<string> > (it->second.getCategory(), temp));
+		} else {
+			categories[it->second.getCategory()].push_back(it->first);
+		}
+	}
 	int mi = 0;
+	for (auto it = categories.begin(); it!=categories.end(); ++it) {
+		ui->comboCategory->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
+	}
+	ui->comboCategory->setCurrentIndex(-1);
+
+	// fill module dropdown
+	mi = 0;
 	for (auto it = modules.begin(); it!=modules.end(); ++it) {
 		ui->comboModule->insertItem(mi++, QString(it->first.c_str()), QString(it->first.c_str()));
 	}

@@ -30,6 +30,7 @@ MetaData LongRunningDummyModule::getMetaData() const
 {
 	return MetaData(
 		"A dummy module for testing long running tasks",
+		"Dummy",
 		map<string, DataDescription>(),
 		map<string, DataDescription>(),
 		map<string, ParamDescription>()
