@@ -465,6 +465,7 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 		conf_.setProcessingStepInputs(currentStepName, inputs);
 
 		refreshInputs();
+		refreshGraph();
 	}
 }
 

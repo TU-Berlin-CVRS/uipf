@@ -104,6 +104,7 @@ void ModuleManager::run(Configuration config){
 		string moduleName = proSt.module;
 		if (hasModule(moduleName)) {
 			module = loadModule(moduleName);
+			context_.processingStepName_ = proSt.name;
 			module->setContext(&context_);
 
 		} else {

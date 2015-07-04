@@ -22,6 +22,17 @@ class Context {
 		//it is their responsibility to check this flag periodically.
 		//otherwise they get killed automatically after a grace period
 		volatile bool bStopRequested_;
+
+		// returns the current processing step name
+		// can be useful to provide default settings for parameters like filenames and the like
+		std::string getProcessingStepName() const { return processingStepName_; };
+
+	protected:
+
+		std::string processingStepName_;
+
+		friend class ModuleManager;
+
 };
 
 } // namespace
