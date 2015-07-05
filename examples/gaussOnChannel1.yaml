@@ -7,7 +7,7 @@ gaussian:
   windowSize: ""
 load:
   module: loadImage
-  filename: input.png
+  filename: input.jpg
   mode: ""
 merge ch0:
   module: addListItem

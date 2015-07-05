@@ -48,12 +48,12 @@ void AddListItemModule::run( DataManager& data) const
 MetaData AddListItemModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"list", DataDescription(LIST, "optional input list, if empty, a new empty list will be created.") },
-		{"string", DataDescription(STRING, "if it is a list of strings, the string element to add.") },
-		{"integer", DataDescription(INTEGER, "if it is a list of integers, the integer element to add.") },
-		{"float", DataDescription(FLOAT, "if it is a list of floats, the float element to add.") },
-		{"bool", DataDescription(BOOL, "if it is a list of bools, the bool element to add.") },
-		{"image", DataDescription(MATRIX, "if it is a list of images, the image to add.") }
+		{"list", DataDescription(LIST, "optional input list, if empty, a new empty list will be created.", true) },
+		{"string", DataDescription(STRING, "if it is a list of strings, the string element to add.", true) },
+		{"integer", DataDescription(INTEGER, "if it is a list of integers, the integer element to add.", true) },
+		{"float", DataDescription(FLOAT, "if it is a list of floats, the float element to add.", true) },
+		{"bool", DataDescription(BOOL, "if it is a list of bools, the bool element to add.", true) },
+		{"image", DataDescription(MATRIX, "if it is a list of images, the image to add.", true) }
 	};
 	map<string, DataDescription> output = {
 		{"list", DataDescription(LIST, "the result list with an added element.") },

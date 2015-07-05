@@ -135,6 +135,13 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 			if (module.getInputs().count(inputIt->first) == 0) {
 				errors.push_back( inStep + string("Module '") + step.module + string("' has no input named '") + inputIt->first + string("'.") );
 			}
+			// check if input is set when not optional
+			if (inputIt->second.first.empty()) {
+				if (!module.getInputs()[inputIt->first].getIsOptional()) {
+					errors.push_back( inStep + string("Input '") + inputIt->first + string("' is not optional and not defined.") );
+				}
+				continue;
+			}
 			// check if dependencies refer to existing steps
 			if (chain_.count(inputIt->second.first) == 0) {
 				errors.push_back( inStep + string("Input '") + inputIt->first + string("' refers to non-existing step '") + inputIt->second.first + string("'.") );
@@ -203,6 +210,27 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 
 	}
 
+	// check for circular dependencies
+	vector<string> circleSteps = detectCircularDependencies();
+	if (circleSteps.size() > 0) {
+		auto it = circleSteps.begin();
+		string stepNames = *it;
+		++it;
+		for (; it!=circleSteps.end(); ++it) {
+			stepNames += string(", ") + *it;
+		}
+		errors.push_back( string("Circular dependency detected between the following configuration steps: ") + stepNames);
+	}
+
+	return errors;
+}
+
+// detect circular dependencies in the inputs
+vector<string> Configuration::detectCircularDependencies() {
+
+	// list of names that are involved in the circular dependency
+	vector<string> stepNames;
+
 	// detect circular dependencies
 	map<string, ProcessingStep> chainTmp;
 	chainTmp.insert(chain_.begin(), chain_.end());
@@ -232,6 +260,10 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 				map<string, pair<string,string> >::iterator it = itProSt->second.inputs.begin();
 				int i = 1;
 				for (; it!=itProSt->second.inputs.end(); ++it) {
+					// skip empty references (unset optional input)
+					if (it->second.first.empty()) {
+						continue;
+					}
 					if (find(sortedChain.begin(), sortedChain.end(), it->second.first) != sortedChain.end()){
 						i *=1;
 					} else{
@@ -250,7 +282,7 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 				}
 			}
 		}
-		if(!elemWasAdded){
+		if(!elemWasAdded){ // a circle has been detected
 
 			// detect only the concrete circle, and not also all the steps, which depend on it
 
@@ -276,6 +308,10 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 					map<string, pair<string, string> > tempInp = itProSt->second.inputs;
 					map<string, pair<string, string> >::iterator itInp = tempInp.begin();
 					for(;itInp!=tempInp.end();++itInp) {
+						// skip empty references (unset optional input)
+						if (itInp->second.first.empty()) {
+							continue;
+						}
 						modulesProvideOutput.push_front(itInp->second.first);
 					}
 				}
@@ -304,19 +340,15 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 
 			// TODO divide the circles, when there are many
 
-			auto it = chainCircle.begin();
-			string stepNames = it->first;
-			++it;
-			for (; it!=chainCircle.end(); ++it) {
-				stepNames += string(", ") + it->first;
+			// fill list of names that are involved in the circular dependency
+			for (auto it = chainCircle.begin(); it!=chainCircle.end(); ++it) {
+				stepNames.push_back(it->first);
 			}
-
-			errors.push_back( string("Circular dependency detected between the following configuration steps: ") + stepNames);
 			break;
 		}
 	}
 
-	return errors;
+	return stepNames;
 }
 
 // prints the current configurations yaml structure
