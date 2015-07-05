@@ -140,6 +140,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	resetParams();
 
+	refreshSaveIcon();
+
 }
 
 // destructor
@@ -160,6 +162,7 @@ void MainWindow::loadDataFlow(string filename)
 	ui->deleteButton->setEnabled(false);
 	unknownFile = false;
 	savedVersion = 0;
+	refreshSaveIcon();
 	currentFileHasChanged = false;
 
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
@@ -281,6 +284,21 @@ void MainWindow::refreshInputs()
 	}
 
 	delegateTableInputs->setConfiguration(conf_, currentStepName, inputNames);
+}
+
+// refresh save icon
+void MainWindow::refreshSaveIcon()
+{
+	QPixmap image;
+    if (savedVersion == 0) {
+		image = QPixmap(":/images/pen.png");
+	} else {
+		image = QPixmap(":/images/penRed.png");
+	}
+	QIcon icon(image);
+	icon.addPixmap(image, QIcon::Mode::Disabled, QIcon::State::On);
+	icon.addPixmap(image, QIcon::Mode::Disabled, QIcon::State::Off);
+	ui->status->setIcon(icon);
 }
 
 // refresh the graph view
@@ -577,6 +595,8 @@ void MainWindow::new_Data_Flow() {
 	currentFileHasChanged = false;
 	unknownFile = true;
 
+	savedVersion = 1;
+
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
 	while(! redoStack.empty()){
 		redoStack.pop();
@@ -650,6 +670,7 @@ void MainWindow::save_Data_Flow() {
 	unknownFile = false;
 	savedVersion = 0;
 	currentFileHasChanged = false;
+	refreshSaveIcon();
 	saveAct->setEnabled(false);
 
 }
@@ -679,6 +700,8 @@ void MainWindow::save_Data_Flow_as() {
 	currentFileHasChanged = false;
 	unknownFile = false;
 	savedVersion = 0;
+	refreshSaveIcon();
+
 }
 
 void MainWindow::about() {
@@ -692,11 +715,13 @@ void MainWindow::undo() {
 
 		if (!unknownFile) saveAct->setEnabled(true);
 
+
 		savedVersion--;
 		if (!unknownFile && savedVersion == 0){
 			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
+		refreshSaveIcon();
 
 
 		// move the current config to the redo stack
@@ -745,11 +770,14 @@ void MainWindow::redo() {
 
 		if (!unknownFile) saveAct->setEnabled(true);
 
+
 		savedVersion++;
 		if (!unknownFile && savedVersion == 0){
 			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
+		refreshSaveIcon();
+
 
 		// move the current config to the undo stack
 		undoStack.push(conf_);
@@ -805,6 +833,9 @@ void MainWindow::beforeConfigChange(){
 	// set the undo to active and redo to inactive
 	undoAct->setEnabled(true);
 	redoAct->setEnabled(false);
+
+	refreshSaveIcon();
+
 }
 
 

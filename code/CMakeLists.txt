@@ -64,6 +64,10 @@ QT5_WRAP_UI(UI_HS
     gui/mainwindow.ui
 )
 
+# this command will generate rules that will run rcc on all listed files
+# in result RC_SRCS variable will contain paths to files produced by rcc
+qt5_add_resources(RC_SRCS gui/mainwindow.qrc)
+
 # add executeable for the gui application
 add_executable(uipf-gui
 
@@ -80,6 +84,7 @@ add_executable(uipf-gui
 
 	gui/RunWorkerThread.cpp
 
+	${RC_SRCS}
 )
 target_link_libraries (uipf-gui boost_graph uipf-framework)
 qt5_use_modules(uipf-gui Core Gui Widgets)
