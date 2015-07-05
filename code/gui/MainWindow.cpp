@@ -263,8 +263,11 @@ void MainWindow::refreshInputs()
 	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
 		QStandardItem* item = new QStandardItem((it->first).c_str());
 		if (mm_.hasModule(step.module)) {
-			string str = mm_.getModuleMetaData(step.module).getInput(it->first).getDescription();
-			item->setToolTip(QString(str.c_str()));
+			map<string, DataDescription> inputs = mm_.getModuleMetaData(step.module).getInputs();
+			if (inputs.count(it->first) > 0) {
+				string str = inputs[it->first].getDescription();
+				item->setToolTip(QString(str.c_str()));
+			}
 		}
 		modelTableInputs->setVerticalHeaderItem(row, item);
 		inputNames[row] = it->first;
