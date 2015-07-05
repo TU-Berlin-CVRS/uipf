@@ -542,6 +542,8 @@ void MainWindow::on_comboCategory_currentIndexChanged(int index)
 		}
 		ui->comboModule->setCurrentIndex(-1);
 		ui->comboModule->setEnabled(true);
+
+		refreshGraph();
 	}
 
 }
@@ -556,6 +558,7 @@ void MainWindow::on_comboModule_currentIndexChanged(int index)
 		conf_.setProcessingStepModule(currentStepName, module, mm_.getModuleMetaData(module));
 		refreshParams();
 		refreshInputs();
+		refreshGraph();
 	}
 }
 
@@ -567,6 +570,7 @@ void MainWindow::on_paramChanged(std::string paramName, std::string value)
 		map<string, string> params = conf_.getProcessingStep(currentStepName).params;
 		params[paramName] = value;
 		conf_.setProcessingStepParams(currentStepName, params);
+		refreshGraph();
 	}
 }
 
