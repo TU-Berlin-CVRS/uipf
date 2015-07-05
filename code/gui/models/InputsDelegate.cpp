@@ -40,10 +40,21 @@ void InputsDelegate::setConfiguration(const Configuration& conf, const std::stri
 		stepItems_.push_back(it->first.c_str());
 	}
 
-	// fill vector of possible outputs for each referenced module
 	ProcessingStep step = conf.getProcessingStep(currentStepName);
 	for(auto it = step.inputs.cbegin(); it != step.inputs.end(); ++it) {
 
+		// fill optional inputs
+		auto ownMetaIt = moduleMetaData.find(step.module);
+		if (ownMetaIt != moduleMetaData.end()) {
+			map<string, DataDescription> in = ownMetaIt->second.getInputs();
+			for (auto iit = in.cbegin(); iit!=in.end(); ++iit) {
+				if (iit->second.getIsOptional()) {
+					optionalInputs_.push_back(iit->first);
+				}
+			}
+		}
+
+		// fill vector of possible outputs for each referenced module
 		vector<string> subItems;
 		if (conf.hasProcessingStep(it->second.first)) {
 			// only possible to add items if the referenced step exists and we can get its module
@@ -69,8 +80,21 @@ QWidget *InputsDelegate::createEditor(QWidget *parent, const QStyleOptionViewIte
 
 	// first column is the processing step
 	if (index.column() == 0) {
+		string inputName = inputNames_[index.row()];
+		bool isOptional = false;
+		for (unsigned int i = 0; i < optionalInputs_.size(); ++i) {
+			if (inputName.compare(optionalInputs_[i]) == 0) {
+				isOptional = true;
+				break;
+			}
+		}
+		int k = 0;
+		// add a selection that is empty for optional inputs
+		if (isOptional) {
+			editor->insertItem(k++, QString(""), QString(""));
+		}
 		for(unsigned int i = 0; i < stepItems_.size(); ++i) {
-			editor->insertItem(i, QString(stepItems_[i].c_str()), QString(stepItems_[i].c_str()));
+			editor->insertItem(k++, QString(stepItems_[i].c_str()), QString(stepItems_[i].c_str()));
 		}
 	}
 	// second column is the output of the source module
