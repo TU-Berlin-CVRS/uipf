@@ -1,0 +1,13 @@
+new step 1:
+  module: loadImage
+  filename: ""
+  mode: ""
+new step 2:
+  module: dummyModule
+new step 3:
+  module: gaussian
+  input:
+    image: .
+  sigmaX: ""
+  sigmaY: ""
+  windowSize: ""
