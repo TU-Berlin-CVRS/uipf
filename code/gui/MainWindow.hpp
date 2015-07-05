@@ -124,7 +124,7 @@ private:
 	std::map<std::string, std::vector<std::string> > categories_;
 
 	// counts the undo/redo, when = 0, it is the saved version
-	int savedVersion = 0;
+	int savedVersion = 1;
 	// is true if file was at least one time saved
 	bool unknownFile = true;
 
@@ -142,6 +142,7 @@ private:
 	void refreshParams();
 	void refreshInputs();
 	void refreshGraph();
+	void refreshSaveIcon();
 
 	// reset UI triggers
 	void resetCategoryAndModule();
