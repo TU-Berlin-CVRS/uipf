@@ -2,9 +2,11 @@
 #include "edge.h"
 #include "node.h"
 #include "../../framework/StdIncl.hpp"
+#include "../../framework/Logger.hpp"
 #include <math.h>
 #include <random>
 #include <QKeyEvent>
+#include <QSizePolicy>
 
 #include <boost/graph/fruchterman_reingold.hpp>
 #include <boost/graph/random_layout.hpp>
@@ -41,17 +43,17 @@ Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 
 
 GraphWidget::GraphWidget(QWidget *parent)
-    : QGraphicsView(parent)
+    : QGraphicsView(parent),currentScale_(0.7f)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(-200, -200, 400, 400);
+    scene->setSceneRect(-100, -200, 400, 400);
     setScene(scene);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
-    scale(qreal(0.8), qreal(0.8));
+    scale(currentScale_,currentScale_);
     setMinimumSize(400, 400);
 
 }
@@ -70,7 +72,7 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	for (auto it = chain.begin(); it!=chain.end(); ++it)
 	{
 		  Node *node = new Node(this,QString(it->first.c_str()),it->second);
-		  //node->setPos(-rand()%150, rand()%150);
+
 		  scene->addItem(node);
 		  nodes.insert(std::pair<string,Node*>(it->first,node));
 	}
@@ -96,8 +98,8 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	}
 
 	//calculate graph layout with boosts fruchterman_reingold algo
-	double width = scene->width(); //fixed size (2DO: make relative)
-	double height = scene->height();
+	double width = this->width();//scene->width();
+	double height = this->height();//scene->height();
 
 	typedef std::vector<point_type> PositionVec;
 	PositionVec position_vec(num_vertices(g));
@@ -119,6 +121,9 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 		nodes[strName]->setPos(position[*vi][0],  position[*vi][1]);
 	}
 
+
+	//QGraphicsView::fitInView( scene->itemsBoundingRect(), Qt::KeepAspectRatio );
+
 }
 
 void GraphWidget::wheelEvent(QWheelEvent *event)
@@ -133,6 +138,8 @@ void GraphWidget::scaleView(qreal scaleFactor)
         return;
 
     scale(scaleFactor, scaleFactor);
+
+    currentScale_ = scaleFactor;
 }
 
 }//gui

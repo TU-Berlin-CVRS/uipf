@@ -24,6 +24,8 @@ private:
    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 
    void scaleView(qreal scaleFactor);
+
+   qreal currentScale_;
 };
 
 }//gui
