@@ -73,7 +73,7 @@ QVariant ParamsModel::headerData(int section, Qt::Orientation orientation, int r
 			return QString::fromStdString(descr);
 		}
 	}
-	QSize size(100, 50);
+	QSize size(100, 30);
 	if (section == 0) {
 		size.setWidth(200);
 	}
