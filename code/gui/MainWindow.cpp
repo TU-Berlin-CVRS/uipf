@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <QPointer>
+#include <QShortcut>
 #include <iostream>
 #include <memory>
 #include <opencv2/opencv.hpp>
@@ -75,6 +76,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// react to selection of the entries
     connect(ui->listProcessingSteps->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
 			this, SLOT(on_stepSelectionChanged(QItemSelection)));
+
+	QShortcut *shortcut = new QShortcut(QKeySequence("Del"), this);
+	ui->deleteButton->connect(shortcut, SIGNAL(activated()),
+			this, SLOT(on_deleteButton_clicked()));
+
 
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
@@ -488,6 +494,7 @@ void MainWindow::on_stepNameChanged(){
 
 // Delete button clicked
 void MainWindow::on_deleteButton_clicked() {
+	if (!ui->deleteButton->isEnabled()) return;
     // remove from the chain
 	beforeConfigChange();
 	conf_.removeProcessingStep(currentStepName);
