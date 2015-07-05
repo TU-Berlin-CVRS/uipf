@@ -15,7 +15,7 @@ class String : public Data {
 
 	public:
 		// constructor
-		String(void){};
+		String(std::string s) : str_(s) {};
 		// destructor
 		~String(void){};
 

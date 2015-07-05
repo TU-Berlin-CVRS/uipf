@@ -1,0 +1,30 @@
+in:
+  module: loadImage
+  filename: input.jpg
+  mode: ""
+merge:
+  module: mergeChannels
+  input:
+    channels: split.channels
+show channels:
+  module: showImageList
+  input:
+    imageList: split.channels
+  blocking: true
+  title: ""
+show input:
+  module: showImage
+  input:
+    image: in.image
+  blocking: true
+  title: ""
+show merge:
+  module: showImage
+  input:
+    image: merge.image
+  blocking: ""
+  title: ""
+split:
+  module: splitChannels
+  input:
+    image: in.image

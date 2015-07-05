@@ -13,7 +13,6 @@ class Matrix : public Data {
 
 	public:
 		// constructor
-		Matrix(void){};
 		Matrix(cv::Mat&);
 		// destructor
 		~Matrix(void){};

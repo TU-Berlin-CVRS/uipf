@@ -14,7 +14,7 @@ class Bool : public Data {
 
 	public:
 		// constructor
-		Bool(void){};
+		Bool(bool b) : b_(b) {};
 		// destructor
 		~Bool(void){};
 

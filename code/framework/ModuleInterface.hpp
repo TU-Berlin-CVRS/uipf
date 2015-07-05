@@ -3,12 +3,21 @@
 
 #include <QObject>
 #include <QtPlugin>
-#include "types/Data.hpp"
 #include "Context.hpp"
 #include "MetaData.hpp"
 #include "InvalidConfigException.hpp"
 #include "ErrorException.hpp"
 #include "DataManager.hpp"
+
+// data tyes
+#include "types/Data.hpp"
+#include "types/String.hpp"
+#include "types/Integer.hpp"
+#include "types/Float.hpp"
+#include "types/Bool.hpp"
+#include "types/Matrix.hpp"
+#include "types/List.hpp"
+#include "types/Map.hpp"
 
 namespace uipf{
 

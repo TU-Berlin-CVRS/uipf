@@ -17,22 +17,22 @@ class List : public Data {
 
 	public:
 		// constructor
-		List(void){};
+		List(std::list<typename T::ptr>& l) : list_(l) {};
 		// destructor
 		~List(void){};
 
 		// returns the content of the list
-		std::list<T> getContent();
+		std::list<typename T::ptr> getContent();
 
 		// sets the content of the list
-		void setContent(std::list<T>);
+		void setContent(std::list<typename T::ptr>);
 
 		// returns the data type of this data object: in this case: LIST
 		Type getType() override;
 
 	private:
 		// content of the list
-		std::list<T> list_;
+		std::list<typename T::ptr> list_;
 };
 
 
@@ -40,7 +40,7 @@ class List : public Data {
 
 // returns the content of the list
 template <typename T>
-std::list<T> List<T>::getContent(){
+std::list<typename T::ptr> List<T>::getContent(){
 	return list_;
 }
 
@@ -49,7 +49,7 @@ std::list<T> List<T>::getContent(){
 list	list<Data> content
 */
 template <typename T>
-void List<T>::setContent(std::list<T> list){
+void List<T>::setContent(std::list<typename T::ptr> list){
 	list_ = list;
 }
 

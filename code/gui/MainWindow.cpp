@@ -35,13 +35,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // create model for step list
     modelStep = new QStringListModel(this);
     // create model for params list
-    modelTableParams = new ParamsModel(this);
+    modelTableParams = new ParamsModel(mm_,this);
 
     // create model for inputs list
     modelTableInputs = new QStandardItemModel(this);
 	modelTableInputs->setColumnCount(2);
 	QStandardItem* item0 = new QStandardItem("From Step:");
 	QStandardItem* item1 = new QStandardItem("Output Name:");
+	item0->setToolTip(QString("Select here the processing step, which provides the needed input"));
+	item1->setToolTip(QString("Select here the output of the selected processing step, which is needed as input"));
 	modelTableInputs->setHorizontalHeaderItem(0, item0);
 	modelTableInputs->setHorizontalHeaderItem(1, item1);
 	delegateTableInputs = new InputsDelegate(mm_, this);
@@ -98,8 +100,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     			this, SLOT (on_reportProgress(const float&)));
 
     // Window creation
-    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& )),
-      			this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& , bool )),
+				this, SLOT (on_createWindow(const std::string , const cv::Mat&, bool )));
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -209,7 +211,7 @@ void MainWindow::refreshCategoryAndModule()
     ui->comboModule->setEnabled(true);
 
 	ProcessingStep step = conf_.getProcessingStep(currentStepName);
-	if (step.module.empty()){
+	if (step.module.empty() || !mm_.hasModule(step.module)){
 		resetCategoryAndModule();
 		ui->comboCategory->setEnabled(true);
 		return;
@@ -266,7 +268,12 @@ void MainWindow::refreshInputs()
 	vector<string> inputNames(inputs.size());
 	int row = 0;
 	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
-		modelTableInputs->setVerticalHeaderItem(row, new QStandardItem((it->first).c_str()));
+		QStandardItem* item = new QStandardItem((it->first).c_str());
+		if (mm_.hasModule(step.module)) {
+			string str = mm_.getModuleMetaData(step.module).getInput(it->first).getDescription();
+			item->setToolTip(QString(str.c_str()));
+		}
+		modelTableInputs->setVerticalHeaderItem(row, item);
 		inputNames[row] = it->first;
 		modelTableInputs->setItem(row, 0, new QStandardItem((it->second.first).c_str()));
 		modelTableInputs->setItem(row, 1, new QStandardItem((it->second.second).c_str()));
@@ -319,7 +326,7 @@ void MainWindow::resetInputs()
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
+void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking)
 {
 	//create windows that show images without opencv imshow()
 
@@ -349,7 +356,12 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 
 	/*using namespace cv;
 	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
-	imshow( strTitle.c_str(), oMat);*/
+	imshow( strTitle.c_str(), oMat);
+
+	if (blocking) {
+		waitKey(-1);
+	}
+*/
 }
 
 // append messages from our logger to the log-textview
@@ -507,6 +519,8 @@ void MainWindow::on_comboCategory_currentIndexChanged(int index)
 		vector<string> modulesOfSameCategory = categories_[category];
 		for (unsigned int i = 0; i < modulesOfSameCategory.size() ; i++) {
 			ui->comboModule->insertItem(i, QString(modulesOfSameCategory[i].c_str()), QString(modulesOfSameCategory[i].c_str()));
+			string str = mm_.getModuleMetaData(modulesOfSameCategory[i]).getDescription();
+			ui->comboModule->setItemData(i, QVariant(str.c_str()) , Qt::ToolTipRole);
 		}
 		ui->comboModule->setCurrentIndex(-1);
 		ui->comboModule->setEnabled(true);

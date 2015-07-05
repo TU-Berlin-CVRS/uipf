@@ -16,6 +16,6 @@ void Bool::setContent(bool b){
 }
 
 // returns the data type of this data object: in this case: BOOL
-Type String::getType(){
+Type Bool::getType(){
 	return BOOL;
 }

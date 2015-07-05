@@ -2,7 +2,7 @@
 #include "node.h"
 
 #include <math.h>
-
+#include <QDebug>
 #include <QPainter>
 
 namespace uipf{
@@ -38,7 +38,41 @@ void Edge::adjust()
     if (!source || !dest)
         return;
 
-    QLineF line(mapFromItem(source, 0, 0), mapFromItem(dest, 0, 0));
+    QPointF pStart = mapFromItem(source, 0, 0);
+    QPointF pEnd = mapFromItem(dest, 0, 0);
+    QRectF sourceBounds = source->boundingRect();
+    QRectF destBounds = dest->boundingRect();
+    //move point to middle of boundingbox
+    pStart.setX(pStart.x()-15 + source->boundingRect().width()/2);
+    pEnd.setX(pEnd.x()-15 + dest->boundingRect().width()/2);
+
+   // qDebug() << pStart << " " << pEnd << " " << sourceBounds << " " << destBounds;
+
+    if (abs(pStart.y() - pEnd.y()) < sourceBounds.height()*2.5f)
+    {
+    	if (pStart.x() > pEnd.x())
+    	{
+    		pStart.setX(pStart.x()-sourceBounds.width()/2);
+    		pEnd.setX(pEnd.x()+destBounds.width()/2);
+    	}
+    	else
+    	{
+    		pStart.setX(pStart.x()+sourceBounds.width()/2);
+    		pEnd.setX(pEnd.x()-destBounds.width()/2);
+    	}
+    }
+    else if (pStart.y() > pEnd.y())
+    {
+    	pStart.setY(pStart.y()-sourceBounds.height()/2);
+    	pEnd.setY(pEnd.y()+destBounds.height()/2);
+    }
+    else
+    {
+    	pStart.setY(pStart.y()+sourceBounds.height()/2);
+    	pEnd.setY(pEnd.y()-destBounds.height()/2);
+    }
+
+    QLineF line(pStart, pEnd);
        qreal length = line.length();
 
        prepareGeometryChange();

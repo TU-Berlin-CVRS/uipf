@@ -4,8 +4,8 @@ using namespace std;
 using namespace uipf;
 
 // constructor
-ParamsModel::ParamsModel(QObject *parent) : QAbstractTableModel(parent)
-{
+ParamsModel::ParamsModel(ModuleManager& mm, QObject *parent) : QAbstractTableModel(parent),  mm_(mm) {
+
 }
 
 // sets the number of rows for the widget
@@ -50,7 +50,10 @@ QVariant ParamsModel::data(const QModelIndex &index, int role) const
 	}
 	else if (role == Qt::TextAlignmentRole) {
         return int(Qt::AlignLeft | Qt::AlignVCenter);
-	}
+	} else if (role == Qt::ToolTipRole) {
+		string descr = mm_.getModuleMetaData(step_.module).getParam(paramNames_[index.row()]).getDescription();
+		return QString::fromStdString(descr);
+	} else
     return QVariant();
 }
 
@@ -63,6 +66,11 @@ QVariant ParamsModel::headerData(int section, Qt::Orientation orientation, int r
 		}
 		else if(orientation == Qt::Vertical) {
 			return QString(paramNames_[section].c_str());
+		}
+	} else if (role == Qt::ToolTipRole) {
+		if(orientation == Qt::Vertical) {
+			string descr = mm_.getModuleMetaData(step_.module).getParam(paramNames_[section]).getDescription();
+			return QString::fromStdString(descr);
 		}
 	}
 	QSize size(100, 50);

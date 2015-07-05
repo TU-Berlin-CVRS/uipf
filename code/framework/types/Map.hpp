@@ -18,7 +18,7 @@ class Map : public Data {
 
 	public:
 		// constructor
-		Map(void){};
+		Map(std::map<typename K::ptr, typename V::ptr>& m) : map_(m) {};
 		// destructor
 		~Map(void){};
 
@@ -41,7 +41,7 @@ class Map : public Data {
 
 // returns the content of the list
 template <typename K, typename V>
-map<K,V> Map<K,V>::getContent(){
+std::map<K,V> Map<K,V>::getContent(){
 	return map_;
 }
 

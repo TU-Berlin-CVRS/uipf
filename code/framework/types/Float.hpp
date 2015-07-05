@@ -13,7 +13,7 @@ class Float : public Data {
 			typedef const SMARTPOINTER<Float> c_ptr;
 	public:
 		// constructor
-		Float(void){};
+		Float(float f) : f_(f) {};
 		// destructor
 		~Float(void){};
 

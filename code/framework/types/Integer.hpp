@@ -14,7 +14,7 @@ class Integer : public Data {
 
 	public:
 		// constructor
-		Integer(void){};
+		Integer(int i) : i_(i) {};
 		// destructor
 		~Integer(void){};
 
