@@ -3,6 +3,28 @@
 using namespace std;
 using namespace uipf;
 
+// helper function to add an item to the list
+template<typename T, typename I>
+List<T>* addItemToList(DataManager& data, const string& inputListName, const string& inputItemName) {
+
+	List<T>* newList;
+
+	// if a list has been given, use it
+	if (data.hasInputData(inputListName)) {
+		auto list = data.getInputData< List<T> >(inputListName)->getContent();
+		newList = new List<T>(list);
+	} else {
+		newList = new List<T>();
+	}
+	if (data.hasInputData(inputItemName)) {
+		typename T::c_ptr item = data.getInputData< T >(inputItemName);
+		I i = item->getContent();
+		newList->addItem(new T(i));
+	} else {
+		LOG_W("No input was given for " + inputItemName + ", no element was added to the list.");
+	}
+	return newList;
+}
 
 // runs the module
 /*
@@ -12,43 +34,34 @@ void AddListItemModule::run( DataManager& data) const
 {
 	using namespace cv;
 
-	std::list<Data::ptr> list;
-
-	// if there is an input list, take it, otherwise we start with an empty list
-	if (data.hasInputData("list")) {
-		List<Data>::c_ptr pList = data.getInputData< List<Data> >("list");
-		list = pList->getContent();
+	// select input list dependend on the type
+	if (data.hasInputData("stringList") || data.hasInputData("string")) {
+		data.setOutputData("stringList", addItemToList<String, string>(data, "stringList", "string"));
 	}
-
-	// add input item dependend on the type
-	if (data.hasInputData("string")) {
-		string s = data.getInputData< String >("string")->getContent();
-		list.push_back(String::ptr(new String(s)));
+	if (data.hasInputData("integerList") || data.hasInputData("integer")) {
+		data.setOutputData("integerList", addItemToList<Integer, int>(data, "integerList", "integer"));
 	}
-	else if (data.hasInputData("integer")) {
-		int i = data.getInputData< Integer >("integer")->getContent();
-		list.push_back(Integer::ptr(new Integer(i)));
+	if (data.hasInputData("floatList") || data.hasInputData("float")) {
+		data.setOutputData("floatList", addItemToList<Float, float>(data, "floatList", "float"));
 	}
-	else if (data.hasInputData("float")) {
-		float f = data.getInputData< Float >("float")->getContent();
-		list.push_back(Float::ptr(new Float(f)));
+	if (data.hasInputData("boolList") || data.hasInputData("bool")) {
+		data.setOutputData("boolList", addItemToList<Bool, bool>(data, "boolList", "bool"));
 	}
-	else if (data.hasInputData("bool")) {
-		bool b = data.getInputData< Bool >("bool")->getContent();
-		list.push_back(Bool::ptr(new Bool(b)));
+	if (data.hasInputData("imageList") || data.hasInputData("image")) {
+		data.setOutputData("imageList", addItemToList<Matrix, Mat>(data, "imageList", "image"));
 	}
-	else if (data.hasInputData("image")) {
-		Mat m = data.getInputData< Matrix >("image")->getContent();
-		list.push_back(Matrix::ptr(new Matrix(m)));
-	}
-	LOG_W("No input was given, an empty list has been created.");
 }
 
 // returns the meta data of this module
 MetaData AddListItemModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"list", DataDescription(LIST, "optional input list, if empty, a new empty list will be created.", true) },
+		{"stringList", DataDescription(STRING_LIST, "a list of strings.", true) },
+		{"integerList", DataDescription(INTEGER_LIST, "a list of integers.", true) },
+		{"floatList", DataDescription(FLOAT_LIST, "a list of floats.", true) },
+		{"boolList", DataDescription(BOOL_LIST, "a list of bools.", true) },
+		{"imageList", DataDescription(MATRIX_LIST, "a list of images.", true) },
+
 		{"string", DataDescription(STRING, "if it is a list of strings, the string element to add.", true) },
 		{"integer", DataDescription(INTEGER, "if it is a list of integers, the integer element to add.", true) },
 		{"float", DataDescription(FLOAT, "if it is a list of floats, the float element to add.", true) },
@@ -56,7 +69,11 @@ MetaData AddListItemModule::getMetaData() const
 		{"image", DataDescription(MATRIX, "if it is a list of images, the image to add.", true) }
 	};
 	map<string, DataDescription> output = {
-		{"list", DataDescription(LIST, "the result list with an added element.") },
+		{"stringList", DataDescription(STRING_LIST, "the result list with an added element. a list of strings.") },
+		{"integerList", DataDescription(INTEGER_LIST, "the result list with an added element. a list of integers.") },
+		{"floatList", DataDescription(FLOAT_LIST, "the result list with an added element. a list of floats.") },
+		{"boolList", DataDescription(BOOL_LIST, "the result list with an added element. a list of bools.") },
+		{"imageList", DataDescription(MATRIX_LIST, "the result list with an added element. a list of images.") }
 	};
 	map<string, ParamDescription> params = {};
 

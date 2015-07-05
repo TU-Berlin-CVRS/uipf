@@ -129,11 +129,14 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 			continue;
 		}
 
+		// metadata of the module of the current step
+		MetaData module = modules[step.module];
+
 		for(auto inputIt = step.inputs.cbegin(); inputIt != step.inputs.end(); ++inputIt) {
 			// check if input exists for a module
-			MetaData module = modules[step.module];
 			if (module.getInputs().count(inputIt->first) == 0) {
 				errors.push_back( inStep + string("Module '") + step.module + string("' has no input named '") + inputIt->first + string("'.") );
+				continue;
 			}
 			// check if input is set when not optional
 			if (inputIt->second.first.empty()) {
@@ -157,15 +160,17 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 					// check if the type of output and input matches
 					DataDescription output = refModule.getOutputs()[inputIt->second.second];
 					if (output.getType() != module.getInputs()[inputIt->first].getType()) {
-						errors.push_back( inStep + string("Type of input '") + inputIt->first
-							+ string("' does not match the type of the referenced output.")
+						errors.push_back( inStep + string("Type of input '") + inputIt->first + string("' ( ")
+							+ type2string(module.getInputs()[inputIt->first].getType())
+							+ string(" ) does not match the type of the referenced output '") + inputIt->second.first + string(".") + inputIt->second.second + string("'")
+							+ string(" which is of type ")
+							+ type2string(output.getType()) + string(".")
 						);
 					}
 				}
 			}
 		}
 
-		MetaData module = modules[step.module];
 		auto paramDesc = module.getParams();
 		//check, if all mandatory parameters are given
 		for(auto paramIt = paramDesc.cbegin(); paramIt != paramDesc.end(); ++paramIt)

@@ -37,6 +37,7 @@ add_library(uipf-framework SHARED
 	framework/MetaData.cpp
 
 	framework/DataManager.cpp
+	framework/types/Data.cpp
 	framework/types/String.cpp
 	framework/types/Float.cpp
 	framework/types/Integer.cpp

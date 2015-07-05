@@ -19,4 +19,3 @@ void DataManager::listParams( ) const
 bool DataManager::hasInputData( const std::string& strName) const {
 	return input_.find(strName) != input_.end();
 }
-

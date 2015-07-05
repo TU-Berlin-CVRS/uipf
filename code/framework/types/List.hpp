@@ -17,6 +17,7 @@ class List : public Data {
 
 	public:
 		// constructor
+		List() {};
 		List(std::list<typename T::ptr>& l) : list_(l) {};
 		// destructor
 		~List(void){};
@@ -26,6 +27,16 @@ class List : public Data {
 
 		// sets the content of the list
 		void setContent(std::list<typename T::ptr>);
+
+		// check whether item with index exists
+		bool hasItem(int index);
+
+		// returns an item in the list or nullptr if it does not exist, check with hasItem() before doing this.
+		typename T::ptr getItem(int index);
+
+		// add an item to the list by either passing a new element or an existing pointer
+		void addItem(T* item);
+		void addItem(typename T::ptr item);
 
 		// returns the data type of this data object: in this case: LIST
 		Type getType() override;
@@ -53,12 +64,60 @@ void List<T>::setContent(std::list<typename T::ptr> list){
 	list_ = list;
 }
 
+template<typename T>
+bool List<T>::hasItem(int index) {
+
+	int i = 0;
+	for(auto it = list_.begin(); it != list_.end(); ++it) {
+		if (i++ == index) {
+			return true;
+		}
+	}
+	return false;
+}
+
+template<typename T>
+typename T::ptr List<T>::getItem(int index) {
+
+	int i = 0;
+	for(auto it = list_.begin(); it != list_.end(); ++it) {
+		if (i++ == index) {
+			return *it;
+		}
+	}
+	return nullptr;
+}
+
+template<typename T>
+void List<T>::addItem(T* item) {
+
+	list_.push_back(typename T::ptr(item));
+}
+
+template<typename T>
+void List<T>::addItem(typename T::ptr item) {
+
+	list_.push_back(item);
+}
+
 
 // returns the data type of this data object: in this case: LIST
-template <typename T>
-Type List<T>::getType(){
-	return LIST;
-}
+template <>
+inline Type List<String>::getType() { return STRING_LIST; }
+
+template <>
+inline Type List<Integer>::getType() { return INTEGER_LIST; }
+
+template <>
+inline Type List<Float>::getType() { return FLOAT_LIST; }
+
+template <>
+inline Type List<Bool>::getType() { return BOOL_LIST; }
+
+template <>
+inline Type List<Matrix>::getType() { return MATRIX_LIST; }
+
+
 
 } // namespace
 
