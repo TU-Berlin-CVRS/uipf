@@ -73,9 +73,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// set up slots for signals
 
 	// react to selection of the entries
-	// -> TODO improve this to react on any selection change: http://stackoverflow.com/questions/2468514/how-to-get-the-selectionchange-event-in-qt
-    connect(ui->listProcessingSteps, SIGNAL(clicked(const QModelIndex &)),
-            this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
+    connect(ui->listProcessingSteps->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+			this, SLOT(on_stepSelectionChanged(QItemSelection)));
+
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(on_stepNameChanged()));
@@ -488,11 +488,13 @@ void MainWindow::on_stepNameChanged(){
 
 // Delete button clicked
 void MainWindow::on_deleteButton_clicked() {
-    // Get the position and remove the row
-    modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
     // remove from the chain
 	beforeConfigChange();
 	conf_.removeProcessingStep(currentStepName);
+
+    // Get the position and remove the row
+    modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
+
 
 	if (ui->listProcessingSteps->currentIndex().row() == -1){
 		currentStepName = string("");
@@ -500,6 +502,7 @@ void MainWindow::on_deleteButton_clicked() {
 	} else {
 		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 	}
+
 
 	// refresh configuration widgets
 	refreshCategoryAndModule();
@@ -511,15 +514,21 @@ void MainWindow::on_deleteButton_clicked() {
 
 
 // gets called when a processing step is selected
-void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
-{
-	ui->deleteButton->setEnabled(true);
-	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
-
-	// refresh configuration widgets
-	refreshCategoryAndModule();
-	refreshParams();
-	refreshInputs();
+void MainWindow::on_stepSelectionChanged(const QItemSelection& selection){
+	if(selection.indexes().isEmpty()) {
+		ui->deleteButton->setEnabled(false);
+		resetCategoryAndModule();
+		resetParams();
+		resetInputs();
+	} else {
+		ui->deleteButton->setEnabled(true);
+		ui->listProcessingSteps->setCurrentIndex(selection.indexes().first());
+		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+		// refresh configuration widgets
+		refreshCategoryAndModule();
+		refreshParams();
+		refreshInputs();
+	}
 }
 
 void MainWindow::on_comboCategory_currentIndexChanged(int index)
@@ -577,7 +586,6 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 		beforeConfigChange();
 		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
 		inputs[inputName] = value;
-		//cout << "input " << inputName << " changed: " << value.first << "." << value.second << endl;
 		conf_.setProcessingStepInputs(currentStepName, inputs);
 
 		refreshInputs();

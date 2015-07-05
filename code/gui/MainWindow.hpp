@@ -57,7 +57,7 @@ private slots:
 	void on_stepNameChanged();
 
     // Activation of Step (via clicking)
-    void on_listProcessingSteps_activated(const QModelIndex & index);
+    void on_stepSelectionChanged(const QItemSelection&);
 
     // append messages from our logger to the log-textview
     void on_appendToLog(const Logger::LogType&, const std::string& );
