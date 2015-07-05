@@ -17,7 +17,6 @@
 #include "types/Bool.hpp"
 #include "types/Matrix.hpp"
 #include "types/List.hpp"
-#include "types/Map.hpp"
 
 namespace uipf{
 

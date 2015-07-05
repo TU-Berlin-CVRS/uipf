@@ -26,7 +26,6 @@ enum Type {
 	BOOL_LIST,
 	MATRIX_LIST,
 
-	MAP,
 };
 
 // returns the string representation of a type

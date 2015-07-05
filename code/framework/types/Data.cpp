@@ -15,7 +15,6 @@ std::string uipf::type2string(uipf::Type t) {
 		case BOOL_LIST:    return "LIST(BOOL)";
 		case MATRIX_LIST:  return "LIST(MATRIX)";
 
-		case MAP:  return "MAP";
 	}
 	return "UNKNOWN!";
 }
