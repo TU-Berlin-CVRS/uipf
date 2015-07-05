@@ -363,14 +363,28 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 
 	using namespace cv;
 
-	Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
-	QImage image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
-	cvtColor(oMat, tmp,CV_BGR2RGB);
+	QImage image;
 
-	//check if image is flipped
-	int origin = ((IplImage) oMat).origin;
-	if (origin != 0)
-		flip(tmp,tmp,0);
+	if (oMat.channels() == 3) {
+		// assume RGB image for 3 channels
+		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+		cvtColor(oMat, tmp, CV_BGR2RGB);
+		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+
+		//check if image is flipped
+		int origin = ((IplImage) oMat).origin;
+		if (origin != 0)
+			flip(tmp,tmp,0);
+
+	} else if (oMat.channels() == 1) {
+		// assume Grayscale image for 1 channel
+		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+		cvtColor(oMat, tmp, CV_GRAY2RGB);
+		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+	} else {
+		LOG_E("Unsupported number of channels for displaying image.");
+		return;
+	}
 
 	//simple view that contains an Image
 	QPointer<QGraphicsScene> scene = new QGraphicsScene;
