@@ -10,7 +10,7 @@ void Context::displayImage(const std::string strTitle, const Matrix& oMat, bool 
 	// if we are running in the gui, open the window using Qt in the Qt MainWindow thread
 	if (bHaveGUI_)
 	{
-		GUIEventDispatcher::instance()->triggerCreateWindow(strTitle, oMat.getContent(), bBlocking);
+		GUIEventDispatcher::instance()->triggerCreateWindow(strTitle, oMat.getContent().clone(), bBlocking);
 	}
 	else
 	{
