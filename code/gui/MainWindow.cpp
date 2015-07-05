@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->listProcessingSteps-> setEditTriggers(QAbstractItemView::AnyKeyPressed | QAbstractItemView::DoubleClicked);
 
     ui->progressBar->setValue(0.0f);
-
+    ui->progressBar->setHidden(true);
 	// set up slots for signals
 
 	// react to selection of the entries
@@ -826,6 +826,8 @@ void MainWindow::run() {
 	// stop is now activated and run unactivated
 	stopAct->setEnabled(true);
 	runAct->setEnabled(false);
+	ui->progressBar->setHidden(false);
+	ui->progressBar->update();
 
 	if (workerThread_ != nullptr) return; //should not happen, because GUI prevents it. we only allow one chain to be processed by a thread
 
@@ -843,6 +845,8 @@ void MainWindow::on_backgroundWorkerFinished()
 	// run is now activated and stop unactivated
 	stopAct->setEnabled(false);
 	runAct->setEnabled(true);
+	ui->progressBar->setHidden(true);
+	ui->progressBar->update();
 	delete workerThread_;
 	workerThread_ = nullptr;
 }
