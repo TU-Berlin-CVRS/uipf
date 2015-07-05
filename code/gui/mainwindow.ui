@@ -100,15 +100,6 @@
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
           <widget class="QToolBox" name="toolBox">
-           <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Plain</enum>
-           </property>
-           <property name="midLineWidth">
-            <number>0</number>
-           </property>
            <property name="currentIndex">
             <number>0</number>
            </property>
@@ -118,13 +109,20 @@
               <x>0</x>
               <y>0</y>
               <width>576</width>
-              <height>73</height>
+              <height>79</height>
              </rect>
             </property>
             <attribute name="label">
              <string>Module</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Name</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
@@ -132,18 +130,11 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Name</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QComboBox" name="comboModule"/>
-             </item>
-             <item row="2" column="0">
+             <item row="1" column="0">
               <widget class="QComboBox" name="comboCategory"/>
+             </item>
+             <item row="1" column="2">
+              <widget class="QComboBox" name="comboModule"/>
              </item>
             </layout>
            </widget>
@@ -152,8 +143,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>576</width>
-              <height>133</height>
+              <width>102</width>
+              <height>102</height>
              </rect>
             </property>
             <attribute name="label">
@@ -170,8 +161,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>576</width>
-              <height>133</height>
+              <width>102</width>
+              <height>102</height>
              </rect>
             </property>
             <attribute name="label">
@@ -212,7 +203,7 @@
      <x>0</x>
      <y>0</y>
      <width>630</width>
-     <height>25</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="status">

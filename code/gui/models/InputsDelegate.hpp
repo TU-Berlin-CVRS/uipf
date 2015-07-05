@@ -47,6 +47,8 @@ private:
 	// reference to input names, row index => input name
 	std::vector<std::string> inputNames_;
 
+	std::vector<std::string> optionalInputs_;
+
 };
 
 } // namespace

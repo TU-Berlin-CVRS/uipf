@@ -40,7 +40,7 @@ MetaData SplitChannelsModule::getMetaData() const
 		{"image", DataDescription(MATRIX, "the image to split.") }
 	};
 	map<string, DataDescription> output = {
-		{"channels", DataDescription(LIST, "the image channel list.") }
+		{"channels", DataDescription(MATRIX_LIST, "the image channel list.") }
 	};
 	map<string, ParamDescription> params = {};
 

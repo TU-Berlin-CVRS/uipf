@@ -66,8 +66,13 @@ void ModuleManager::run(Configuration config){
 				// go through dependencies, and add only the modules, where module
 				// on which they depend have already been added
 				map<string, pair<string,string> >::iterator it = itProSt->second.inputs.begin();
+
 				int i = 1;
 				for (; it!=itProSt->second.inputs.end(); ++it) {
+					// skip empty references (unset optional input)
+					if (it->second.first.empty()) {
+						continue;
+					}
 					if (find(sortedChain.begin(), sortedChain.end(), it->second.first) != sortedChain.end()){
 						i *=1;
 					} else{
@@ -119,6 +124,10 @@ void ModuleManager::run(Configuration config){
 		// fill the inputs of the current processing step by taking it from the stored outputs
 		map<string, pair<string, string> >::iterator it = proSt.inputs.begin();
 		for (; it!=proSt.inputs.end(); ++it) {
+			// skip empty references (unset optional input)
+			if (it->second.first.empty()) {
+				continue;
+			}
 			map<string, Data::ptr>* out = stepsOutputs[it->second.first];
 			Data::ptr& pt = out->find(it->second.second)->second;
 			inputs.insert(pair<string, Data::ptr&>(it->first, pt));

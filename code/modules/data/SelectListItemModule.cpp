@@ -5,6 +5,19 @@ using namespace std;
 using namespace uipf;
 
 
+// helper function to select an item from the list
+template<typename T, typename I>
+I selectItemFromList(DataManager& data, string inputName, int index) {
+
+	typename List<T>::ptr list = data.getInputData< List<T> >(inputName);
+	if (list->hasItem(index)) {
+		return list->getItem(index)->getContent();
+	} else {
+		throw ErrorException("element with index " + to_string(index) + " was not found in the " + inputName + ".");
+	}
+
+}
+
 // runs the module
 /*
 data	DataManager handles the input and ouput of this module
@@ -13,49 +26,37 @@ void SelectListItemModule::run( DataManager& data) const
 {
 	using namespace cv;
 
-	// get a pointers to the input data
-	List<Data>::c_ptr pList = data.getInputData< List<Data> >("list");
-	std::list<Data::ptr> list = pList->getContent();
-
 	// get the index to select from the list
 	int index = data.getParam<int>("index", 0);
 
-	int i = 0;
-	for(auto it = list.begin(); it != list.end(); ++it) {
-		if (i == index) {
-			// set outputs dependend on the type of list
-			switch((*it)->getType()) {
-				case STRING:
-					data.setOutputData("string", new String(std::dynamic_pointer_cast<String>(*it)->getContent()) );
-					break;
-				case INTEGER:
-					data.setOutputData("integer", new Integer(std::dynamic_pointer_cast<Integer>(*it)->getContent()) );
-					break;
-				case FLOAT:
-					data.setOutputData("float", new Float(std::dynamic_pointer_cast<Float>(*it)->getContent()) );
-					break;
-				case BOOL:
-					data.setOutputData("bool", new Bool(std::dynamic_pointer_cast<Bool>(*it)->getContent()) );
-					break;
-				case MATRIX: {
-					Mat content = std::dynamic_pointer_cast<Matrix>(*it)->getContent();
-					data.setOutputData("image", new Matrix(content) );
-					break;
-				}
-				default:
-					throw ErrorException("unexpected element type in the list.");
-			}
-			break;
-		}
+	// select input list dependend on the type
+	if (data.hasInputData("stringList")) {
+		data.setOutputData("string", new String(selectItemFromList<String, string>(data, "stringList", index)));
 	}
-	throw ErrorException("element with index " + to_string(index) + " was not found in the list.");
+	if (data.hasInputData("integerList")) {
+		data.setOutputData("integer", new Integer(selectItemFromList<Integer, int>(data, "integerList", index)));
+	}
+	if (data.hasInputData("floatList")) {
+		data.setOutputData("float", new Float(selectItemFromList<Float, float>(data, "floatList", index)));
+	}
+	if (data.hasInputData("boolList")) {
+		data.setOutputData("bool", new Bool(selectItemFromList<Bool, bool>(data, "boolList", index)));
+	}
+	if (data.hasInputData("imageList")) {
+		Mat m = selectItemFromList<Matrix, Mat>(data, "imageList", index);
+		data.setOutputData("image", new Matrix(m));
+	}
 }
 
 // returns the meta data of this module
 MetaData SelectListItemModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"list", DataDescription(LIST, "the image list.") }
+		{"stringList", DataDescription(STRING_LIST, "a list of strings.", true) },
+		{"integerList", DataDescription(INTEGER_LIST, "a list of integers.", true) },
+		{"floatList", DataDescription(FLOAT_LIST, "a list of floats.", true) },
+		{"boolList", DataDescription(BOOL_LIST, "a list of bools.", true) },
+		{"imageList", DataDescription(MATRIX_LIST, "a list of images.", true) }
 	};
 	map<string, DataDescription> output = {
 		{"string", DataDescription(STRING, "the extracted string value, if it was a list of strings.") },
@@ -69,7 +70,7 @@ MetaData SelectListItemModule::getMetaData() const
 	};
 
 	return MetaData(
-		"Selects one item from a list of items.",
+		"Selects one item from a list of items. Set the corresponding input dependend on the type you need.",
 		"Data Structures",
 		input,
 		output,

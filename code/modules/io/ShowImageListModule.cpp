@@ -25,7 +25,8 @@ void ShowImageModule::run( DataManager& data) const
 		i++;
 	}
 
-	if (data.getParam<bool>("blocking", true)) {
+	if (data.getParam<bool>("blocking", true) && !context_->bHaveGUI_) {
+		// TODO blocking currently does not work with the GUI
 		waitKey(-1);
 	} else {
 		waitKey(1);
@@ -35,7 +36,7 @@ void ShowImageModule::run( DataManager& data) const
 MetaData ShowImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"imageList", DataDescription(LIST, "the list of images to show.") },
+		{"imageList", DataDescription(MATRIX_LIST, "the list of images to show.") },
 
 	};
 	map<string, ParamDescription> params = {

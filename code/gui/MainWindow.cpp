@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <QPointer>
+#include <QShortcut>
 #include <iostream>
 #include <memory>
 #include <opencv2/opencv.hpp>
@@ -73,9 +74,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	// set up slots for signals
 
 	// react to selection of the entries
-	// -> TODO improve this to react on any selection change: http://stackoverflow.com/questions/2468514/how-to-get-the-selectionchange-event-in-qt
-    connect(ui->listProcessingSteps, SIGNAL(clicked(const QModelIndex &)),
-            this, SLOT(on_listProcessingSteps_activated(const QModelIndex &)));
+    connect(ui->listProcessingSteps->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+			this, SLOT(on_stepSelectionChanged(QItemSelection)));
+
+	QShortcut *shortcut = new QShortcut(QKeySequence("Del"), this);
+	ui->deleteButton->connect(shortcut, SIGNAL(activated()),
+			this, SLOT(on_deleteButton_clicked()));
+
+
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
             this, SLOT(on_stepNameChanged()));
@@ -273,8 +279,11 @@ void MainWindow::refreshInputs()
 	for (auto it = inputs.begin(); it!=inputs.end(); ++it) {
 		QStandardItem* item = new QStandardItem((it->first).c_str());
 		if (mm_.hasModule(step.module)) {
-			string str = mm_.getModuleMetaData(step.module).getInput(it->first).getDescription();
-			item->setToolTip(QString(str.c_str()));
+			map<string, DataDescription> inputs = mm_.getModuleMetaData(step.module).getInputs();
+			if (inputs.count(it->first) > 0) {
+				string str = inputs[it->first].getDescription();
+				item->setToolTip(QString(str.c_str()));
+			}
 		}
 		modelTableInputs->setVerticalHeaderItem(row, item);
 		inputNames[row] = it->first;
@@ -354,14 +363,28 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 
 	using namespace cv;
 
-	Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
-	QImage image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
-	cvtColor(oMat, tmp,CV_BGR2RGB);
+	QImage image;
 
-	//check if image is flipped
-	int origin = ((IplImage) oMat).origin;
-	if (origin != 0)
-		flip(tmp,tmp,0);
+	if (oMat.channels() == 3) {
+		// assume RGB image for 3 channels
+		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+		cvtColor(oMat, tmp, CV_BGR2RGB);
+		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+
+		//check if image is flipped
+		int origin = ((IplImage) oMat).origin;
+		if (origin != 0)
+			flip(tmp,tmp,0);
+
+	} else if (oMat.channels() == 1) {
+		// assume Grayscale image for 1 channel
+		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+		cvtColor(oMat, tmp, CV_GRAY2RGB);
+		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+	} else {
+		LOG_E("Unsupported number of channels for displaying image.");
+		return;
+	}
 
 	//simple view that contains an Image
 	QPointer<QGraphicsScene> scene = new QGraphicsScene;
@@ -488,11 +511,14 @@ void MainWindow::on_stepNameChanged(){
 
 // Delete button clicked
 void MainWindow::on_deleteButton_clicked() {
-    // Get the position and remove the row
-    modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
+	if (!ui->deleteButton->isEnabled()) return;
     // remove from the chain
 	beforeConfigChange();
 	conf_.removeProcessingStep(currentStepName);
+
+    // Get the position and remove the row
+    modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
+
 
 	if (ui->listProcessingSteps->currentIndex().row() == -1){
 		currentStepName = string("");
@@ -500,6 +526,7 @@ void MainWindow::on_deleteButton_clicked() {
 	} else {
 		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
 	}
+
 
 	// refresh configuration widgets
 	refreshCategoryAndModule();
@@ -511,15 +538,21 @@ void MainWindow::on_deleteButton_clicked() {
 
 
 // gets called when a processing step is selected
-void MainWindow::on_listProcessingSteps_activated(const QModelIndex & index)
-{
-	ui->deleteButton->setEnabled(true);
-	currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
-
-	// refresh configuration widgets
-	refreshCategoryAndModule();
-	refreshParams();
-	refreshInputs();
+void MainWindow::on_stepSelectionChanged(const QItemSelection& selection){
+	if(selection.indexes().isEmpty()) {
+		ui->deleteButton->setEnabled(false);
+		resetCategoryAndModule();
+		resetParams();
+		resetInputs();
+	} else {
+		ui->deleteButton->setEnabled(true);
+		ui->listProcessingSteps->setCurrentIndex(selection.indexes().first());
+		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
+		// refresh configuration widgets
+		refreshCategoryAndModule();
+		refreshParams();
+		refreshInputs();
+	}
 }
 
 void MainWindow::on_comboCategory_currentIndexChanged(int index)
@@ -581,7 +614,6 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 		beforeConfigChange();
 		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
 		inputs[inputName] = value;
-		//cout << "input " << inputName << " changed: " << value.first << "." << value.second << endl;
 		conf_.setProcessingStepInputs(currentStepName, inputs);
 
 		refreshInputs();
