@@ -18,10 +18,19 @@ enum Type {
 	INTEGER,
 	FLOAT,
 	BOOL,
-	LIST,
-	MAP,
 	MATRIX,
+
+	STRING_LIST,
+	INTEGER_LIST,
+	FLOAT_LIST,
+	BOOL_LIST,
+	MATRIX_LIST,
+
+	MAP,
 };
+
+// returns the string representation of a type
+std::string type2string(Type t);
 
 // Data which represents an arbitrary element
 // It is a virtual class and cant be instantiated

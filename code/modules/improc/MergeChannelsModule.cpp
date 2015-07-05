@@ -35,7 +35,7 @@ void MergeChannelsModule::run( DataManager& data) const
 MetaData MergeChannelsModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"channels", DataDescription(LIST, "the image channel list.") }
+		{"channels", DataDescription(MATRIX_LIST, "the image channel list.") }
 	};
 	map<string, DataDescription> output = {
 		{"image", DataDescription(MATRIX, "the image as a result from the merge.") }

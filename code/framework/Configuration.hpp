@@ -66,6 +66,9 @@ class Configuration{
 		// returns the YAML representation of the config, used for storing and printing
 		std::string getYAML();
 
+		// detect circular dependencies in the inputs
+		std::vector<std::string> detectCircularDependencies();
+
 };
 
 } // namespace
