@@ -35,21 +35,23 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
 
     //build a complex view in html
     std::stringstream complex;
-       complex << "<h2> "<< processingStep_.name <<" </h2> <h3>["<< processingStep_.module <<"]</h3>"
-    		   << "<hr />"
-			   <<  "<table border='1'> "
-			   << "<tr>    <th>Parameter</th>    <th>Value</th>  </tr>  ";
-       for (auto param : processingStep_.params)
-       		complex << "<tr>    <td>"<< param.first<<"</td> <td>"<< param.second<<"</td>   </tr>  ";
+    complex << "<h2> "<< processingStep_.name <<" </h2> <h3>["<< processingStep_.module <<"]</h3>"
+    		<< "<hr />";
+    if (processingStep_.params.size() > 0)
+    {
+    	complex	<<  "<table border='1'> "
+    			<< "<tr>    <th>Parameter</th>    <th>Value</th>  </tr>  ";
+    	for (auto param : processingStep_.params)
+    		complex << "<tr>    <td>"<< param.first<<"</td> <td>"<< param.second<<"</td>   </tr>  ";
 
-			complex << "</table>";
+    	complex << "</table>";
+    }
 
-			simpleHtml_ = QString(simple.str().c_str());
-			complexHtml_ = QString(complex.str().c_str());
+    simpleHtml_ = QString(simple.str().c_str());
+    complexHtml_ = QString(complex.str().c_str());
 
 
     setHtml(simpleHtml_);
-
     adjustSize();
 }
 
