@@ -3,7 +3,14 @@
 #include <QItemSelectionModel>
 #include <QStandardItemModel>
 #include <QThread>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsPixmapItem>
+#include <QPixmap>
+#include <QImage>
+#include <QPointer>
 #include <iostream>
+#include <memory>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -314,9 +321,35 @@ void MainWindow::resetInputs()
 
 void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
 {
+	//create windows that show images without opencv imshow()
+
+	//this code is inspired by opencv source /modules/highgui/src/window_QT.cpp
+	//we create a standardised tmp image to support different image types (rgb,grayscale)
+	//other types need to be tested...
+
 	using namespace cv;
+
+	Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+	QImage image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+	cvtColor(oMat, tmp,CV_BGR2RGB);
+
+	//check if image is flipped
+	int origin = ((IplImage) oMat).origin;
+	if (origin != 0)
+		flip(tmp,tmp,0);
+
+	//simple view that contains an Image
+	QPointer<QGraphicsScene> scene = new QGraphicsScene;
+	QPointer<QGraphicsView> view = new QGraphicsView(scene);
+	view->setWindowTitle( QString::fromStdString(strTitle));
+	QPixmap pixmap = QPixmap::fromImage(image);
+	QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pixmap);
+	scene->addItem(item);
+	view->show();
+
+	/*using namespace cv;
 	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
-	imshow( strTitle.c_str(), oMat);
+	imshow( strTitle.c_str(), oMat);*/
 }
 
 // append messages from our logger to the log-textview
