@@ -159,6 +159,25 @@ MainWindow::~MainWindow() {
     delete graphView_;
 
     deleteActions();
+
+
+}
+
+void MainWindow::closeAllCreatedWindows()
+{
+	//close all windows we created
+	for (auto w : createdWindwows_)
+	{
+		if (w != nullptr)
+		{
+			w->close();
+		}
+	}
+	createdWindwows_.clear();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+	closeAllCreatedWindows();
 }
 
 // loads a new configuration from file
@@ -394,7 +413,7 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 	QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pixmap);
 	scene->addItem(item);
 	view->show();
-
+	createdWindwows_.push_back(view);
 	/*using namespace cv;
 	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
 	imshow( strTitle.c_str(), oMat);
@@ -576,7 +595,7 @@ void MainWindow::on_comboCategory_currentIndexChanged(int index)
 		ui->comboModule->setCurrentIndex(-1);
 		ui->comboModule->setEnabled(true);
 
-		refreshGraph();
+
 	}
 
 }

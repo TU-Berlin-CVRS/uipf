@@ -93,6 +93,10 @@ private slots:
 	void run();
 	void stop();
 
+	void closeAllCreatedWindows();
+
+protected:
+	void closeEvent(QCloseEvent *event);
 
 private:
 	// default window title that appears next to the file name
@@ -182,6 +186,9 @@ private:
 
     //our current backgroundworker or a nullptr
     RunWorkerThread* workerThread_;
+
+    //keep track of all windows we created so we can close them later
+    std::vector<QGraphicsView* > createdWindwows_;
 };
 
 } // namespace
