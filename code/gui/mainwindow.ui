@@ -15,20 +15,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="1" colspan="2">
-     <widget class="QProgressBar" name="progressBar">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1" colspan="2">
+    <item row="1" column="1" colspan="2">
      <widget class="QGroupBox" name="groupBox_5">
       <property name="title">
        <string>Logs</string>
@@ -98,82 +85,45 @@
          <string>Step Configuration</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0">
-          <widget class="QToolBox" name="toolBox">
-           <property name="currentIndex">
-            <number>0</number>
+         <item row="3" column="0">
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="title">
+            <string>Parameters</string>
            </property>
-           <widget class="QWidget" name="page_3">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>576</width>
-              <height>79</height>
-             </rect>
-            </property>
-            <attribute name="label">
-             <string>Module</string>
-            </attribute>
-            <layout class="QGridLayout" name="gridLayout_3">
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Name</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Category</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QComboBox" name="comboCategory"/>
-             </item>
-             <item row="1" column="2">
-              <widget class="QComboBox" name="comboModule"/>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="page">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>102</width>
-              <height>102</height>
-             </rect>
-            </property>
-            <attribute name="label">
-             <string>Parameters</string>
-            </attribute>
-            <layout class="QGridLayout" name="gridLayout_7">
-             <item row="0" column="0">
-              <widget class="QTableView" name="tableParams"/>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="page_2">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>102</width>
-              <height>102</height>
-             </rect>
-            </property>
-            <attribute name="label">
-             <string>Inputs from other steps</string>
-            </attribute>
-            <layout class="QGridLayout" name="gridLayout_8">
-             <item row="0" column="0">
-              <widget class="QTableView" name="tableInputs"/>
-             </item>
-            </layout>
-           </widget>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableParams"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Module:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboCategory"/>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboModule"/>
+           </item>
+          </layout>
+         </item>
+         <item row="4" column="0">
+          <widget class="QGroupBox" name="groupBox_4">
+           <property name="title">
+            <string>Inputs from other steps:</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="1" column="0">
+             <widget class="QTableView" name="tableInputs"/>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
@@ -181,18 +131,18 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="1">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+    <item row="2" column="1" colspan="2">
+     <widget class="QProgressBar" name="progressBar">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
+      <property name="value">
+       <number>24</number>
       </property>
-     </spacer>
+     </widget>
     </item>
    </layout>
   </widget>
