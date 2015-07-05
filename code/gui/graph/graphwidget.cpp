@@ -69,7 +69,7 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	map<string,Node*> nodes;
 	for (auto it = chain.begin(); it!=chain.end(); ++it)
 	{
-		  Node *node = new Node(this,QString(it->first.c_str()));
+		  Node *node = new Node(this,QString(it->first.c_str()),it->second);
 		  //node->setPos(-rand()%150, rand()%150);
 		  scene->addItem(node);
 		  nodes.insert(std::pair<string,Node*>(it->first,node));

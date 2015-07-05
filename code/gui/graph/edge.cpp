@@ -42,48 +42,50 @@ void Edge::adjust()
     QPointF pEnd = mapFromItem(dest, 0, 0);
     QRectF sourceBounds = source->boundingRect();
     QRectF destBounds = dest->boundingRect();
-    //move point to middle of boundingbox
-    pStart.setX(pStart.x()-15 + source->boundingRect().width()/2);
-    pEnd.setX(pEnd.x()-15 + dest->boundingRect().width()/2);
 
-   // qDebug() << pStart << " " << pEnd << " " << sourceBounds << " " << destBounds;
+    //move points to middle of boundingboxes
+    pStart.setX(pStart.x() + source->boundingRect().width()/2);
+    pEnd.setX(pEnd.x() + dest->boundingRect().width()/2);
+    pStart.setY(pStart.y() + source->boundingRect().height()/2);
+    pEnd.setY(pEnd.y() + dest->boundingRect().height()/2);
 
-    if (abs(pStart.y() - pEnd.y()) < sourceBounds.height()*2.5f)
+    //adjust docking edges relative to point positions
+    if (abs(pStart.y() - pEnd.y()) < destBounds.height()+30.f)//start and end are approximately at same height
     {
-    	if (pStart.x() > pEnd.x())
+    	if (pStart.x() > pEnd.x()) //start is to the right of end
     	{
     		pStart.setX(pStart.x()-sourceBounds.width()/2);
     		pEnd.setX(pEnd.x()+destBounds.width()/2);
     	}
-    	else
+    	else //start is to the left of end
     	{
     		pStart.setX(pStart.x()+sourceBounds.width()/2);
     		pEnd.setX(pEnd.x()-destBounds.width()/2);
     	}
     }
-    else if (pStart.y() > pEnd.y())
+    else if (pStart.y() > pEnd.y())//start is over end
     {
     	pStart.setY(pStart.y()-sourceBounds.height()/2);
     	pEnd.setY(pEnd.y()+destBounds.height()/2);
     }
-    else
+    else //start is under end
     {
     	pStart.setY(pStart.y()+sourceBounds.height()/2);
     	pEnd.setY(pEnd.y()-destBounds.height()/2);
     }
 
     QLineF line(pStart, pEnd);
-       qreal length = line.length();
+    qreal length = line.length();
 
-       prepareGeometryChange();
+    prepareGeometryChange();
 
-       if (length > qreal(20.)) {
-           QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
-           sourcePoint = line.p1() + edgeOffset;
-           destPoint = line.p2() - edgeOffset;
-       } else {
-           sourcePoint = destPoint = line.p1();
-       }
+    if (length > qreal(20.)) {
+    	QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
+    	sourcePoint = line.p1() + edgeOffset;
+    	destPoint = line.p2() - edgeOffset;
+    } else {
+    	sourcePoint = destPoint = line.p1();
+    }
 }
 
 QRectF Edge::boundingRect() const
