@@ -143,6 +143,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
 	ui->deleteButton->setEnabled(false);
+	closeWindowsAct->setEnabled(false);
 
 	resetParams();
 
@@ -174,6 +175,9 @@ void MainWindow::closeAllCreatedWindows()
 		}
 	}
 	createdWindwows_.clear();
+
+	closeWindowsAct->setEnabled(false);
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -413,6 +417,9 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 	scene->addItem(item);
 	view->show();
 	createdWindwows_.push_back(view);
+
+	closeWindowsAct->setEnabled(true);
+
 	/*using namespace cv;
 	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
 	imshow( strTitle.c_str(), oMat);
