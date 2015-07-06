@@ -1,0 +1,33 @@
+conv:
+  module: convolution
+  input:
+    image: gaus.image
+    kernel: conv2.image
+  anchorX: ""
+  anchorY: ""
+  delta: ""
+conv2:
+  module: convolution
+  input:
+    image: conv.image
+    kernel: gaus.
+  anchorX: ""
+  anchorY: ""
+  delta: ""
+gaus:
+  module: gaussian
+  input:
+    image: load.image
+  sigmaX: 3
+  sigmaY: 3
+  windowSize: ""
+load:
+  module: loadImage
+  filename: hier.png
+  mode: ""
+show:
+  module: showImage
+  input:
+    image: conv.image
+  blocking: ""
+  title: ""

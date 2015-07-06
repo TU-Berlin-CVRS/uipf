@@ -1,0 +1,38 @@
+new step 1:
+  module: loadImage
+  filename: hier.png
+  mode: grayscale
+new step 2:
+  module: showImage
+  input:
+    image: new step 1.image
+  blocking: ""
+  title: ""
+new step 3:
+  module: loadImage
+  filename: hier.png
+  mode: color
+new step 4:
+  module: showImage
+  input:
+    image: new step 3.image
+  blocking: ""
+  title: ""
+new step 5:
+  module: showImage
+  input:
+    image: new step 1.image
+  blocking: ""
+  title: ""
+new step 6:
+  module: showImage
+  input:
+    image: new step 1.image
+  blocking: ""
+  title: ""
+new step 7:
+  module: showImage
+  input:
+    image: new step 3.image
+  blocking: ""
+  title: ""

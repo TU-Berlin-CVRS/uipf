@@ -144,6 +144,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
 	ui->deleteButton->setEnabled(false);
+	closeWindowsAct->setEnabled(false);
 
 	resetParams();
 
@@ -175,10 +176,19 @@ void MainWindow::closeAllCreatedWindows()
 		}
 	}
 	createdWindwows_.clear();
+
+	closeWindowsAct->setEnabled(false);
+
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-	closeAllCreatedWindows();
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (okToContinue()) {
+		closeAllCreatedWindows();
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 // loads a new configuration from file
@@ -189,7 +199,6 @@ void MainWindow::loadDataFlow(string filename)
 	unknownFile = false;
 	savedVersion = 0;
 	refreshSaveIcon();
-	currentFileHasChanged = false;
 
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
 	while(! redoStack.empty()){
@@ -416,6 +425,8 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 	scene->addItem(item);
 	view->show();
 	createdWindwows_.push_back(view);
+
+	closeWindowsAct->setEnabled(true);
 }
 
 // append messages from our logger to the log-textview
@@ -635,13 +646,22 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 }
 
 
+// menu click File -> Exit
+void MainWindow::on_close() {
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
+
+	close();
+
+}
+
+
 // menu click File -> New
 void MainWindow::new_Data_Flow() {
 	//check whether there are unsaved changes, and ask the user, whether he wants to save them
 	if (!okToContinue()) return;
 
 	ui->deleteButton->setEnabled(false);
-	currentFileHasChanged = false;
 	unknownFile = true;
 
 	savedVersion = 1;
@@ -696,7 +716,7 @@ void MainWindow::load_Data_Flow()
 // when unsaved changes occure, give the user the possibility to save them
 bool MainWindow::okToContinue() {
 
-    if (currentFileHasChanged) {
+    if (savedVersion != 0 && undoAct->isEnabled()) {
         int r = QMessageBox::warning(this, tr("Spreadsheet"),
                         tr("The document has been modified.\n"
                            "Do you want to save your changes?"),
@@ -719,7 +739,6 @@ void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
 	unknownFile = false;
 	savedVersion = 0;
-	currentFileHasChanged = false;
 	refreshSaveIcon();
 	saveAct->setEnabled(false);
 
@@ -747,7 +766,6 @@ void MainWindow::save_Data_Flow_as() {
 	conf_.store(currentFileName);
 
 	saveAct->setEnabled(false);
-	currentFileHasChanged = false;
 	unknownFile = false;
 	savedVersion = 0;
 	refreshSaveIcon();
@@ -768,7 +786,6 @@ void MainWindow::undo() {
 
 		savedVersion--;
 		if (!unknownFile && savedVersion == 0){
-			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
 		refreshSaveIcon();
@@ -823,7 +840,6 @@ void MainWindow::redo() {
 
 		savedVersion++;
 		if (!unknownFile && savedVersion == 0){
-			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
 		refreshSaveIcon();
@@ -871,7 +887,6 @@ void MainWindow::redo() {
 // has to be called BEFORE the config has changed!
 void MainWindow::beforeConfigChange(){
 	// configuration changed
-	currentFileHasChanged = true;
 	savedVersion++;
 	if (!unknownFile) saveAct->setEnabled(true);
 
@@ -981,7 +996,7 @@ void MainWindow::createActions() {
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
-    connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect(exitAct, SIGNAL(triggered()), this, SLOT(on_close()));
 
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setShortcuts(QKeySequence::WhatsThis);

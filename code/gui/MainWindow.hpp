@@ -84,6 +84,7 @@ private slots:
 	void load_Data_Flow();
 	void save_Data_Flow();
 	void save_Data_Flow_as();
+	void on_close();
 	// Help
 	void about();
 	// Edit
@@ -94,6 +95,7 @@ private slots:
 	void stop();
 
 	void closeAllCreatedWindows();
+
 
 protected:
 	void closeEvent(QCloseEvent *event);
@@ -119,7 +121,6 @@ private:
 
 	// the file name of the currently loaded configuration
 	std::string currentFileName;
-	bool currentFileHasChanged = false;
 	// asks the user, whether he wants to save the file
 	bool okToContinue();
 	// the currently loaded configuration represented in the window
