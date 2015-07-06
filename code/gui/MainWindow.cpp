@@ -17,6 +17,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "MainWindow.hpp"
+#include "ImageWindow.hpp"
 #include "ui_mainwindow.h"
 #include "../framework/GUIEventDispatcher.hpp"
 #include "RunWorkerThread.h"
@@ -106,8 +107,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     			this, SLOT (on_reportProgress(const float&)));
 
     // Window creation
-    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& , bool )),
-				this, SLOT (on_createWindow(const std::string , const cv::Mat&, bool )));
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat&)),
+				this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -143,6 +144,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->tableParams->setEnabled(false);
 	ui->tableInputs->setEnabled(false);
 	ui->deleteButton->setEnabled(false);
+	closeWindowsAct->setEnabled(false);
 
 	resetParams();
 
@@ -174,10 +176,19 @@ void MainWindow::closeAllCreatedWindows()
 		}
 	}
 	createdWindwows_.clear();
+
+	closeWindowsAct->setEnabled(false);
+
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-	closeAllCreatedWindows();
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (okToContinue()) {
+		closeAllCreatedWindows();
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 // loads a new configuration from file
@@ -188,7 +199,6 @@ void MainWindow::loadDataFlow(string filename)
 	unknownFile = false;
 	savedVersion = 0;
 	refreshSaveIcon();
-	currentFileHasChanged = false;
 
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
 	while(! redoStack.empty()){
@@ -372,7 +382,7 @@ void MainWindow::resetInputs()
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking)
+void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
 {
 	//create windows that show images without opencv imshow()
 
@@ -398,6 +408,7 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 	} else if (oMat.channels() == 1) {
 		// assume Grayscale image for 1 channel
 		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+		// convert gray to RGB since gray image display is only supported since Gt 5.4
 		cvtColor(oMat, tmp, CV_GRAY2RGB);
 		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
 	} else {
@@ -407,21 +418,15 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 
 	//simple view that contains an Image
 	QPointer<QGraphicsScene> scene = new QGraphicsScene;
-	QPointer<QGraphicsView> view = new QGraphicsView(scene);
+	QPointer<QGraphicsView> view = new ImageWindow(mm_, scene);
 	view->setWindowTitle( QString::fromStdString(strTitle));
 	QPixmap pixmap = QPixmap::fromImage(image);
 	QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pixmap);
 	scene->addItem(item);
 	view->show();
 	createdWindwows_.push_back(view);
-	/*using namespace cv;
-	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
-	imshow( strTitle.c_str(), oMat);
 
-	if (blocking) {
-		waitKey(-1);
-	}
-*/
+	closeWindowsAct->setEnabled(true);
 }
 
 // append messages from our logger to the log-textview
@@ -641,16 +646,26 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 }
 
 
+// menu click File -> Exit
+void MainWindow::on_close() {
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
+
+	close();
+
+}
+
+
 // menu click File -> New
 void MainWindow::new_Data_Flow() {
 	//check whether there are unsaved changes, and ask the user, whether he wants to save them
 	if (!okToContinue()) return;
 
 	ui->deleteButton->setEnabled(false);
-	currentFileHasChanged = false;
 	unknownFile = true;
 
 	savedVersion = 1;
+	refreshSaveIcon();
 
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
 	while(! redoStack.empty()){
@@ -701,7 +716,7 @@ void MainWindow::load_Data_Flow()
 // when unsaved changes occure, give the user the possibility to save them
 bool MainWindow::okToContinue() {
 
-    if (currentFileHasChanged) {
+    if (savedVersion != 0 && undoAct->isEnabled()) {
         int r = QMessageBox::warning(this, tr("Spreadsheet"),
                         tr("The document has been modified.\n"
                            "Do you want to save your changes?"),
@@ -724,7 +739,6 @@ void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
 	unknownFile = false;
 	savedVersion = 0;
-	currentFileHasChanged = false;
 	refreshSaveIcon();
 	saveAct->setEnabled(false);
 
@@ -752,7 +766,6 @@ void MainWindow::save_Data_Flow_as() {
 	conf_.store(currentFileName);
 
 	saveAct->setEnabled(false);
-	currentFileHasChanged = false;
 	unknownFile = false;
 	savedVersion = 0;
 	refreshSaveIcon();
@@ -773,7 +786,6 @@ void MainWindow::undo() {
 
 		savedVersion--;
 		if (!unknownFile && savedVersion == 0){
-			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
 		refreshSaveIcon();
@@ -828,7 +840,6 @@ void MainWindow::redo() {
 
 		savedVersion++;
 		if (!unknownFile && savedVersion == 0){
-			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
 		refreshSaveIcon();
@@ -876,7 +887,6 @@ void MainWindow::redo() {
 // has to be called BEFORE the config has changed!
 void MainWindow::beforeConfigChange(){
 	// configuration changed
-	currentFileHasChanged = true;
 	savedVersion++;
 	if (!unknownFile) saveAct->setEnabled(true);
 
@@ -951,6 +961,12 @@ void MainWindow::stop() {
 
 }
 
+void MainWindow::keyReleaseEvent(QKeyEvent *)
+{
+	// resume a paused chain on key press
+	mm_.resumeChain();
+}
+
 // Up to here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -980,7 +996,7 @@ void MainWindow::createActions() {
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
-    connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect(exitAct, SIGNAL(triggered()), this, SLOT(on_close()));
 
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setShortcuts(QKeySequence::WhatsThis);
@@ -1000,21 +1016,18 @@ void MainWindow::createActions() {
     connect(redoAct, SIGNAL(triggered()), this, SLOT(redo()));
 
     runAct = new QAction(tr("&Run"), this);
-    //runAct->setShortcuts(QKeySequence(Qt::CTRL + Qt::Key_R));//not working :/
-    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(run()));
+    runAct->setShortcut(QKeySequence(tr("Ctrl+R")));
     runAct->setStatusTip(tr("Run the configuration"));
     connect(runAct, SIGNAL(triggered()), this, SLOT(run()));
 
     stopAct = new QAction(tr("&Stop"), this);
-   // stopAct->setShortcuts(QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_R));
-    new QShortcut(QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_R), this, SLOT(stop()));
+	stopAct->setShortcut(QKeySequence(tr("Shift+Ctrl+R")));
     stopAct->setStatusTip(tr("Stop the execution of the configuration"));
     stopAct->setEnabled(false); // initially inactive
     connect(stopAct, SIGNAL(triggered()), this, SLOT(stop()));
 
     closeWindowsAct = new QAction(tr("&Close windows"), this);
-    //closeWindowsAct->setShortcuts(QKeySequence(Qt::CTRL + Qt::Key_W));
-    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), this, SLOT(closeAllCreatedWindows()));
+	closeWindowsAct->setShortcut(QKeySequence(tr("Ctrl+W")));
     closeWindowsAct->setStatusTip(tr("Close all open windows"));
     closeWindowsAct->setEnabled(true); // initially inactive
     connect(closeWindowsAct, SIGNAL(triggered()), this, SLOT(closeAllCreatedWindows()));

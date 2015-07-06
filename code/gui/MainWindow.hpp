@@ -77,13 +77,14 @@ private slots:
 	void on_paramChanged(std::string, std::string);
 	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
-	void on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking);
+	void on_createWindow(const std::string strTitle, const cv::Mat& oMat);
 	// menu bar
 	// File
 	void new_Data_Flow();
 	void load_Data_Flow();
 	void save_Data_Flow();
 	void save_Data_Flow_as();
+	void on_close();
 	// Help
 	void about();
 	// Edit
@@ -95,8 +96,10 @@ private slots:
 
 	void closeAllCreatedWindows();
 
+
 protected:
 	void closeEvent(QCloseEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
 
 private:
 	// default window title that appears next to the file name
@@ -118,7 +121,6 @@ private:
 
 	// the file name of the currently loaded configuration
 	std::string currentFileName;
-	bool currentFileHasChanged = false;
 	// asks the user, whether he wants to save the file
 	bool okToContinue();
 	// the currently loaded configuration represented in the window
