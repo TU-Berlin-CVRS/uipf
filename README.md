@@ -18,7 +18,7 @@ The following dependencies are needed to build:
 
 On Debian/Ubuntu you can install the above packages by running the following command:
 
-	sudo apt-get install libboost-serialization-dev libboost-program-options-dev libboost-graph-de qtbase5-dev qtbase5-dev-tools
+	sudo apt-get install libboost-serialization-dev libboost-program-options-dev libboost-graph-dev qtbase5-dev qtbase5-dev-tools
 
 The following additional packages may be needed for building C++ code:
 
