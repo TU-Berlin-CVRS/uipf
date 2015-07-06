@@ -1000,15 +1000,24 @@ void MainWindow::createActions() {
     connect(redoAct, SIGNAL(triggered()), this, SLOT(redo()));
 
     runAct = new QAction(tr("&Run"), this);
-    // TODO set shortcut
+    //runAct->setShortcuts(QKeySequence(Qt::CTRL + Qt::Key_R));//not working :/
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(run()));
     runAct->setStatusTip(tr("Run the configuration"));
     connect(runAct, SIGNAL(triggered()), this, SLOT(run()));
 
     stopAct = new QAction(tr("&Stop"), this);
-    // TODO set shortcut
+   // stopAct->setShortcuts(QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_R));
+    new QShortcut(QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_R), this, SLOT(stop()));
     stopAct->setStatusTip(tr("Stop the execution of the configuration"));
     stopAct->setEnabled(false); // initially inactive
     connect(stopAct, SIGNAL(triggered()), this, SLOT(stop()));
+
+    closeWindowsAct = new QAction(tr("&Close windows"), this);
+    //closeWindowsAct->setShortcuts(QKeySequence(Qt::CTRL + Qt::Key_W));
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), this, SLOT(closeAllCreatedWindows()));
+    closeWindowsAct->setStatusTip(tr("Close all open windows"));
+    closeWindowsAct->setEnabled(true); // initially inactive
+    connect(closeWindowsAct, SIGNAL(triggered()), this, SLOT(closeAllCreatedWindows()));
 }
 
 // delete actions from heap for destructor
@@ -1023,6 +1032,7 @@ void MainWindow::deleteActions() {
     delete redoAct;
     delete runAct;
     delete stopAct;
+    delete closeWindowsAct;
 }
 
 // creates the menu bar and attaches the actions
@@ -1043,7 +1053,24 @@ void MainWindow::createMenus() {
     configMenu->addAction(runAct);
     configMenu->addAction(stopAct);
 
+    viewMenu = menuBar()->addMenu(tr("&View"));
+    viewMenu->addAction(closeWindowsAct);
+
+
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
+
+    //to make global keylisteners work Actions have to be added to the rootwidget (MainWindow.cpp) too
+    addAction(newAct);
+    addAction(openAct);
+    addAction(saveAct);
+    addAction(saveAsAct);
+    addAction(exitAct);
+    addAction(undoAct);
+    addAction(redoAct);
+    addAction(runAct);
+    addAction(stopAct);
+    addAction(closeWindowsAct);
+    addAction(aboutAct);
 }
 
