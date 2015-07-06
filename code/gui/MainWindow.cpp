@@ -641,6 +641,15 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 }
 
 
+// menu click File -> Exit
+void MainWindow::on_close() {
+	//check whether there are unsaved changes, and ask the user, whether he wants to save them
+	if (!okToContinue()) return;
+
+	close();
+
+}
+
 // menu click File -> New
 void MainWindow::new_Data_Flow() {
 	//check whether there are unsaved changes, and ask the user, whether he wants to save them
@@ -981,7 +990,7 @@ void MainWindow::createActions() {
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
-    connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect(exitAct, SIGNAL(triggered()), this, SLOT(on_close()));
 
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setShortcuts(QKeySequence::WhatsThis);

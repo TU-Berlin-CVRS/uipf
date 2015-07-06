@@ -84,6 +84,7 @@ private slots:
 	void load_Data_Flow();
 	void save_Data_Flow();
 	void save_Data_Flow_as();
+	void on_close();
 	// Help
 	void about();
 	// Edit
@@ -178,7 +179,7 @@ private:
     // actions in configMenu
    	QAction *runAct;
     QAction *stopAct;
-    
+
     // actions in viewMenu
     QAction *closeWindowsAct;
 
