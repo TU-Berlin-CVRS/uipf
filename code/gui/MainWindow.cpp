@@ -17,6 +17,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "MainWindow.hpp"
+#include "ImageWindow.hpp"
 #include "ui_mainwindow.h"
 #include "../framework/GUIEventDispatcher.hpp"
 #include "RunWorkerThread.h"
@@ -106,8 +107,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     			this, SLOT (on_reportProgress(const float&)));
 
     // Window creation
-    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat& , bool )),
-				this, SLOT (on_createWindow(const std::string , const cv::Mat&, bool )));
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat&)),
+				this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -372,7 +373,7 @@ void MainWindow::resetInputs()
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking)
+void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
 {
 	//create windows that show images without opencv imshow()
 
@@ -398,6 +399,7 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 	} else if (oMat.channels() == 1) {
 		// assume Grayscale image for 1 channel
 		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+		// convert gray to RGB since gray image display is only supported since Gt 5.4
 		cvtColor(oMat, tmp, CV_GRAY2RGB);
 		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
 	} else {
@@ -407,21 +409,13 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 
 	//simple view that contains an Image
 	QPointer<QGraphicsScene> scene = new QGraphicsScene;
-	QPointer<QGraphicsView> view = new QGraphicsView(scene);
+	QPointer<QGraphicsView> view = new ImageWindow(mm_, scene);
 	view->setWindowTitle( QString::fromStdString(strTitle));
 	QPixmap pixmap = QPixmap::fromImage(image);
 	QGraphicsPixmapItem* item = new QGraphicsPixmapItem(pixmap);
 	scene->addItem(item);
 	view->show();
 	createdWindwows_.push_back(view);
-	/*using namespace cv;
-	namedWindow( strTitle.c_str(), WINDOW_AUTOSIZE );
-	imshow( strTitle.c_str(), oMat);
-
-	if (blocking) {
-		waitKey(-1);
-	}
-*/
 }
 
 // append messages from our logger to the log-textview
@@ -950,6 +944,12 @@ void MainWindow::stop() {
 	workerThread_->terminate();
 	//not need to delete -> finished()
 
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *)
+{
+	// resume a paused chain on key press
+	mm_.resumeChain();
 }
 
 // Up to here: SLOTS -------------------------------------------------------------------------------------------------------------------------------

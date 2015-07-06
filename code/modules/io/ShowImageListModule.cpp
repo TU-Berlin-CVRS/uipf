@@ -25,11 +25,8 @@ void ShowImageModule::run( DataManager& data) const
 		i++;
 	}
 
-	if (data.getParam<bool>("blocking", true) && !context_->bHaveGUI_) {
-		// TODO blocking currently does not work with the GUI
-		waitKey(-1);
-	} else {
-		waitKey(1);
+	if (data.getParam<bool>("blocking", true)) {
+		context_->waitKey();
 	}
 }
 

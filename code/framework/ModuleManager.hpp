@@ -31,11 +31,15 @@ class ModuleManager{
 		// returns a map of module name => meta data
 		std::map<std::string, MetaData> getAllModuleMetaData();
 
-		//if set modules should finish their work
-		void requestStop(){context_.bStopRequested_=true;}
+		// if set modules should finish their work
+		void requestStop(){ context_.bStopRequested_ = true; }
+
+		// set pause and resume to enable blocking windows in GUI mode
+		void pauseChain(){ context_.bPaused_ = true; }
+		void resumeChain(){ context_.bPaused_ = false; }
 
 		//tell modules that we have a GUI
-		void setHaveGUI(){context_.bHaveGUI_=true;}
+		void setHaveGUI(){ context_.bHasGUI_ = true; }
 
 	private:
 

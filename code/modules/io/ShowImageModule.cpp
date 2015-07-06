@@ -18,15 +18,14 @@ void ShowImageModule::run( DataManager& data) const
 		}
 		context_->displayImage(title, *oMatrix, data.getParam<bool>("blocking",true));
 	} else {
-		LOG_E("Failed to show image");
+		LOG_E("Failed to show image.");
 	}
 }
 
 MetaData ShowImageModule::getMetaData() const
 {
 	map<string, DataDescription> input = {
-		{"image", DataDescription(MATRIX, "the image to show.") },
-
+		{"image", DataDescription(MATRIX, "the image to show.") }
 	};
 	map<string, ParamDescription> params = {
 		{"title", ParamDescription("the title of the window, defaults to the current processing step name", true) },

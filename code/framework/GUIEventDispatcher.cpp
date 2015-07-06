@@ -43,10 +43,10 @@ void GUIEventDispatcher::triggerLogEvent(const Logger::LogType& eLogType, const 
 	emit logEvent(eLogType,strMessage);
 }
 
-void GUIEventDispatcher::triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking)
+void GUIEventDispatcher::triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat)
 {
 	//send signal to GUI
-	emit createWindow(strTitle, oMat, blocking);
+	emit createWindow(strTitle, oMat);
 }
 
 } //namespace

@@ -20,7 +20,11 @@ void StoreImageModule::run( DataManager& data) const
 	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
 
 	if (oMatrix) {
-		std::string strFilename = data.getParam<std::string>("filename","noname.png");
+		std::string strFilename = data.getParam<std::string>("filename", "");
+		if (strFilename.empty()) {
+			strFilename = context_->getProcessingStepName() + string(".png");
+		}
+
 		int nQuality = data.getParam<int>("quality",-1);
 		if (nQuality != -1)
 		{
@@ -55,8 +59,8 @@ MetaData StoreImageModule::getMetaData() const
 		{"image", DataDescription(MATRIX, "the image to save.") }
 	};
 	map<string, ParamDescription> params = {
-		{"filename", ParamDescription("file name of the file to save to. imageformat is derived by fileending automatically.") },
-		{"quality", ParamDescription("compression quality (optional)",true) }
+		{"filename", ParamDescription("file name of the file to save to. imageformat is derived by fileending automatically. Defaults to '<step name>.png'.", true) },
+		{"quality", ParamDescription("compression quality (optional)", true) }
 	};
 
 	return MetaData(

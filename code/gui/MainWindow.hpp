@@ -77,7 +77,7 @@ private slots:
 	void on_paramChanged(std::string, std::string);
 	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
-	void on_createWindow(const std::string strTitle, const cv::Mat& oMat, bool blocking);
+	void on_createWindow(const std::string strTitle, const cv::Mat& oMat);
 	// menu bar
 	// File
 	void new_Data_Flow();
@@ -97,6 +97,7 @@ private slots:
 
 protected:
 	void closeEvent(QCloseEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
 
 private:
 	// default window title that appears next to the file name
@@ -178,7 +179,7 @@ private:
     // actions in configMenu
    	QAction *runAct;
     QAction *stopAct;
-    
+
     // actions in viewMenu
     QAction *closeWindowsAct;
 

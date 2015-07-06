@@ -76,6 +76,8 @@ add_executable(uipf-gui
 	gui/MainWindow.cpp
 	${UI_HS}
 
+	gui/ImageWindow.cpp
+
 	gui/graph/edge.cpp
 	gui/graph/node.cpp
 	gui/graph/graphwidget.cpp
