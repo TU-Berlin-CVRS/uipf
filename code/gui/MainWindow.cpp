@@ -180,8 +180,13 @@ void MainWindow::closeAllCreatedWindows()
 
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-	closeAllCreatedWindows();
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (okToContinue()) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 // loads a new configuration from file
@@ -655,6 +660,7 @@ void MainWindow::on_close() {
 	close();
 
 }
+
 
 // menu click File -> New
 void MainWindow::new_Data_Flow() {

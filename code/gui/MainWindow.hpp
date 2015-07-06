@@ -96,6 +96,7 @@ private slots:
 
 	void closeAllCreatedWindows();
 
+
 protected:
 	void closeEvent(QCloseEvent *event);
 
