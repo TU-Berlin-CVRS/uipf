@@ -709,7 +709,7 @@ void MainWindow::load_Data_Flow()
 // when unsaved changes occure, give the user the possibility to save them
 bool MainWindow::okToContinue() {
 
-    if (savedVersion != 0) {
+    if (savedVersion != 0 && undoAct->isEnabled()) {
         int r = QMessageBox::warning(this, tr("Spreadsheet"),
                         tr("The document has been modified.\n"
                            "Do you want to save your changes?"),
