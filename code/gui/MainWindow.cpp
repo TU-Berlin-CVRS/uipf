@@ -651,6 +651,7 @@ void MainWindow::new_Data_Flow() {
 	unknownFile = true;
 
 	savedVersion = 1;
+	refreshSaveIcon();
 
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
 	while(! redoStack.empty()){
@@ -1000,21 +1001,18 @@ void MainWindow::createActions() {
     connect(redoAct, SIGNAL(triggered()), this, SLOT(redo()));
 
     runAct = new QAction(tr("&Run"), this);
-    //runAct->setShortcuts(QKeySequence(Qt::CTRL + Qt::Key_R));//not working :/
-    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this, SLOT(run()));
+    runAct->setShortcut(QKeySequence(tr("Ctrl+R")));
     runAct->setStatusTip(tr("Run the configuration"));
     connect(runAct, SIGNAL(triggered()), this, SLOT(run()));
 
     stopAct = new QAction(tr("&Stop"), this);
-   // stopAct->setShortcuts(QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_R));
-    new QShortcut(QKeySequence(Qt::SHIFT + Qt::CTRL + Qt::Key_R), this, SLOT(stop()));
+	stopAct->setShortcut(QKeySequence(tr("Shift+Ctrl+R")));
     stopAct->setStatusTip(tr("Stop the execution of the configuration"));
     stopAct->setEnabled(false); // initially inactive
     connect(stopAct, SIGNAL(triggered()), this, SLOT(stop()));
 
     closeWindowsAct = new QAction(tr("&Close windows"), this);
-    //closeWindowsAct->setShortcuts(QKeySequence(Qt::CTRL + Qt::Key_W));
-    new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_W), this, SLOT(closeAllCreatedWindows()));
+	closeWindowsAct->setShortcut(QKeySequence(tr("Ctrl+W")));
     closeWindowsAct->setStatusTip(tr("Close all open windows"));
     closeWindowsAct->setEnabled(true); // initially inactive
     connect(closeWindowsAct, SIGNAL(triggered()), this, SLOT(closeAllCreatedWindows()));
