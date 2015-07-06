@@ -188,7 +188,6 @@ void MainWindow::loadDataFlow(string filename)
 	unknownFile = false;
 	savedVersion = 0;
 	refreshSaveIcon();
-	currentFileHasChanged = false;
 
 	// when new dataflow, both stacks become empty and the buttons will be deactivated
 	while(! redoStack.empty()){
@@ -656,7 +655,6 @@ void MainWindow::new_Data_Flow() {
 	if (!okToContinue()) return;
 
 	ui->deleteButton->setEnabled(false);
-	currentFileHasChanged = false;
 	unknownFile = true;
 
 	savedVersion = 1;
@@ -711,7 +709,7 @@ void MainWindow::load_Data_Flow()
 // when unsaved changes occure, give the user the possibility to save them
 bool MainWindow::okToContinue() {
 
-    if (currentFileHasChanged) {
+    if (savedVersion != 0) {
         int r = QMessageBox::warning(this, tr("Spreadsheet"),
                         tr("The document has been modified.\n"
                            "Do you want to save your changes?"),
@@ -734,7 +732,6 @@ void MainWindow::save_Data_Flow() {
 	conf_.store(currentFileName);
 	unknownFile = false;
 	savedVersion = 0;
-	currentFileHasChanged = false;
 	refreshSaveIcon();
 	saveAct->setEnabled(false);
 
@@ -762,7 +759,6 @@ void MainWindow::save_Data_Flow_as() {
 	conf_.store(currentFileName);
 
 	saveAct->setEnabled(false);
-	currentFileHasChanged = false;
 	unknownFile = false;
 	savedVersion = 0;
 	refreshSaveIcon();
@@ -783,7 +779,6 @@ void MainWindow::undo() {
 
 		savedVersion--;
 		if (!unknownFile && savedVersion == 0){
-			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
 		refreshSaveIcon();
@@ -838,7 +833,6 @@ void MainWindow::redo() {
 
 		savedVersion++;
 		if (!unknownFile && savedVersion == 0){
-			currentFileHasChanged = false;
 			saveAct->setEnabled(false);
 		}
 		refreshSaveIcon();
@@ -886,7 +880,6 @@ void MainWindow::redo() {
 // has to be called BEFORE the config has changed!
 void MainWindow::beforeConfigChange(){
 	// configuration changed
-	currentFileHasChanged = true;
 	savedVersion++;
 	if (!unknownFile) saveAct->setEnabled(true);
 
