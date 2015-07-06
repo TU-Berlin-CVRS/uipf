@@ -161,6 +161,7 @@ private:
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *configMenu;
+    QMenu *viewMenu;
     QMenu *helpMenu;
 
     // actions in fileMenu
@@ -177,6 +178,9 @@ private:
     // actions in configMenu
    	QAction *runAct;
     QAction *stopAct;
+
+    // actions in viewMenu
+    QAction *closeWindowsAct;
 
     // actions in helpMenu
     QAction *aboutAct;
