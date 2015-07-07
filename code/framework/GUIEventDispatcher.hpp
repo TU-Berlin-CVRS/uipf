@@ -1,8 +1,12 @@
 #ifndef GUIEVENTDISPATCHER_H_
 #define GUIEVENTDISPATCHER_H_
 
-#include "StdIncl.hpp"
 #include <QObject>
+#include <QImage>
+#include <QMutex>
+#include <QWaitCondition>
+
+#include "StdIncl.hpp"
 #include "Logger.hpp"
 
 namespace uipf
@@ -17,6 +21,18 @@ Q_OBJECT
 
 public:
 	static GUIEventDispatcher* instance();
+
+protected:
+	// protected properties accessable by the MainWindow, used for displaying image windows
+	friend class MainWindow;
+
+	// used by triggerCreateWindow to transfer the image into the GUI thread
+	QImage image_;
+
+	// mutex and condition to communicate with the GUI thread to figure out when the image was
+	// rendered and memory can be freed by our thread.
+	QMutex mutex;
+	QWaitCondition imageRendered;
 
 private:
 	// holds the singleton instance of the logger
@@ -39,7 +55,7 @@ private:
 signals: //for QT to connect
 	void reportProgressEvent(const float& val);
 	void logEvent(const Logger::LogType& eType, const std::string& strMessage);
-	void createWindow(const std::string strTitle, const cv::Mat& oMat);
+	void createWindow(const std::string strTitle);
 
 public: //methods for model to call and trigger GUI
 	void triggerReportProgress(const float& );

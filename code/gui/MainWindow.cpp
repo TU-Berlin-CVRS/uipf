@@ -28,7 +28,7 @@ using namespace std;
 using namespace uipf;
 
 // constructor
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),workerThread_(nullptr) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), workerThread_(nullptr) {
 
     ui->setupUi(this);
 
@@ -117,8 +117,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     // Window creation
-    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat&)),
-				this, SLOT (on_createWindow(const std::string , const cv::Mat&)));
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string)),
+				this, SLOT (on_createWindow(const std::string)));
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -392,39 +392,10 @@ void MainWindow::resetInputs()
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat)
+void MainWindow::on_createWindow(const std::string strTitle)
 {
-	//create windows that show images without opencv imshow()
-
-	//this code is inspired by opencv source /modules/highgui/src/window_QT.cpp
-	//we create a standardised tmp image to support different image types (rgb,grayscale)
-	//other types need to be tested...
-
-	using namespace cv;
-
-	QImage image;
-
-	if (oMat.channels() == 3) {
-		// assume RGB image for 3 channels
-		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
-		cvtColor(oMat, tmp, CV_BGR2RGB);
-		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
-
-		//check if image is flipped
-		int origin = ((IplImage) oMat).origin;
-		if (origin != 0)
-			flip(tmp,tmp,0);
-
-	} else if (oMat.channels() == 1) {
-		// assume Grayscale image for 1 channel
-		Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
-		// convert gray to RGB since gray image display is only supported since Gt 5.4
-		cvtColor(oMat, tmp, CV_GRAY2RGB);
-		image = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
-	} else {
-		LOG_E("Unsupported number of channels for displaying image.");
-		return;
-	}
+	// fetch the image from the GUIEventDispatcher
+	QImage image = GUIEventDispatcher::instance()->image_;
 
 	//simple view that contains an Image
 	QPointer<QGraphicsScene> scene = new QGraphicsScene;
@@ -437,6 +408,9 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 	createdWindwows_.push_back(view);
 
 	closeWindowsAct->setEnabled(true);
+
+	// unlock the mutex with the working thread
+	GUIEventDispatcher::instance()->imageRendered.wakeAll();
 }
 
 // append messages from our logger to the log-textview
