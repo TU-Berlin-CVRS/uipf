@@ -20,6 +20,14 @@ public:
 
    void renderConfig(uipf::Configuration& config);
 
+   void selectNodeByName(const QString name);
+
+   void triggerNodeSelected(const uipf::gui::Node*);
+
+   signals: //for QT to connect
+   		void nodeSelected(const uipf::gui::Node*);
+
+
 private:
    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
 

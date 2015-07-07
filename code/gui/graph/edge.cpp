@@ -4,6 +4,8 @@
 #include <math.h>
 #include <QDebug>
 #include <QPainter>
+#include <sstream>
+#include <QGraphicsTextItem>
 
 namespace uipf{
 namespace gui{
@@ -100,6 +102,16 @@ QRectF Edge::boundingRect() const
                                       destPoint.y() - sourcePoint.y()))
         .normalized()
         .adjusted(-extra, -extra, extra, extra);
+}
+
+void Edge::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+
+}
+
+void Edge::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+
 }
 
 void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

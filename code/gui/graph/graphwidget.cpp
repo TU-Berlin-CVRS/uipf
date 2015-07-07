@@ -58,6 +58,16 @@ GraphWidget::GraphWidget(QWidget *parent)
 
 }
 
+void GraphWidget::selectNodeByName(const QString name)
+{
+
+}
+
+void GraphWidget::triggerNodeSelected(const uipf::gui::Node* node)
+{
+	emit nodeSelected(node);
+}
+
 //takes a configuration and outputs a graph layout
 void GraphWidget::renderConfig(uipf::Configuration& config)
 {

@@ -33,11 +33,16 @@ public:
     //QPainterPath shape() const Q_DECL_OVERRIDE;
     //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
 
+    QString name_;
+
+    ProcessingStep processingStep_;
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) Q_DECL_OVERRIDE;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QGraphicsSceneMouseEvent * event) Q_DECL_OVERRIDE;
 
 private:
     void updateEdges();
@@ -45,13 +50,15 @@ private:
     QList<Edge *> edgeList;
     QPointF newPos;
     GraphWidget *graph;
-    ProcessingStep processingStep_;
-    QString name_;
+
+
     QRectF boundingRect_;
     QPen pen_;
     bool pinned_;
     QString simpleHtml_;
     QString complexHtml_;
+    QString inputsHtml_;
+
 };
 
 }//gui
