@@ -3,7 +3,6 @@
 //Register Types for interthreadcommunication. qRegisterMetaType() needs to be called too -> ctr()
 Q_DECLARE_METATYPE(uipf::Logger::LogType)
 Q_DECLARE_METATYPE(std::string)
-Q_DECLARE_METATYPE(cv::Mat)
 
 namespace uipf
 {
@@ -25,7 +24,6 @@ GUIEventDispatcher::GUIEventDispatcher()
 	//Q_DECLARE_METATYPE(...) has to be called in advance
 	qRegisterMetaType<uipf::Logger::LogType>("Logger::LogType");
 	qRegisterMetaType<std::string>("std::string");
-	qRegisterMetaType<cv::Mat>("cv::Mat");
 }
 
 GUIEventDispatcher::~GUIEventDispatcher() {}
@@ -43,10 +41,49 @@ void GUIEventDispatcher::triggerLogEvent(const Logger::LogType& eLogType, const 
 	emit logEvent(eLogType,strMessage);
 }
 
+// create windows that show images without opencv imshow()
 void GUIEventDispatcher::triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat)
 {
-	//send signal to GUI
-	emit createWindow(strTitle, oMat);
+	using namespace cv;
+
+	// lock needed to ensure only one image is displayed at a time to avoid different threads to interfere
+	mutex.lock();
+
+	//this code is inspired by opencv source /modules/highgui/src/window_QT.cpp
+	//we create a standardised tmp image to support different image types (rgb,grayscale)
+	//other types need to be tested...
+
+	// when changing this code make sure tmp is in scope until the mutex is unlocked.
+	// This is because it holds the data of the image that is displayed in the GUI thread.
+	// If tmp falls out of scope before the image is rendered in the GUI it will delete its
+	// memory because of the OpenCV internal smartpointer implementation and the image display
+	// will look corrupt.
+	Mat tmp = Mat(oMat.rows, oMat.cols, CV_8UC3);
+
+	if (oMat.channels() == 3) {
+		// assume RGB image for 3 channels
+		cvtColor(oMat, tmp, CV_BGR2RGB);
+	} else if (oMat.channels() == 1) {
+		// assume Grayscale image for 1 channel
+		// convert gray to RGB since gray image display in QImage is only supported since Qt 5.4
+		cvtColor(oMat, tmp, CV_GRAY2RGB);
+	} else {
+		LOG_E("Unsupported number of channels for displaying image.");
+		mutex.unlock();
+		return;
+	}
+
+	image_ = QImage(tmp.data, tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
+
+	// send signal to GUI
+	emit createWindow(strTitle);
+
+	// wait for the GUI to render the image so that resources of this thread are not freed before GUI can use them
+	imageRendered.wait(&mutex);
+
+	// unlock the mutex created above
+	mutex.unlock();
+
 }
 
 } //namespace
