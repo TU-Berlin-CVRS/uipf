@@ -21,7 +21,58 @@
        <string>Logs</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="1" column="0">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="logWarnCheckbox">
+           <property name="text">
+            <string>Warn</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="logErrorCheckbox">
+           <property name="text">
+            <string>Error</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="logInfoCheckbox">
+           <property name="text">
+            <string>Info</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="logFilterLE">
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="placeholderText">
+            <string>Filter</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearLogButton">
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
         <widget class="QPlainTextEdit" name="tbLog">
          <property name="readOnly">
           <bool>true</bool>
