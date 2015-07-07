@@ -8,6 +8,7 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 #include <QImage>
+#include <QModelIndex>
 #include <QPointer>
 #include <QShortcut>
 #include <iostream>
@@ -15,6 +16,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <QDebug>
 
 #include "MainWindow.hpp"
 #include "ImageWindow.hpp"
@@ -79,9 +81,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			this, SLOT(on_stepSelectionChanged(QItemSelection)));
 
 	QShortcut *shortcut = new QShortcut(QKeySequence("Del"), this);
-	ui->deleteButton->connect(shortcut, SIGNAL(activated()),
-			this, SLOT(on_deleteButton_clicked()));
+	ui->clearLogButton->connect(shortcut, SIGNAL(activated()),
+			this, SLOT(on_clearLogButton_clicked()));
 
+
+	ui->deleteButton->connect(shortcut, SIGNAL(activated()),
+				this, SLOT(on_deleteButton_clicked()));
 
     // react to changes in the entries
     connect(modelStep, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &, const QVector<int> &)),
@@ -105,6 +110,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // progressbar
     connect(GUIEventDispatcher::instance(), SIGNAL (reportProgressEvent(const float&)),
     			this, SLOT (on_reportProgress(const float&)));
+
+    //synchronize selection in graph and combobox
+    connect(graphView_, SIGNAL (nodeSelected(const uipf::gui::Node*)),
+       			this, SLOT (on_graphNodeSelected(const uipf::gui::Node*)));
+
 
     // Window creation
     connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string , const cv::Mat&)),
@@ -431,12 +441,27 @@ void MainWindow::on_createWindow(const std::string strTitle, const cv::Mat& oMat
 
 // append messages from our logger to the log-textview
 void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& strText) {
+
+	if (!ui->logWarnCheckbox->isChecked() && eType == Logger::WARNING )return;
+	if (!ui->logInfoCheckbox->isChecked() && eType == Logger::INFO )return;
+	if (!ui->logErrorCheckbox->isChecked() && eType == Logger::ERROR )return;
+
+	QString qText = QString(strText.c_str());
+
+	//filter
+	if (!qText.toLower().contains(ui->logFilterLE->text().toLower()))return;
+
 	// For colored Messages we need html :-/
 	QString strColor = (eType == Logger::WARNING ? "Blue" : eType == Logger::ERROR ? "Red" : "Green");
-	QString alertHtml = "<font color=\""+strColor+"\">" + QString(strText.c_str()) + "</font>";
+	QString alertHtml = "<font color=\""+strColor+"\">" + qText + "</font>";
 	ui->tbLog->appendHtml(alertHtml);
 	//autoscroll
 	ui->tbLog->verticalScrollBar()->setValue(ui->tbLog->verticalScrollBar()->maximum());
+}
+
+void MainWindow::on_clearLogButton_clicked()
+{
+	ui->tbLog->clear();
 }
 
 // moves the progressbar on every step of the processing chain
@@ -560,6 +585,13 @@ void MainWindow::on_deleteButton_clicked() {
     refreshGraph();
 }
 
+void MainWindow::on_graphNodeSelected(const uipf::gui::Node* node)
+{
+	int row = modelStep->stringList().indexOf(node->name_);
+
+	QModelIndex index = modelStep->index(row, 0);
+	ui->listProcessingSteps->setCurrentIndex(index);
+}
 
 // gets called when a processing step is selected
 void MainWindow::on_stepSelectionChanged(const QItemSelection& selection){
@@ -576,6 +608,7 @@ void MainWindow::on_stepSelectionChanged(const QItemSelection& selection){
 		refreshCategoryAndModule();
 		refreshParams();
 		refreshInputs();
+		graphView_->selectNodeByName(QString::fromStdString(currentStepName));
 	}
 }
 
@@ -931,6 +964,7 @@ void MainWindow::run() {
 
 	// Setup callback for cleanup when it finishes
 	connect(workerThread_, SIGNAL(finished()),  this, SLOT(on_backgroundWorkerFinished()));
+
 	// Run, Forest, run!
 	workerThread_->start(); // This invokes WorkerThread::run in a new thread
 }

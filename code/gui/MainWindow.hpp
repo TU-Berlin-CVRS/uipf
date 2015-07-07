@@ -30,6 +30,7 @@
 #include "../framework/GUIEventDispatcher.hpp"
 
 #include "graph/graphwidget.h"
+#include "graph/node.h"
 
 
 namespace Ui {
@@ -96,6 +97,9 @@ private slots:
 
 	void closeAllCreatedWindows();
 
+	void on_graphNodeSelected(const uipf::gui::Node* node);
+
+	void on_clearLogButton_clicked();
 
 protected:
 	void closeEvent(QCloseEvent *event);
