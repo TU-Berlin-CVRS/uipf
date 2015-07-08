@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include "../../framework/Configuration.hpp"
+#include "../framework/GUIEventDispatcher.hpp"
 
 namespace uipf{
 namespace gui{
@@ -20,13 +21,16 @@ public:
 
    void renderConfig(uipf::Configuration& config);
 
-   void selectNodeByName(const QString name);
+   void selectNodeByName(const QString name, bool bUnselectOthers=true);
 
    void triggerNodeSelected(const uipf::gui::Node*);
 
    signals: //for QT to connect
    		void nodeSelected(const uipf::gui::Node*);
 
+private slots:
+	void on_selectNodesInGraphView(const std::vector<std::string>& vcNodeNames,uipf::gui::GraphViewSelectionType eType,bool bUnselectOthers);
+	void on_clearSelectionInGraphView();
 
 private:
    void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
@@ -34,6 +38,7 @@ private:
    void scaleView(qreal scaleFactor);
 
    qreal currentScale_;
+   std::map<std::string,uipf::gui::Node*> nodes_;
 };
 
 }//gui

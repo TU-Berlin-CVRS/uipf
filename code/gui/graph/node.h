@@ -6,6 +6,7 @@
 #include <QList>
 #include <QPen>
 #include "../../framework/ProcessingStep.hpp"
+#include "../framework/GUIEventDispatcher.hpp"
 
 namespace uipf{
 namespace gui{
@@ -31,11 +32,14 @@ public:
 
     //QRectF boundingRect() const Q_DECL_OVERRIDE;
     //QPainterPath shape() const Q_DECL_OVERRIDE;
-    //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
 
     QString name_;
 
     ProcessingStep processingStep_;
+
+    void select(uipf::gui::GraphViewSelectionType eType);
+    void unselect();
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) Q_DECL_OVERRIDE;
@@ -58,6 +62,7 @@ private:
     QString simpleHtml_;
     QString complexHtml_;
     QString inputsHtml_;
+    uipf::gui::GraphViewSelectionType eSelectionType_;
 
 };
 

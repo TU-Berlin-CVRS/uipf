@@ -41,6 +41,26 @@ void GUIEventDispatcher::triggerLogEvent(const Logger::LogType& eLogType, const 
 	emit logEvent(eLogType,strMessage);
 }
 
+void GUIEventDispatcher::triggerSelectNodesInGraphView(const std::vector<std::string>& vcProcessingStepNames,uipf::gui::GraphViewSelectionType eType, bool bUnselectOthers /*=true*/)
+{
+	//send signal to GUI
+	emit selectNodesInGraphView(vcProcessingStepNames,eType,bUnselectOthers);
+}
+
+void GUIEventDispatcher::triggerSelectSingleNodeInGraphView(const std::string& strProcessingStepName,uipf::gui::GraphViewSelectionType eType, bool bUnselectOthers /*=true*/)
+{
+	std::vector<std::string> tmp;
+	tmp.push_back(strProcessingStepName);
+	triggerSelectNodesInGraphView(tmp,eType,bUnselectOthers);
+}
+
+void GUIEventDispatcher::triggerClearSelectionInGraphView()
+{
+	//send signal to GUI
+	emit clearSelectionInGraphView();
+}
+
+
 // create windows that show images without opencv imshow()
 void GUIEventDispatcher::triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat)
 {

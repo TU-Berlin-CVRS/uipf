@@ -3,6 +3,7 @@
 #include "node.h"
 #include "../../framework/StdIncl.hpp"
 #include "../../framework/Logger.hpp"
+
 #include <math.h>
 #include <random>
 #include <QKeyEvent>
@@ -56,11 +57,50 @@ GraphWidget::GraphWidget(QWidget *parent)
     scale(currentScale_,currentScale_);
     setMinimumSize(400, 400);
 
+    // react to selections from framework
+    connect(GUIEventDispatcher::instance(), SIGNAL (selectNodesInGraphView(const std::vector<std::string>&,uipf::gui::GraphViewSelectionType,bool)),
+    		this, SLOT (on_selectNodesInGraphView(const std::vector<std::string>&,uipf::gui::GraphViewSelectionType,bool)),Qt::DirectConnection);
+
+    // react to clear selections from framework
+    connect(GUIEventDispatcher::instance(), SIGNAL (clearSelectionInGraphView()),
+    		this, SLOT (on_clearSelectionInGraphView()),Qt::DirectConnection);
 }
 
-void GraphWidget::selectNodeByName(const QString name)
+void GraphWidget::on_clearSelectionInGraphView()
 {
+	for (auto pair : nodes_)
+	{
+		auto node = pair.second;
+		node->unselect();
+	}
+}
 
+void GraphWidget::on_selectNodesInGraphView(const std::vector<std::string>& vcNodeNames,uipf::gui::GraphViewSelectionType eType,bool bUnselectOthers)
+{
+	for (auto pair : nodes_)
+	{
+		auto node = pair.second;
+		for (auto name : vcNodeNames)
+		{
+			if (node->processingStep_.name == name)
+				node->select(eType);
+			else if (bUnselectOthers)
+				node->unselect();
+		}
+
+	}
+}
+
+void GraphWidget::selectNodeByName(const QString name, bool bUnselectOthers)
+{
+	for (auto pair : nodes_)
+	{
+		auto node = pair.second;
+		if (node->name_ == name)
+			node->select(uipf::gui::GraphViewSelectionType::CURRENT);
+		else if (bUnselectOthers)
+			node->unselect();
+	}
 }
 
 void GraphWidget::triggerNodeSelected(const uipf::gui::Node* node)
@@ -73,18 +113,19 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 {
 	QGraphicsScene* scene = this->scene();
 	scene->clear();
+	nodes_.clear();
+
 	using namespace std;
 	using namespace uipf;
 	map<string, ProcessingStep> chain = config.getProcessingChain();
 
 	//create all nodes first
-	map<string,Node*> nodes;
 	for (auto it = chain.begin(); it!=chain.end(); ++it)
 	{
 		  Node *node = new Node(this,QString(it->first.c_str()),it->second);
 
 		  scene->addItem(node);
-		  nodes.insert(std::pair<string,Node*>(it->first,node));
+		  nodes_.insert(std::pair<string,Node*>(it->first,node));
 	}
 
 	Graph g;
@@ -98,8 +139,8 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 		for (auto inputIt = inputs.begin();inputIt!=inputs.end();++inputIt)
 		{
 			std::string othername = inputIt->second.first;
-			if (nodes.count(othername) != 0) { // only create edge if referenced node exists
-				auto edge =new Edge(nodes[it->first], nodes[othername]);
+			if (nodes_.count(othername) != 0) { // only create edge if referenced node exists
+				auto edge =new Edge(nodes_[it->first], nodes_[othername]);
 				scene->addItem(edge);
 				//add to calculation graph
 				add_edge(get_vertex(thisname, g, names), get_vertex(othername, g, names), g);
@@ -128,7 +169,7 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
 		std::string strName = get(vertex_name, g, *vi) ;
 
-		nodes[strName]->setPos(position[*vi][0],  position[*vi][1]);
+		nodes_[strName]->setPos(position[*vi][0],  position[*vi][1]);
 	}
 
 

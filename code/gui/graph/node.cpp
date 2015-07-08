@@ -4,7 +4,6 @@
 #include "graphwidget.h"
 #include "../../framework/Logger.hpp"
 
-
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -16,7 +15,7 @@ namespace gui{
 
 
 Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processingStep)
-    : name_(name),processingStep_(processingStep),graph(graphWidget),pinned_(false)
+    : name_(name),processingStep_(processingStep),graph(graphWidget),pinned_(false),eSelectionType_(uipf::gui::NONE)
 {
     setFlag(ItemIsMovable);
     setFlag(ItemSendsGeometryChanges);
@@ -38,14 +37,14 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
 		<<"</style>";
     //build a simple view in html
     std::stringstream simple;
-    simple << style.str() << "<table border='1'> "
+    simple << style.str() << "<table border='0'> "
     		<< "<tr>    <th>"<<processingStep_.name <<"</th>    </tr>  "
 			<< "</table>";
 
 
     //build a complex view in html
     std::stringstream complex;
-    complex << style.str() << "<table border='1'> "
+    complex << style.str() << "<table border='0'> "
     		<< "<tr>    <th width='100%' >"<<processingStep_.name <<" ["<< processingStep_.module <<"]</th>    </tr> ";
 
     		//<< "<h3> "<< processingStep_.name <<" </h3> <h4>["<< processingStep_.module <<"]</h4>";
@@ -53,7 +52,7 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
     bool bHaveNonEmptyParams = false;
     if (processingStep_.params.size() > 0)
     {
-    	sParams	<< "<tr><td><table border='0'> "
+    	sParams	<< "<hr/> <tr><td><table border='0'> "
     			<< "<tr>    <th width='30%' align='left'>Parameter</th>    <th width='70%' align='left'>Value</th>  </tr>  ";
     	for (auto param : processingStep_.params)
     	{
@@ -71,7 +70,7 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
     if (inputs.size()>0)
     {
     	ss	<<  "<tr><td><table border='0'> "
-    			<< "<tr><th width='30%' align='left'>From</th>    <th width='70%' align='left'>Output</th>  </tr>  ";
+    		<< "<tr><th width='30%' align='left'>From</th>    <th width='70%' align='left'>Output</th>  </tr>  ";
 
     	for (auto inputIt = inputs.begin();inputIt!=inputs.end();++inputIt)
     	{
@@ -104,33 +103,39 @@ QList<Edge *> Node::edges() const
     return edgeList;
 }
 
-void Node::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+void Node::unselect()
 {
-	if (pinned_) return;
+	eSelectionType_ = uipf::gui::NONE;
 
-	setHtml(complexHtml_);
-
-	adjustSize();
 	update();
 
 	updateEdges();
 }
 
-void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+void Node::select(uipf::gui::GraphViewSelectionType eType)
 {
-	if (pinned_) return;
+	eSelectionType_ = eType;
 
-	setHtml(simpleHtml_);
-
-	adjustSize();
 	update();
 
 	updateEdges();
+}
+
+void Node::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+	graph->triggerNodeSelected(this);
+	select(uipf::gui::CURRENT);
+}
+
+void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
+{
+	unselect();
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
 	graph->triggerNodeSelected(this);
+	//always call parent. otherwise event is swallowed
 	QGraphicsTextItem::mousePressEvent(event);
 }
 
@@ -149,58 +154,50 @@ void Node::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 	pinned_ = !pinned_;
 }
 
-//void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
-//{
-//	if (complexView_)
-//	{
-//		painter->setPen(pen_);
-//
-//		QFont font("times", 24);
-//		font.setBold(false);
-//		font.setPointSize(14);
-//
-//		QString qstrStepName("");
-//
-//		if (!processingStep_.name.empty())
-//			qstrStepName = QString(processingStep_.name.c_str());
-//
-//
-//		//painter->drawRect(boundingRect_);
-//		painter->setFont(font);
-//		//painter->setPen(Qt::lightGray);
-//		// painter->drawText(boundingRect_.translated(2, 2), name_);
-//		painter->setPen(Qt::black);
-//		painter->drawText(boundingRect_.translated(2, 0),qstrStepName);
-//
-//		if (!processingStep_.module.empty())
-//		{
-//			QString qstrModName(processingStep_.module.c_str());
-//
-//			QRectF moduleRect = measureString(qstrModName);
-//
-//			painter->drawText(moduleRect.translated(0, -30),qstrModName);
-//		}
-//	}
-//	else
-//	{
-//		painter->setPen(pen_);
-//
-//		QFont font("times", 24);
-//		font.setBold(false);
-//		font.setPointSize(14);
-//
-//
-//		painter->drawRect(boundingRect_);
-//		painter->setFont(font);
-//		//painter->setPen(Qt::lightGray);
-//		// painter->drawText(boundingRect_.translated(2, 2), name_);
-//		painter->setPen(Qt::black);
-//		painter->drawText(boundingRect_.translated(2, 0), name_);
-//	}
-//}
+void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* w)
+{
+	//draw a surrounding coloured rectangle
+		QRectF boundingBox = this->boundingRect();
+		//painter->drawRect(boundingBox);
+
+		QPainterPath path;
+		path.addRoundedRect(boundingBox, 10, 10);
+		QPen pen(Qt::black, 2);
+		painter->setPen(pen);
+
+	switch (eSelectionType_)
+	{
+	case uipf::gui::CURRENT:
+		//painter->setPen(Qt::blue);
+		painter->fillPath(path, QColor(0, 0, 255, 127));//use alpha to get some transparency
+		break;
+	case uipf::gui::ERROR:
+		//painter->setPen(Qt::red);
+		painter->fillPath(path, QColor(255, 0, 0, 127));
+		break;
+	case uipf::gui::GOOD:
+		//painter->setPen(Qt::green);
+		painter->fillPath(path, QColor(0, 255, 0, 127));
+		break;
+	case uipf::gui::NONE:
+		//painter->setPen(Qt::black);
+		//painter.fillPath(path, Qt::blue);
+		break;
+	}
+
+	//draw a surrounding coloured rectangle
+		//QRectF boundingBox = this->boundingRect();
+		//painter->drawRect(boundingBox);
+
+	painter->drawPath(path);
+
+	//call parent to draw its content
+	QGraphicsTextItem::paint(painter,option,w);
+}
 
 void Node::updateEdges()
 {
+	//tell our edges we changed so they can arrange
 	foreach (Edge *edge, edgeList)
 			edge->adjust();
 

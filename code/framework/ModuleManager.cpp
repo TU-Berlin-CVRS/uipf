@@ -98,10 +98,14 @@ void ModuleManager::run(Configuration config){
 
 	LOG_I( "Starting processing chain." );
 
+	GUIEventDispatcher::instance()->clearSelectionInGraphView();
+
 	// iterate over the sortedChain and run the modules in the order given by the chain
 	for (unsigned int i=0; i<sortedChain.size(); i++){
 
 		ProcessingStep proSt = chain[sortedChain[i]];
+
+		GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::CURRENT,false);
 
 		// load the module
 		ModuleInterface* module;
@@ -141,12 +145,15 @@ void ModuleManager::run(Configuration config){
 			module->run(dataMnrg);
 
 		} catch (ErrorException& e) {
+			GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::ERROR,false);
 			LOG_E( string("Error: ") + e.what() );
 			break;
 		} catch (InvalidConfigException& e) {
+			GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::ERROR,false);
 			LOG_E( string("Invalid config: ") + e.what() );
 			break;
 		} catch (std::exception& e) {
+			GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::ERROR,false);
 			LOG_E( string("Error: module threw exception: ") + e.what() );
 			break;
 		}
@@ -155,6 +162,8 @@ void ModuleManager::run(Configuration config){
 		GUIEventDispatcher::instance()->triggerReportProgress(static_cast<float>(i+1)/static_cast<float>(sortedChain.size())*100.0f);
 
 		LOG_I( "Done with step '" + proSt.name + "'." );
+
+		GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::GOOD,false);
 
 		// check if stop button was pressed
 		if (context_.bStopRequested_ )

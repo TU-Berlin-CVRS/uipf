@@ -12,6 +12,17 @@
 namespace uipf
 {
 
+namespace gui
+{
+
+
+	enum GraphViewSelectionType {
+								NONE /*no selection (transparent)*/,
+								CURRENT /*the currently selected (blue)*/,
+								ERROR/*Node with errors (red)*/,
+								GOOD /*nodes that good e.g. passed a steps (green)*/
+	};
+}
 //A class that handles communication between QTGUI components and module-classes
 //by exposing signals.
 //so module classes can trigger the GUI without the need of implementing QObject
@@ -56,11 +67,17 @@ signals: //for QT to connect
 	void reportProgressEvent(const float& val);
 	void logEvent(const Logger::LogType& eType, const std::string& strMessage);
 	void createWindow(const std::string strTitle);
+	void clearSelectionInGraphView();
+	void selectNodesInGraphView(const std::vector<std::string>& vcProcessingStepNames,uipf::gui::GraphViewSelectionType eType,bool bUnselectOthers);
 
 public: //methods for model to call and trigger GUI
 	void triggerReportProgress(const float& );
 	void triggerLogEvent(const Logger::LogType& eType, const std::string& strMessage);
 	void triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat);
+	void triggerClearSelectionInGraphView();
+	void triggerSelectSingleNodeInGraphView(const std::string& strProcessingStepName,uipf::gui::GraphViewSelectionType eType=uipf::gui::GraphViewSelectionType::CURRENT, bool bUnselectOthers=true);
+	void triggerSelectNodesInGraphView(const std::vector<std::string>& vcProcessingStepNames,uipf::gui::GraphViewSelectionType eType=uipf::gui::GraphViewSelectionType::CURRENT, bool bUnselectOthers=true);
+
 };
 
 } //namespace
