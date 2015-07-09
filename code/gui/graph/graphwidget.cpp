@@ -44,18 +44,25 @@ Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 
 
 GraphWidget::GraphWidget(QWidget *parent)
-    : QGraphicsView(parent),currentScale_(0.7f)
+    : QGraphicsView(parent),currentScale_(1.0f)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(-100, -200, 400, 400);
+    //scene->setSceneRect(0, 0, 400, 400);
     setScene(scene);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
     scale(currentScale_,currentScale_);
-    setMinimumSize(400, 400);
+    setMinimumSize(600, 400);
+    setDragMode(ScrollHandDrag);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    //setInteractive(false);
+    this->mapToScene( this->viewport()->geometry() );
 
     // react to selections from framework
     connect(GUIEventDispatcher::instance(), SIGNAL (selectNodesInGraphView(const std::vector<std::string>&,uipf::gui::GraphViewSelectionType,bool)),
@@ -119,10 +126,16 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	using namespace uipf;
 	map<string, ProcessingStep> chain = config.getProcessingChain();
 
+	double width = this->width();//scene->width();
+	double height = this->height();//scene->height();
+
+	srand (0);//same seed to get invariant positions
+
 	//create all nodes first
 	for (auto it = chain.begin(); it!=chain.end(); ++it)
 	{
 		  Node *node = new Node(this,QString(it->first.c_str()),it->second);
+		  node->setPos(rand()%static_cast<int>(width),rand()%static_cast<int>(height));//initial random position to prevent clashes
 
 		  scene->addItem(node);
 		  nodes_.insert(std::pair<string,Node*>(it->first,node));
@@ -149,8 +162,7 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	}
 
 	//calculate graph layout with boosts fruchterman_reingold algo
-	double width = this->width();//scene->width();
-	double height = this->height();//scene->height();
+
 
 	typedef std::vector<point_type> PositionVec;
 	PositionVec position_vec(num_vertices(g));
@@ -173,13 +185,13 @@ void GraphWidget::renderConfig(uipf::Configuration& config)
 	}
 
 
-	//QGraphicsView::fitInView( scene->itemsBoundingRect(), Qt::KeepAspectRatio );
+	QGraphicsView::fitInView( scene->itemsBoundingRect(), Qt::KeepAspectRatio );
 
 }
 
 void GraphWidget::wheelEvent(QWheelEvent *event)
 {
-    scaleView(pow((double)2, -event->delta() / 240.0));
+    scaleView(pow((double)2, event->delta() / 240.0));
 }
 
 void GraphWidget::scaleView(qreal scaleFactor)

@@ -5,6 +5,7 @@
 #include "../../framework/Logger.hpp"
 
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
@@ -52,7 +53,7 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
     bool bHaveNonEmptyParams = false;
     if (processingStep_.params.size() > 0)
     {
-    	sParams	<< "<hr/> <tr><td><table border='0'> "
+    	sParams	<< "<tr><td><table border='0'> "
     			<< "<tr>    <th width='30%' align='left'>Parameter</th>    <th width='70%' align='left'>Value</th>  </tr>  ";
     	for (auto param : processingStep_.params)
     	{
@@ -62,11 +63,11 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
     	}
     	sParams << "</table></td>   </tr>";
     }
-    if (bHaveNonEmptyParams)
-    	complex << sParams.str();
+
 
     auto inputs = processingStep_.inputs;
     std::stringstream ss;
+    bool bHaveNonEmptyInputs = false;
     if (inputs.size()>0)
     {
     	ss	<<  "<tr><td><table border='0'> "
@@ -78,11 +79,18 @@ Node::Node(GraphWidget *graphWidget,QString name,uipf::ProcessingStep processing
     			continue;
 
     		ss << "<tr>    <td>"<< inputIt->second.first<<"</td> <td>"<< inputIt->second.second<<"</td>   </tr>  ";
+    		bHaveNonEmptyInputs = true;
 
     	}
     	ss << "</table></td>   </tr>";
     }
     inputsHtml_= QString(ss.str().c_str());
+
+    if (bHaveNonEmptyParams || bHaveNonEmptyInputs)
+    	complex << "<hr />";
+
+    if (bHaveNonEmptyParams)
+       	complex << sParams.str();
 
     complex << ss.str() << "</table>";
     simpleHtml_ = QString(simple.str().c_str());
@@ -125,11 +133,13 @@ void Node::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
 	graph->triggerNodeSelected(this);
 	select(uipf::gui::CURRENT);
+	graph->setDragMode(QGraphicsView::NoDrag);
 }
 
 void Node::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
 	unselect();
+	graph->setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent * event)
@@ -157,37 +167,27 @@ void Node::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget* w)
 {
 	//draw a surrounding coloured rectangle
-		QRectF boundingBox = this->boundingRect();
-		//painter->drawRect(boundingBox);
+	QRectF boundingBox = this->boundingRect();
 
-		QPainterPath path;
-		path.addRoundedRect(boundingBox, 10, 10);
-		QPen pen(Qt::black, 2);
-		painter->setPen(pen);
+	QPainterPath path;
+	path.addRoundedRect(boundingBox, 9.5, 9.5);
+	QPen pen(Qt::black, 2.5);
+	painter->setPen(pen);
 
 	switch (eSelectionType_)
 	{
 	case uipf::gui::CURRENT:
-		//painter->setPen(Qt::blue);
 		painter->fillPath(path, QColor(0, 0, 255, 127));//use alpha to get some transparency
 		break;
 	case uipf::gui::ERROR:
-		//painter->setPen(Qt::red);
 		painter->fillPath(path, QColor(255, 0, 0, 127));
 		break;
 	case uipf::gui::GOOD:
-		//painter->setPen(Qt::green);
 		painter->fillPath(path, QColor(0, 255, 0, 127));
 		break;
 	case uipf::gui::NONE:
-		//painter->setPen(Qt::black);
-		//painter.fillPath(path, Qt::blue);
 		break;
 	}
-
-	//draw a surrounding coloured rectangle
-		//QRectF boundingBox = this->boundingRect();
-		//painter->drawRect(boundingBox);
 
 	painter->drawPath(path);
 
