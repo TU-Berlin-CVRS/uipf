@@ -11,7 +11,7 @@
 * Focus on framework-design
 * CMake
 
-## Moduls
+## Modules
 
 * Capsulate functionality like Filters, wrappers for OpenCV etc.
 * Have their own GUI-window
@@ -34,9 +34,9 @@
 
 ## Persistence
 
-* Configfile with settings (xml)
-* Store graph and modul settings
-* Every modul has its own settings
+* Configfile with settings (yaml)
+* Store graph and module settings
+* Every module has its own settings
 
 ## Open
 
