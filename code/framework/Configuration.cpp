@@ -184,7 +184,10 @@ pair< vector<string>, vector<string> > Configuration::validate(map<string, MetaD
 		{
 			if (!paramIt->second.getIsOptional()) {
 				if ( step.params.find(paramIt->first) == step.params.end()) {
-					errors.push_back("mandatory parameter: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
+					errors.push_back("mandatory parameter '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
+					affectedSteps.push_back(step.name);
+				} else if (step.params[paramIt->first].empty()) {
+					errors.push_back("mandatory parameter '" + string(paramIt->first) +  "' of module '"+step.module+"' is empty!");
 					affectedSteps.push_back(step.name);
 				}
 			}

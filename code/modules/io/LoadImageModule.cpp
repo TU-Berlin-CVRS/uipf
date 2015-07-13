@@ -15,7 +15,7 @@ void LoadImageModule::run( DataManager& data) const
 	 using namespace cv;
 
 	  Mat image;
-	  std::string strFilename = data.getParam<std::string>("filename","not found");
+	  std::string strFilename = data.getParam<std::string>("filename","");
 	  // check whether to load the image in grayscale mode, defaults to color
 	  if (data.getParam<std::string>("mode","color").compare("grayscale") == 0)
 	  {
