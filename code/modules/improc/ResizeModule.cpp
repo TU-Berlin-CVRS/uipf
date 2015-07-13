@@ -17,36 +17,36 @@ void ResizeModule::run( DataManager& data) const
 	// print params for debugging
 	data.listParams();
 
-	// read the params (window size and sigma) given for this step
+	// read the params (width and height) given for this step
 	double width = data.getParam<double>("width", 0.0);
 	double height = data.getParam<double>("height", 0.0);
 
-    LOG_I("w:" + utils::toString(width) + " h:" + utils::toString(height));
 	// get a pointer to the "image" input data
 	Matrix::c_ptr oMatrix = data.getInputData<Matrix>("image");
+
 	// get the actual opencv matrix of the input data
-    Mat src = oMatrix->getContent();
-	Mat dst;
+    Mat m = oMatrix->getContent();
 
-	// do gaussian blur using opencv
-    Size s(width,height);
-    resize(src,dst,s);
+	// do resize using opencv
+    resize(m,m, Size (width,height));
 
-	// set the result (output) on the datamanager
-	data.setOutputData("image",new Matrix(dst));
+	// set the result (image) on the datamanager
+	data.setOutputData("image",new Matrix(m));
 
 }
 
 // returns the meta data of this module
 MetaData ResizeModule::getMetaData() const
 {
-	map<string, DataDescription> input = {
+	DataDescriptionMap input = {
 		{"image", DataDescription(MATRIX, "the image to resize.") }
 	};
-	map<string, DataDescription> output = {
+
+	DataDescriptionMap output = {
 		{"image", DataDescription(MATRIX, "the result image.") }
 	};
-	map<string, ParamDescription> params = {
+
+	ParamDescriptionMap params = {
 		{"width", ParamDescription("new width") },
         {"height", ParamDescription("new height") }
 	};

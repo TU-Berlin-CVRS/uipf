@@ -1,13 +1,13 @@
-#ifndef _GAUSSIANMODULE_
-#define _GAUSSIANMODULE_
+#ifndef _RESIZEMODULE_
+#define _RESIZEMODULE_
 
 #include "../../framework/ModuleInterface.hpp"
 #include "../../framework/ModuleBase.hpp"
 
 namespace uipf{
 
-// Applies Resize blurring to an image using openCV.
-// See http://docs.opencv.org/modules/imgproc/doc/filtering.html#gaussianblur
+// Applies Resize to an image using openCV.
+// See http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#resize
 class ResizeModule :  public QObject, ModuleBase
 {
 Q_OBJECT
@@ -29,4 +29,4 @@ Q_INTERFACES(uipf::ModuleInterface)
 
 }
 
-#endif //GAUSSIANMODULE
+#endif //_RESIZEMODULE_
