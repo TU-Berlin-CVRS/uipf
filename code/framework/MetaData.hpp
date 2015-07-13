@@ -59,16 +59,20 @@ class ParamDescription : public Description {
 
 };
 
+typedef std::map<std::string, DataDescription> DataDescriptionMap ;
+typedef std::map<std::string, ParamDescription> ParamDescriptionMap ;
+
 // describes the module meta data
 class MetaData {
+
 	public:
 		// constructor
 		MetaData(
 			std::string, // general verbal description of the module
 			std::string, // category
-			std::map<std::string, DataDescription>, // input
-			std::map<std::string, DataDescription>, // output
-			std::map<std::string, ParamDescription> // params
+			DataDescriptionMap, // input
+			DataDescriptionMap, // output
+			ParamDescriptionMap // params
 		);
 		// constuctor to allow copying
 		MetaData(){};
