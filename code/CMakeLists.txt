@@ -131,6 +131,11 @@ add_library(GaussianModule SHARED modules/improc/GaussianModule.cpp)
 qt5_use_modules(GaussianModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(GaussianModule opencv_core opencv_imgproc ModuleBase)
 
+#for live demo...
+#add_library(ResizeModule SHARED modules/improc/ResizeModule.cpp)
+#qt5_use_modules(ResizeModule Core ) #QtCore is needed for <QPlugin>
+#target_link_libraries(ResizeModule opencv_core opencv_imgproc ModuleBase)
+
 add_library(ConvolutionModule SHARED modules/improc/ConvolutionModule.cpp)
 qt5_use_modules(ConvolutionModule Core ) #QtCore is needed for <QPlugin>
 target_link_libraries(ConvolutionModule opencv_core opencv_imgproc ModuleBase)
