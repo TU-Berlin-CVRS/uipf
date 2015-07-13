@@ -24,9 +24,6 @@ int ParamsModel::columnCount(const QModelIndex & /*parent*/) const
 bool ParamsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && role == Qt::EditRole) {
-        if (value.toString().isEmpty()) {
-			return false;
-		}
 		// only the values can be changed
 		if (index.column() == 0) {
 			step_.params[paramNames_[index.row()]] = value.toString().toStdString();
