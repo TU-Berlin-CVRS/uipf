@@ -196,7 +196,8 @@ Akarsh Seggemu
 \begin{frame}{Unified Image Processing Framework}
 
 
-	\includegraphics[width=\textwidth]{images/uipf-gui-chain}
+	\includegraphics<1>[width=\textwidth]{images/intro/simpleChain}
+	\includegraphics<2>[width=.9\textwidth]{images/intro/complexChain}
 
 	\pnote{
 		Framework which allows you to divide your program in many steps,
@@ -208,28 +209,98 @@ Akarsh Seggemu
 
 \begin{frame}{Reasons to use}
 
-	\begin{itemize}
-		\item easy to use \pause
-		\item extensible \pause
-		\item parallel execution of steps \pause
-		\item visualization of steps \pause
-		\item allows sharing modules \pause
-		\item better reuse of modules \pause
-		\item practical storage of chains with different inputs \pause
-		\item platform independent \pause
-		\item ...
-	\end{itemize}
+%	\begin{itemize}
+%	\end{itemize}
 
 	\pnote{
-		...
+		- easy to use \\
+		- extensible \\
+		- visualization of steps \\
+
+		- better reuse of modules \\
+		- allows sharing modules \\
+
+		- practical storage of chains with different inputs \\
+
+		- "platform independent" \\
+		- "parallel execution of steps" \\
 	}
 
 \end{frame}
 
 
-\section{Working with program}
-\subsection{GUI}
-\begin{frame}{How to use}
+\section{Working with the program}
+\subsection{User Interfaces}
+\begin{frame}[t]{User Interfaces}
+
+	\begin{columns}
+		\begin{column}[t]{.5\textwidth}
+			\begin{center}
+			{\Large GUI}
+			\vspace{.5cm}
+
+			\includegraphics[width=\textwidth]{images/howto/gui}
+
+			\end{center}
+		\end{column}
+		\begin{column}[t]{.5\textwidth}
+			\begin{center}
+			{\Large Console}
+			\vspace{.5cm}
+
+			\includegraphics[width=\textwidth]{images/howto/console}
+
+			\end{center}
+		\end{column}
+	\end{columns}
+
+	\pnote{
+		framework provides two interfaces: GUI, Console
+
+		these share a common file format in YAML.
+
+		GUI can create and run chains.
+
+		Console can run a chain and also run single modules.
+	}
+
+\end{frame}
+
+\subsection{General Concepts}
+\begin{frame}{General Concepts}
+
+	\begin{columns}
+		\begin{column}[t]{.4\textwidth}
+\Large
+			Processing Chain
+			\vspace{.4cm}\pause
+\Large
+			\begin{itemize}
+				\item[$\rightarrow$] Processing Step
+				\vspace{.25cm}\pause
+				\large
+				\begin{itemize}
+					\item[$\rightarrow$] Module
+				\vspace{.25cm}\pause
+					\item[$\rightarrow$] Parameters
+				\vspace{.25cm}\pause
+					\item[$\rightarrow$] Dependencies
+				\end{itemize}
+			\end{itemize}
+
+		\end{column}
+		\begin{column}[t]{.6\textwidth}
+			\begin{center}
+
+				\includegraphics[width=\textwidth]{images/intro/simpleChain}
+
+			\end{center}
+		\end{column}
+	\end{columns}
+
+\end{frame}
+
+\begin{frame}{General Concepts}
 
 	\includegraphics<1>[width=\textwidth]{images/existingChain}
 	\includegraphics<2>[width=\textwidth]{images/runChain}
@@ -388,6 +459,12 @@ void LoadImageModule::run( DataManager& data) const
 
 	Fork us on Github:\\\vspace{0.2cm}
 	\url{https://github.com/TU-Berlin-CVRS/uipf}
+
+	\pnote{
+		first: Questions?\\
+		We are on github!\\
+		second: Live Demo.
+	}
 \end{center}
 \end{frame}
 

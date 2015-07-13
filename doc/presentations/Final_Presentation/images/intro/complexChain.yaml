@@ -1,0 +1,97 @@
+gaussian:
+  module: gaussian
+  input:
+    image: select ch1.image
+  sigmaX: 10
+  sigmaY: ""
+  windowSize: ""
+load:
+  module: loadImage
+  filename: input.jpg
+  mode: ""
+merge ch0:
+  module: addListItem
+  input:
+    bool: .
+    boolList: .
+    float: .
+    floatList: .
+    image: select ch0.image
+    imageList: .
+    integer: .
+    integerList: .
+    string: .
+    stringList: .
+merge ch1:
+  module: addListItem
+  input:
+    bool: .
+    boolList: .
+    float: .
+    floatList: .
+    image: gaussian.image
+    imageList: merge ch0.imageList
+    integer: .
+    integerList: .
+    string: .
+    stringList: .
+merge ch2:
+  module: addListItem
+  input:
+    bool: .
+    boolList: .
+    float: .
+    floatList: .
+    image: select ch2.image
+    imageList: merge ch1.imageList
+    integer: .
+    integerList: .
+    string: .
+    stringList: .
+merge channels:
+  module: mergeChannels
+  input:
+    channels: merge ch2.imageList
+select ch0:
+  module: selectListItem
+  input:
+    boolList: .
+    floatList: .
+    imageList: split channels.channels
+    integerList: .
+    stringList: .
+  index: 0
+select ch1:
+  module: selectListItem
+  input:
+    boolList: .
+    floatList: .
+    imageList: split channels.channels
+    integerList: .
+    stringList: .
+  index: 1
+select ch2:
+  module: selectListItem
+  input:
+    boolList: .
+    floatList: .
+    imageList: split channels.channels
+    integerList: .
+    stringList: .
+  index: 2
+show channels:
+  module: showImageList
+  input:
+    imageList: split channels.channels
+  blocking: ""
+  title: ""
+show result:
+  module: showImage
+  input:
+    image: merge channels.image
+  blocking: ""
+  title: ""
+split channels:
+  module: splitChannels
+  input:
+    image: load.image

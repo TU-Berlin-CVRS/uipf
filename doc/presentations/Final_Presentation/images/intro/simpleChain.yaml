@@ -1,0 +1,29 @@
+load:
+  module: loadImage
+  filename: ""
+  mode: ""
+process:
+  module: gaussian
+  input:
+    image: load.image
+  sigmaX: ""
+  sigmaY: ""
+  windowSize: ""
+show input:
+  module: showImage
+  input:
+    image: load.image
+  blocking: ""
+  title: ""
+show result:
+  module: showImage
+  input:
+    image: process.image
+  blocking: ""
+  title: ""
+store result:
+  module: storeImage
+  input:
+    image: process.image
+  filename: ""
+  quality: ""
