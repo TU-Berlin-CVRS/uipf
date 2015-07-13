@@ -1,0 +1,11 @@
+gaussian:
+  module: gaussian
+  input:
+    image: .
+  sigmaX: ""
+  sigmaY: ""
+  windowSize: ""
+load image:
+  module: ""
+show image:
+  module: ""

@@ -1,0 +1,10 @@
+Load image:
+  module: loadImage
+  filename: output.jpeg
+  mode: grayscale
+Show image:
+  module: showImage
+  input:
+    image: Load image.image
+  blocking: ""
+  title: ""

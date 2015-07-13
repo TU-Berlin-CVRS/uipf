@@ -1,6 +1,6 @@
 new step 1:
   module: loadImage
-  filename: hier.png
+  filename: input.png
   mode: grayscale
 new step 2:
   module: showImage
@@ -10,7 +10,7 @@ new step 2:
   title: ""
 new step 3:
   module: loadImage
-  filename: hier.png
+  filename: input.png
   mode: color
 new step 4:
   module: showImage
