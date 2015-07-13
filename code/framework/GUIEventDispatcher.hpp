@@ -46,14 +46,14 @@ protected:
 	QWaitCondition imageRendered;
 
 private:
-	// holds the singleton instance of the logger
+	// holds the singleton instance of the GUIEventDispatcher
 	static GUIEventDispatcher *instance_;
 	GUIEventDispatcher();
 	GUIEventDispatcher( const GUIEventDispatcher& );
 
 	~GUIEventDispatcher();
 
-	// helper class to ensure logger gets deleted when the context is gone
+	// helper class to ensure GUIEventDispatcher gets deleted when the context is gone
 	class Guard {
 		public: ~Guard() {
 			if( GUIEventDispatcher::instance_ != 0 ) {
@@ -66,14 +66,16 @@ private:
 signals: //for QT to connect
 	void reportProgressEvent(const float& val);
 	void logEvent(const Logger::LogType& eType, const std::string& strMessage);
-	void createWindow(const std::string strTitle);
+	void createWindow(const std::string& strTitle);
+	void closeWindow(const std::string& strTitle);
 	void clearSelectionInGraphView();
 	void selectNodesInGraphView(const std::vector<std::string>& vcProcessingStepNames,uipf::gui::GraphViewSelectionType eType,bool bUnselectOthers);
 
 public: //methods for model to call and trigger GUI
 	void triggerReportProgress(const float& );
 	void triggerLogEvent(const Logger::LogType& eType, const std::string& strMessage);
-	void triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat);
+	void triggerCreateWindow(const std::string& strTitle, const cv::Mat& oMat);
+	void triggerCloseWindow(const std::string& strTitle);
 	void triggerClearSelectionInGraphView();
 	void triggerSelectSingleNodeInGraphView(const std::string& strProcessingStepName,uipf::gui::GraphViewSelectionType eType=uipf::gui::GraphViewSelectionType::CURRENT, bool bUnselectOthers=true);
 	void triggerSelectNodesInGraphView(const std::vector<std::string>& vcProcessingStepNames,uipf::gui::GraphViewSelectionType eType=uipf::gui::GraphViewSelectionType::CURRENT, bool bUnselectOthers=true);

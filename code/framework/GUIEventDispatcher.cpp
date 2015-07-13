@@ -60,9 +60,13 @@ void GUIEventDispatcher::triggerClearSelectionInGraphView()
 	emit clearSelectionInGraphView();
 }
 
+void GUIEventDispatcher::triggerCloseWindow(const std::string& strTitle)
+{
+	emit closeWindow(strTitle);
+}
 
 // create windows that show images without opencv imshow()
-void GUIEventDispatcher::triggerCreateWindow(const std::string strTitle, const cv::Mat& oMat)
+void GUIEventDispatcher::triggerCreateWindow(const std::string& strTitle, const cv::Mat& oMat)
 {
 	using namespace cv;
 

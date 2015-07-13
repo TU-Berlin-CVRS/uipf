@@ -16,7 +16,7 @@ void ShowImageModule::run( DataManager& data) const
 		if (title.empty()) {
 			title = context_->getProcessingStepName();
 		}
-		context_->displayImage(title, *oMatrix, data.getParam<bool>("blocking",true));
+		context_->displayImage(title, *oMatrix, data.getParam<bool>("blocking",true),data.getParam<bool>("autoclose",false));
 	} else {
 		LOG_E("Failed to show image.");
 	}
@@ -29,7 +29,8 @@ MetaData ShowImageModule::getMetaData() const
 	};
 	map<string, ParamDescription> params = {
 		{"title", ParamDescription("the title of the window, defaults to the current processing step name", true) },
-		{"blocking", ParamDescription("'true' or 'false' determines if the processing chain has to wait for this window to close or not.",true) }
+		{"blocking", ParamDescription("'true' or 'false' determines if the processing chain has to wait for this window to close or not.",true) },
+		{"autoclose", ParamDescription("'true' or 'false' determines if the window automatically closes after blocking has ended.",true) }
 	};
 
 	return MetaData(

@@ -78,7 +78,9 @@ private slots:
 	void on_paramChanged(std::string, std::string);
 	void on_inputChanged(std::string, std::pair<std::string, std::string>);
 
-	void on_createWindow(const std::string strTitle);
+	void on_createWindow(const std::string& strTitle);
+
+	void on_closeWindow(const std::string& strTitle);
 	// menu bar
 	// File
 	void new_Data_Flow();
@@ -100,6 +102,8 @@ private slots:
 	void on_graphNodeSelected(const uipf::gui::Node* node);
 
 	void on_clearLogButton_clicked();
+
+	void on_logFiltertextChanged(const QString& text);
 
 protected:
 	void closeEvent(QCloseEvent *event);

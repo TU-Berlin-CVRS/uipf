@@ -6,7 +6,7 @@
 
 using namespace uipf;
 
-void Context::displayImage(const std::string& strTitle, const Matrix& oMat, bool bBlocking)
+void Context::displayImage(const std::string& strTitle, const Matrix& oMat, bool bBlocking, bool bAutoClose)
 {
 	// if we are running in the gui, open the window using Qt in the Qt MainWindow thread
 	if (bHasGUI_) {
@@ -16,7 +16,11 @@ void Context::displayImage(const std::string& strTitle, const Matrix& oMat, bool
 		// block if blocking is true
 		if (bBlocking) {
 			waitKey();
+			if (bAutoClose)
+				GUIEventDispatcher::instance()->triggerCloseWindow(strTitle);
 		}
+
+
 	} else {
 		// otherwise use OpenCV imshow function
 		cv::namedWindow( strTitle.c_str(), cv::WINDOW_AUTOSIZE );
@@ -25,10 +29,14 @@ void Context::displayImage(const std::string& strTitle, const Matrix& oMat, bool
 		// block if blocking is true
 		if (bBlocking) {
 			waitKey();
+			if (bAutoClose)
+				cv::destroyWindow(strTitle.c_str());
 		} else {
 			// calls waitKey to actually show the window
 			cv::waitKey(1);
 		}
+
+
 	}
 
 }

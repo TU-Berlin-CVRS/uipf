@@ -33,7 +33,7 @@ class Context {
 
 
 		// display an image in a window
-		void displayImage(const std::string& strTitle, const Matrix& oMat, bool bBlocking);
+		void displayImage(const std::string& strTitle, const Matrix& oMat, bool bBlocking, bool bAutoClose=false);
 
 		// wait for user input
 		void waitKey(std::string message = "");

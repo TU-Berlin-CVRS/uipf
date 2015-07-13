@@ -117,8 +117,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     // Window creation
-    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string)),
-				this, SLOT (on_createWindow(const std::string)));
+    connect(GUIEventDispatcher::instance(), SIGNAL (createWindow(const std::string&)),
+				this, SLOT (on_createWindow(const std::string&)));
+
+    // Window deletion
+    connect(GUIEventDispatcher::instance(), SIGNAL (closeWindow(const std::string&)),
+    			this, SLOT (on_closeWindow(const std::string&)));
+
+    //Filter logwindow
+    connect(ui->logFilterLE, SIGNAL (textChanged(const QString &)),
+    				this, SLOT (on_logFiltertextChanged(const QString&)));
+
 
 	// fill module categories dropdown
 	map<string, MetaData> modules = mm_.getAllModuleMetaData();
@@ -392,7 +401,7 @@ void MainWindow::resetInputs()
 
 // From here: SLOTS -------------------------------------------------------------------------------------------------------------------------------
 
-void MainWindow::on_createWindow(const std::string strTitle)
+void MainWindow::on_createWindow(const std::string& strTitle)
 {
 	// fetch the image from the GUIEventDispatcher
 	QImage image = GUIEventDispatcher::instance()->image_;
@@ -411,6 +420,16 @@ void MainWindow::on_createWindow(const std::string strTitle)
 
 	// unlock the mutex with the working thread
 	GUIEventDispatcher::instance()->imageRendered.wakeAll();
+}
+
+void MainWindow::on_closeWindow(const std::string& strTitle)
+{
+	auto qTitle = QString::fromStdString(strTitle);
+	for (auto v : createdWindwows_)
+	{
+		if (v->windowTitle() == qTitle)
+			v->close();
+	}
 }
 
 // append messages from our logger to the log-textview
@@ -436,6 +455,13 @@ void MainWindow::on_appendToLog(const Logger::LogType& eType,const std::string& 
 void MainWindow::on_clearLogButton_clicked()
 {
 	ui->tbLog->clear();
+}
+
+void MainWindow::on_logFiltertextChanged(const QString& text)
+{
+	//2DO Filter on demand
+	//some kind of view is needed to display only messages fitting the filter
+	//old messages must be stored to be displayed again when filter is removed
 }
 
 // moves the progressbar on every step of the processing chain
