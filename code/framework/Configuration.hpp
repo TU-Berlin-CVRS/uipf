@@ -26,8 +26,8 @@ class Configuration{
 		void print();
 
 		// validates the config by checking for logical errors
-		// returns a set of error messages, config is valid if messages are empty
-		std::vector<std::string> validate(std::map<std::string, MetaData>);
+		// returns a set of error messages and a set of affected steps, config is valid if messages are empty
+		std::pair< std::vector<std::string>, std::vector<std::string> > validate(std::map<std::string, MetaData>);
 
 		// return processing chain  name => step
 		std::map<std::string, ProcessingStep> getProcessingChain() const;

@@ -10,7 +10,7 @@ conv2:
   module: convolution
   input:
     image: conv.image
-    kernel: gaus.
+    kernel: gaus.image
   anchorX: ""
   anchorY: ""
   delta: ""

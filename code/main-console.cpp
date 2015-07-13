@@ -238,11 +238,11 @@ int main(int argc, char** argv){
 	conf.print();
 
 	// validate configuration and show errors
-	vector<string> errors = conf.validate(mm.getAllModuleMetaData());
-	if (!errors.empty()) {
+	pair< vector<string>, vector<string> > errors = conf.validate(mm.getAllModuleMetaData());
+	if (!errors.first.empty()) {
 		LOG_E("There are configuration errors!");
-		for(unsigned int i = 0; i < errors.size(); ++i) {
-			LOG_E(errors[i]);
+		for(unsigned int i = 0; i < errors.first.size(); ++i) {
+			LOG_E(errors.first[i]);
 		}
 		return 1;
 	}

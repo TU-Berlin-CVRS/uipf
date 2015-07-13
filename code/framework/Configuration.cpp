@@ -109,13 +109,14 @@ void Configuration::load(string filename){
 
 }
 
-// validate this config against a set of available modules
+// validate this config against a set of available modules returns a list of error message and a list of affected steps
 /*
-modules		the path to the .yaml file
+modules		meta data of the existing modules
 */
-vector<string> Configuration::validate(map<string, MetaData> modules){
+pair< vector<string>, vector<string> > Configuration::validate(map<string, MetaData> modules){
 
 	vector<string> errors;
+	vector<string> affectedSteps;
 
 	for(auto it = chain_.cbegin(); it != chain_.end(); ++it) {
 
@@ -125,6 +126,7 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 		// check if module exists
 		if (modules.count(step.module) == 0) {
 			errors.push_back( inStep + string("Module '") + step.module + string("' could not be found.") );
+			affectedSteps.push_back(step.name);
 			// can not do any further chechks on the step if module does not exist, so continue
 			continue;
 		}
@@ -136,18 +138,21 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 			// check if input exists for a module
 			if (module.getInputs().count(inputIt->first) == 0) {
 				errors.push_back( inStep + string("Module '") + step.module + string("' has no input named '") + inputIt->first + string("'.") );
+				affectedSteps.push_back(step.name);
 				continue;
 			}
 			// check if input is set when not optional
 			if (inputIt->second.first.empty()) {
 				if (!module.getInputs()[inputIt->first].getIsOptional()) {
 					errors.push_back( inStep + string("Input '") + inputIt->first + string("' is not optional and not defined.") );
+					affectedSteps.push_back(step.name);
 				}
 				continue;
 			}
 			// check if dependencies refer to existing steps
 			if (chain_.count(inputIt->second.first) == 0) {
 				errors.push_back( inStep + string("Input '") + inputIt->first + string("' refers to non-existing step '") + inputIt->second.first + string("'.") );
+				affectedSteps.push_back(step.name);
 			} else if (modules.count(chain_[inputIt->second.first].module) > 0) {
 				// check if the referenced output exists
 				MetaData refModule = modules[chain_[inputIt->second.first].module];
@@ -156,6 +161,7 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 						+ string("' refers to non-existing output '") + inputIt->second.second
 						+ string("' on module '") + chain_[inputIt->second.first].module + string("'.")
 					);
+					affectedSteps.push_back(step.name);
 				} else {
 					// check if the type of output and input matches
 					DataDescription output = refModule.getOutputs()[inputIt->second.second];
@@ -166,6 +172,7 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 							+ string(" which is of type ")
 							+ type2string(output.getType()) + string(".")
 						);
+						affectedSteps.push_back(step.name);
 					}
 				}
 			}
@@ -175,20 +182,24 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 		//check, if all mandatory parameters are given
 		for(auto paramIt = paramDesc.cbegin(); paramIt != paramDesc.end(); ++paramIt)
 		{
-			if (!paramIt->second.getIsOptional())
-				if ( step.params.find(paramIt->first) == step.params.end())
+			if (!paramIt->second.getIsOptional()) {
+				if ( step.params.find(paramIt->first) == step.params.end()) {
 					errors.push_back("mandatory parameter: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
-
+					affectedSteps.push_back(step.name);
+				}
+			}
 		}
 
 		auto inputDesc = module.getInputs();
 		//check, if all mandatory inputs are given
 		for(auto paramIt = inputDesc.cbegin(); paramIt != inputDesc.end(); ++paramIt)
 		{
-			if (!paramIt->second.getIsOptional())
-				if ( step.inputs.find(paramIt->first) == step.inputs.end())
+			if (!paramIt->second.getIsOptional()) {
+				if ( step.inputs.find(paramIt->first) == step.inputs.end()) {
 					errors.push_back("mandatory input: '" + string(paramIt->first) +  "' of module '"+step.module+"' is not set!");
-
+					affectedSteps.push_back(step.name);
+				}
+			}
 		}
 
 		/*auto outputDesc = module.getOutputs();
@@ -210,6 +221,7 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 			catch(InvalidConfigException& ex)
 			{
 				errors.push_back(ex.what());
+				affectedSteps.push_back(step.name);
 			}
 		}
 
@@ -220,14 +232,16 @@ vector<string> Configuration::validate(map<string, MetaData> modules){
 	if (circleSteps.size() > 0) {
 		auto it = circleSteps.begin();
 		string stepNames = *it;
+		affectedSteps.push_back(*it);
 		++it;
 		for (; it!=circleSteps.end(); ++it) {
 			stepNames += string(", ") + *it;
+			affectedSteps.push_back(*it);
 		}
 		errors.push_back( string("Circular dependency detected between the following configuration steps: ") + stepNames);
 	}
 
-	return errors;
+	return pair< vector<string>, vector<string> >(errors, affectedSteps);
 }
 
 // detect circular dependencies in the inputs
