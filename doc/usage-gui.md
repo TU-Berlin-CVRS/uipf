@@ -1,4 +1,4 @@
-# Usage: Graphical User Interface
+# Graphical User Interface
 The graphical interface is very simple to use, it allows you to create a processing chain,
 to modify it and to store it.
 
