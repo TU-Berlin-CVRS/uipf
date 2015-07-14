@@ -163,6 +163,48 @@ Akarsh Seggemu
 	numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
 }
 
+% A language definition to highlight YAML code:
+% http://tex.stackexchange.com/questions/152829/how-can-i-highlight-yaml-code-in-a-pretty-way-with-listings
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
+\makeatletter
+
+% here is a macro expanding to the name of the language
+% (handy if you decide to change it further down the road)
+\newcommand\language@yaml{yaml}
+
+\expandafter\expandafter\expandafter\lstdefinelanguage
+\expandafter{\language@yaml}
+{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{darkgray}\bfseries,
+  basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\YAMLvaluestyle\ttfamily,
+  moredelim=[l][\color{orange}]{\&},
+  moredelim=[l][\color{magenta}]{*},
+  moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+  morestring=[b]',
+  morestring=[b]",
+  literate =    {---}{{\ProcessThreeDashes}}3
+                {>}{{\textcolor{red}\textgreater}}1
+                {|}{{\textcolor{red}\textbar}}1
+                {\ -\ }{{\mdseries\ -\ }}3,
+}
+
+% switch to key style at EOL
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+\makeatother
+
+\newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
+
+
+
 %  \beamersetuncovermixins{\opaqueness<1>{25}}{\opaqueness<2->{15}}
 %  sorgt dafuer das die Elemente die erst noch (zukuenftig) kommen
 %  nur schwach angedeutet erscheinen
@@ -276,15 +318,15 @@ Akarsh Seggemu
 			\vspace{.4cm}\pause
 \Large
 			\begin{itemize}
-				\item[$\rightarrow$] Processing Step
-				\vspace{.25cm}\pause
+				\item<2->[$\rightarrow$] Processing Step
+				\vspace{.25cm}
 				\large
 				\begin{itemize}
-					\item[$\rightarrow$] Module
-				\vspace{.25cm}\pause
-					\item[$\rightarrow$] Parameters
-				\vspace{.25cm}\pause
-					\item[$\rightarrow$] Dependencies
+					\item<3->[$\rightarrow$] Module
+				\vspace{.25cm}
+					\item<4->[$\rightarrow$] Parameters
+				\vspace{.25cm}
+					\item<5->[$\rightarrow$] Dependencies
 				\end{itemize}
 			\end{itemize}
 
@@ -298,16 +340,101 @@ Akarsh Seggemu
 		\end{column}
 	\end{columns}
 
+	\pnote{
+		Processing chain consists of processing steps
+
+		step has a module: e.g. load, store, show, gauss, ...
+		+ parameters
+
+		data flow is described using dependencies
+
+		input of one module is the output of another
+	}
+
 \end{frame}
 
-\begin{frame}{General Concepts}
+\subsection{Storage format}
+\begin{frame}[fragile]{Storage format: YAML}
 
-	\includegraphics<1>[width=\textwidth]{images/existingChain}
-	\includegraphics<2>[width=\textwidth]{images/runChain}
-	\includegraphics<3>[width=\textwidth]{images/stopChain}
-	\includegraphics<4>[width=\textwidth]{images/newChain}
-	\includegraphics<5>[height=\textheight]{images/buggyChain}
+	\begin{columns}
+		\begin{column}[t]{.7\textwidth}
 
+			\begin{linehighlight}{
+				\only<2>{ \highline{1,5,12} }
+				\only<3>{ \highline{2,6,13} }
+				\only<4>{ \highline{3,9,10} }
+				\only<5>{ \highline{7,8} }
+				\only<6>{ \highline{14,15} }
+			}
+				\lstset{language=yaml}
+				\lstinputlisting{images/howto/format.yaml}
+			\end{linehighlight}
+
+		\end{column}
+		\begin{column}[t]{.3\textwidth}
+			\begin{center}
+
+				\includegraphics[height=5cm]{images/howto/format.png}
+
+			\end{center}
+		\end{column}
+	\end{columns}
+
+	\pnote{
+		human readyble format\\
+
+		indentation is important!\\
+		yaml file shows a map  key => value
+
+		1. each step has a name
+
+		2. has a module
+
+		3. has params to describe behavior of the module
+
+		4. input refers to the step it depends on\\
+			can have multiple\\
+			refers to image output of the input step\\
+
+		5. same for show, refers to image output of gauss step
+	}
+
+\end{frame}
+
+\subsection{GUI}
+\begin{frame}{The Graphical User Interface}
+
+\only<1,3>{
+	\begin{center}
+	\makebox[\textwidth]{\includegraphics[width=\paperwidth]{images/howto/guiexample}}
+	\end{center}
+}
+\only<2>{
+	\begin{center}
+	\includegraphics[height=6cm]{images/howto/stepconfig}
+	\end{center}
+}
+	\pnote{
+		left: chain config
+
+		right: visualization of the dataflow
+
+		bottom logs, and progress info
+	}
+
+\end{frame}
+
+\begin{frame}{The Graphical User Interface}
+	\begin{center}
+	\makebox[\textwidth]{\includegraphics[width=\paperwidth]{images/runChain}}
+	\end{center}
+\end{frame}
+
+\begin{frame}{The Graphical User Interface}
+	\vspace{-.3cm}
+	\begin{center}
+	\includegraphics[width=.9\textwidth]{images/howto/errors}
+	\end{center}
 
 	\pnote{
 		open an existing chain\\
@@ -319,63 +446,51 @@ Akarsh Seggemu
 
 \end{frame}
 
-
-
 \subsection{Console}
-\begin{frame}{How to use}
+\begin{frame}{The Console Interface}
+\Large
+\pnote{	Run a processing chain from a config file}
 
-	\includegraphics<1>[width=\textwidth]{images/ConsoleHelp}
-	\includegraphics<2>[width=\textwidth]{images/ConsoleYaml}
-	\includegraphics<3>[width=\textwidth]{images/ConsoleShort}
+	{\tt ./uipf -c myconfig.yaml}
+\pause
 
+	\vspace{.5cm}
 
-	\pnote{
-		how to use help\\
-		how to run a chain\\
-		how to run a single module\\
-	}
+\pnote{	Run a single module:
+
+usefule to test different params
+
+run an opencv function just right on a file w/o writing any code
+}
+
+	\begin{align*}
+		\texttt{ ./uipf <moduleName>} & \texttt{ -i <input> } \qquad \qquad \qquad \\
+									  & \texttt{ -p <params>} \dots \\
+									  & \texttt{ -o <output>}
+	\end{align*}
+
 
 \end{frame}
 
-
-\subsection{How to create a new chain by hand}
-\begin{frame}[fragile]{How to use}
-
-	\begin{lstlisting}
-conv:
-  module: convolution
-  input:
-    image: gaus.image
-    kernel: load.image
-  anchorX: ""
-  anchorY: ""
-  delta: ""
-gaus:
-  module: gaussian
-  input:
-    image: load.image
-  sigmaX: 3
-  sigmaY: 3
-  windowSize: ""
-load:
-  module: loadImage
-  filename: hier.png
-  mode: ""
-show:
-  module: showImage
-  input:
-    image: gaus.image
-  blocking: ""
-  title: ""
-	\end{lstlisting}
-
-
-	\pnote{
-		human readyble\\
-		uses keywords and indentations
-	}
+\begin{frame}{The Console Interface}
+\Large
+	\begin{align*}
+		\texttt{./uipf gaussian} & \texttt{ -i input.jpg -p sigmaX:5} \\
+	\end{align*}
+	\vspace{-1.5cm}\pause
+	\begin{align*}
+		\texttt{./uipf gaussian} & \texttt{ -i input.jpg -p sigmaX:5} \\
+								 & \texttt{ -o notdefault.png}\\
+	\end{align*}
+	\vspace{-1.5cm}\pause
+	\begin{align*}
+		\texttt{./uipf convolution} & \texttt{ -i image:input.jpg} \\
+									& \texttt{ -i kernel:kernel.png} \\
+									& \texttt{ -p sigmaX:5 -o out.png}
+	\end{align*}
 
 \end{frame}
+
 
 \section{How to write a new module}
 

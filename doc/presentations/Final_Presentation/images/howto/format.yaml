@@ -1,0 +1,15 @@
+input:
+  module: loadImage
+  filename: input.png
+
+gauss:
+  module: gaussian
+  input:
+    image: input.image
+  sigmaX: 10
+  sigmaY: 15
+
+show:
+  module: showImage
+  input:
+    image: gauss.image
