@@ -263,9 +263,13 @@ Akarsh Seggemu
 \end{center}
 
 \pnote{
-	Framework which allows you to divide your program in many steps,
-	which can be combined in arbitrary ways, and also gives you the
-	possibility to store each of your chains, with all inputs and params.
+	usual workflow\\
+	split your program in many methods\\
+	each method is self contained - called module\\
+	e.g. load, gaussian, store\\
+	modules interact with each other\\
+	program is replaced by the chain of modules\\
+	get same results
 }
 
 \end{frame}
@@ -280,6 +284,10 @@ Akarsh Seggemu
 		\item[-] module n
 	\end{itemize}
 	\end{mdframed}
+\pnote{
+	framework already provides a list of modules\\
+	if program consists only of given modules,...
+}
 \end{frame}
 
 \begin{frame}{Specify execution order}
@@ -302,7 +310,9 @@ Akarsh Seggemu
 \end{tikzpicture}
 
 \pnote{
-	easy to handle
+	... just order them\\
+	add dependencies and parameters\\
+	you are finished
 }
 
 \end{frame}
@@ -917,14 +927,13 @@ Steps to create your own Module:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% part 4:  Akarsh %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Testing}
-\begin{frame}{run with TestRail}
-	\includegraphics[width=\textwidth]{images/eval}
-\end{frame}
-
-\begin{frame}{Video Tutorial}
-	%~ \includegraphics[width=\textwidth]{images/tutorial}
-\end{frame}
+%~ \section{Testing}
+%~ \begin{frame}{run with TestRail}
+	%~ \includegraphics[width=\textwidth]{images/eval}
+%~ \end{frame}
+%~
+%~ \begin{frame}{Video Tutorial}
+%~ \end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% part 5:  All of us %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
