@@ -1,8 +1,30 @@
-[file]
-finalPresentation.pdf
 [notes]
 ### 2
 
+### 4
+ usual workflow
+ split your program in many methods
+ each method is self contained - called module
+ e.g. load, gaussian, store
+ modules interact with each other
+ program is replaced by the chain of modules
+ get same results 
+### 4
+ usual workflow
+ split your program in many methods
+ each method is self contained - called module
+ e.g. load, gaussian, store
+ modules interact with each other
+ program is replaced by the chain of modules
+ get same results 
+### 4
+ usual workflow
+ split your program in many methods
+ each method is self contained - called module
+ e.g. load, gaussian, store
+ modules interact with each other
+ program is replaced by the chain of modules
+ get same results 
 ### 4
  usual workflow
  split your program in many methods
@@ -18,6 +40,22 @@ finalPresentation.pdf
  ... just order them
  add dependencies and parameters
  you are finished 
+### 7
+ can replace modules by another
+ can use modules many times
+ can change dependencies 
+### 7
+ can replace modules by another
+ can use modules many times
+ can change dependencies 
+### 7
+ can replace modules by another
+ can use modules many times
+ can change dependencies 
+### 7
+ can replace modules by another
+ can use modules many times
+ can change dependencies 
 ### 7
  can replace modules by another
  can use modules many times
@@ -39,6 +77,10 @@ finalPresentation.pdf
  feature in work:
  framework finds for itself out which steps can be done in parallel
  uses different threads 
+### 12
+ feature in work:
+ framework finds for itself out which steps can be done in parallel
+ uses different threads 
 ### 13
  programmed by using cmake
  should work platform independent
@@ -52,7 +94,7 @@ finalPresentation.pdf
  GUI can create and run chains. 
 
  Console can run a chain and also run single modules. 
-### 17
+### 16
  Processing chain consists of processing steps 
 
  step has a module: e.g. load, store, show, gauss, ... + parameters 
@@ -60,7 +102,39 @@ finalPresentation.pdf
  data flow is described using dependencies 
 
  input of one module is the output of another 
-### 18
+### 16
+ Processing chain consists of processing steps 
+
+ step has a module: e.g. load, store, show, gauss, ... + parameters 
+
+ data flow is described using dependencies 
+
+ input of one module is the output of another 
+### 16
+ Processing chain consists of processing steps 
+
+ step has a module: e.g. load, store, show, gauss, ... + parameters 
+
+ data flow is described using dependencies 
+
+ input of one module is the output of another 
+### 16
+ Processing chain consists of processing steps 
+
+ step has a module: e.g. load, store, show, gauss, ... + parameters 
+
+ data flow is described using dependencies 
+
+ input of one module is the output of another 
+### 16
+ Processing chain consists of processing steps 
+
+ step has a module: e.g. load, store, show, gauss, ... + parameters 
+
+ data flow is described using dependencies 
+
+ input of one module is the output of another 
+### 17
  human readyble format
  
 
@@ -79,19 +153,126 @@ finalPresentation.pdf
  
 
  5. same for show, refers to image output of gauss step 
-### 19
+### 17
+ human readyble format
+ 
+
+ indentation is important!
+ yaml file shows a map key => value 
+
+ 1. each step has a name 
+
+ 2. has a module 
+
+ 3. has params to describe behavior of the module 
+
+ 4. input refers to the step it depends on
+ can have multiple
+ refers to image output of the input step
+ 
+
+ 5. same for show, refers to image output of gauss step 
+### 17
+ human readyble format
+ 
+
+ indentation is important!
+ yaml file shows a map key => value 
+
+ 1. each step has a name 
+
+ 2. has a module 
+
+ 3. has params to describe behavior of the module 
+
+ 4. input refers to the step it depends on
+ can have multiple
+ refers to image output of the input step
+ 
+
+ 5. same for show, refers to image output of gauss step 
+### 17
+ human readyble format
+ 
+
+ indentation is important!
+ yaml file shows a map key => value 
+
+ 1. each step has a name 
+
+ 2. has a module 
+
+ 3. has params to describe behavior of the module 
+
+ 4. input refers to the step it depends on
+ can have multiple
+ refers to image output of the input step
+ 
+
+ 5. same for show, refers to image output of gauss step 
+### 17
+ human readyble format
+ 
+
+ indentation is important!
+ yaml file shows a map key => value 
+
+ 1. each step has a name 
+
+ 2. has a module 
+
+ 3. has params to describe behavior of the module 
+
+ 4. input refers to the step it depends on
+ can have multiple
+ refers to image output of the input step
+ 
+
+ 5. same for show, refers to image output of gauss step 
+### 17
+ human readyble format
+ 
+
+ indentation is important!
+ yaml file shows a map key => value 
+
+ 1. each step has a name 
+
+ 2. has a module 
+
+ 3. has params to describe behavior of the module 
+
+ 4. input refers to the step it depends on
+ can have multiple
+ refers to image output of the input step
+ 
+
+ 5. same for show, refers to image output of gauss step 
+### 18
  left: chain config 
 
  right: visualization of the dataflow 
 
  bottom logs, and progress info 
-### 21
+### 18
+ left: chain config 
+
+ right: visualization of the dataflow 
+
+ bottom logs, and progress info 
+### 18
+ left: chain config 
+
+ right: visualization of the dataflow 
+
+ bottom logs, and progress info 
+### 20
  open an existing chain
  run/stop the chain
  create a new chain/modify existing chain
  save the chain
  run a buggy chain 
-### 22
+### 21
  automatic layout of processing graph 
 
  simple- and detailview 
@@ -101,20 +282,39 @@ finalPresentation.pdf
  color coded errors and executionsteps 
 
  zoom, autoscale and user dragable 
-### 23
+### 22
  Run a processing chain from a config file
  Run a single module: 
 
  usefule to test different params 
 
  run an opencv function just right on a file w/o writing any code 
-### 27
+### 22
+ Run a processing chain from a config file
+ Run a single module: 
+
+ usefule to test different params 
+
+ run an opencv function just right on a file w/o writing any code 
+### 26
+ 
+### 26
+ 
+### 29
  
 ### 30
  
-### 31
+### 30
  
-### 33
+### 30
+ 
+### 30
+ 
+### 30
+ 
+### 30
+ 
+### 32
  first: Questions?
  We are on github!
  second: Live Demo. 
