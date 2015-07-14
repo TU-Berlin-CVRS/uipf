@@ -1,5 +1,4 @@
-Usage: Console Interface
-========================
+# Console Interface
 
 The console interface provides two different use cases:
 
