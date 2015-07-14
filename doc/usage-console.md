@@ -1,32 +1,27 @@
 Usage: Console Interface
 ========================
 
-Usage:
+The console interface provides two different use cases:
 
-./uipf <moduleName> ...options...		run a single module.
-./uipf -c example.yaml							run a processing chain from a config file.
+- run an existing processing chain by specifying its file name:
 
+        ./uipf -c example.yaml
+      
+- run a single module:
 
-Parameter:
+        ./uipf <moduleName> -i <input> [-p <param> ...] [-o <output>]
+      
+  Examples:
 
-	-c	--config			run a specified config file
-
-	-m --moduleName  defines the name of the module
-
-	-i	--input				defines an input, can be used multiple times
-										format: inputName:fileName
-										inputName is optional if there is only one input
-
-	-o	--output			defines an output, can be used multiple times
-										format: outputName:fileName
-										outputName is optional if there is only one output
-										output itself is optional, if there is only one input and one output,
-										the output filename will be choosen from the input name in this case.
-
-	-p	--param				defines a parameter, format:  name:value
-
-
-Concrete example:
-
-./uipf Gaussian -i ../images/ball.png -p sigma:2 -p windowSize:5
-
+  ```sh
+  # run the gaussian module with parameter sigmaX=5 on the input.jpg image
+  # the output will be the default name "input_result.jpg"
+  ./uipf gaussian -i input.jpg -p sigmaX:5
+      
+  # same as above but now the result is stored in "notdefault.png"
+  ./uipf gaussian -i input.jpg -p sigmaX:5 -o notdefault.png
+      
+  # an example with two named inputs, one is the image and one is the kernel:
+  # the same syntax applies when there are multiple outputs
+  ./uipf convolution -i image:input.jpg -i kernel:kernel.png -p sigmaX:5 -o out.png
+  ```
