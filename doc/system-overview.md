@@ -35,26 +35,3 @@ The following is a schematic overview of the components:
     |              |       +--------+  +--------+     
     +--------------+                                  
 
-GUI Interface
--------------
-
-TBD
-
-Console Interface
------------------
-
-TBD
-
-Configuration Storage
----------------------
-
-Configuration of a processing chain should be stored in a file in a human readable format.
-
-- It should be possible to write configuration files per hand.
-- These files should be loadable and saveable by the framework
-
-Modules
--------
-
-Modules provide the processing functionality of the framework.
-
