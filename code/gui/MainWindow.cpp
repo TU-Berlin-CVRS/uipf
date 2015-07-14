@@ -200,8 +200,10 @@ void MainWindow::closeAllCreatedWindows()
 
 }
 
+// this event gets fired when the window gets closed
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+	// check whether there are unsaved changes, and ask the user, whether he wants to save them
     if (okToContinue()) {
 		closeAllCreatedWindows();
         event->accept();
@@ -687,9 +689,8 @@ void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, s
 
 // menu click File -> Exit
 void MainWindow::on_close() {
-	//check whether there are unsaved changes, and ask the user, whether he wants to save them
-	if (!okToContinue()) return;
 
+	// close the window, saved file is checked in close event handler
 	close();
 
 }
