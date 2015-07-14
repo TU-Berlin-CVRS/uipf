@@ -3,6 +3,7 @@
 The general idea of this framework is to split the functionality of complex programs in many small methods, which are called modules.
 
 ## Module
+
 A module is a self contained method in form of an precompiled external library. Each module implements the same interface, which makes the modules look all the same. Each of them have:
 
 - name
@@ -16,12 +17,16 @@ and can also have, if the module needs it:
 
 The framework consists of a lot of such modules. The idea of the framework is that instead of writing a complex program, you just take the modules, the combination of which provides this wanted process and just let them interact in the way you need. This framework allows you to create nearly unlimited amount of possible programs using given modules, without any effort from your side.
 
+You can extend the framework by [adding new modules](extending-modules.md) implementing the simple interface to make even more functionality available.
+
 ## Processing chain
+
 Processing chain consists of a list processing steps, where each step implements a certain module. The order of the execution depends on the dependencies between the single processing steps.
 
 The current version of the processing chain allows only a straightforward execution of the processing steps, and doesn't allow loops, if-else dependencies or any other logic. This improvements could be added in the future.
 
 ## Processing step
+
 Each processing step uses one of the modules given by the framework. It has:
 
 - name 
@@ -31,6 +36,7 @@ Each processing step uses one of the modules given by the framework. It has:
 The inputs define the dependencies between the single processing steps, because the input of one step is an output of another step.
 
 # Storage format
+
 The chains are stored in a `.yaml` file. The chain consists of a list of processing step. The order of the processing step is not relevant:
    
     stepX
