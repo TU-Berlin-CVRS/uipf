@@ -38,12 +38,12 @@ void GradientModule::run( DataManager& data) const
 
 	// Declare the new source for the grayscale data
 	Mat m_gray;
-	
+
 	// convert the filtered image to grayscale
 	cvtColor(m,m_gray, CV_RGB2GRAY);
 
 	//Declare the gradient image source
-	Mat grad;	
+	Mat grad;
 
 	/// Generate grad_x and grad_y
   	Mat grad_x, grad_y;
