@@ -3,6 +3,7 @@
 ## Existing data types
 
 The framework provides currently the following data types:
+
 1. primitive data types:
     - `string`
     - `integer`
