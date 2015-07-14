@@ -1,7 +1,24 @@
 Unified Image Processing Framework
 ==================================
 
-This project is yet to be described... :)
+This program provides a framework for Image Processing allowing you to split your processing chain into
+independent, reuseable modules which can also be run stand alone as well as in complex processing chains.
+It comes with a Graphical Processing Chain Editor and also a console interface for running the processing
+chains and modules.
+
+Installation
+------------
+
+We currently do not have precompiled binaries so you have to build it on your own.
+See the ["How to build"-section](#how-to-build) on how to do this.
+
+Usage
+-----
+
+The Documentation can be found in the [/doc](https://github.com/TU-Berlin-CVRS/uipf/tree/master/doc#documentation)
+directory. Check the README.md file there for an overview.
+
+We also have a demo video on vimeo.com: https://vimeo.com/133464857
 
 How to build
 ------------
@@ -46,3 +63,14 @@ If something goes wrong you may run `make VERBOSE=1` for more detailed output.
 ### Building with CMake on Windows
 
 TDB.
+
+How to contribute
+-----------------
+
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+License
+-------
+
+This work is licensed under the BSD 2-clause License.
+Check the [LICENSE](LICENSE) file for the license terms.
