@@ -229,25 +229,44 @@ Akarsh Seggemu
 \begin{frame}
 	\tableofcontents [currentsection]
 
-	\pnote{
-		notes go here...
-	}
+	%~ \pnote{
+		%~ notes go here...
+	%~ }
 \end{frame}
 }
 
 %---------------------------------------------------------------------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% part 1:  Mila %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{What is this all about?}
-\begin{frame}{Unified Image Processing Framework}
+\begin{frame}[t]{Unified Image Processing Framework}
+\begin{center}
+\begin{tikzpicture}
+	\node<1-> [] (in) at (0,0) {Input};
+	\node<1-> []  at (4,-1) {Program};
+	\node<1-> []  at (4,0.4) {\includegraphics[scale=0.1]{images/wheels}};
+	\node<1-> [draw,shape=rectangle,rounded corners,minimum width=3cm,minimum height=3cm] (pr) at (4,0) {};
+	\node<1-> [] (out) at (8,0) {Output};
+	\draw<1-3> [blue, ->, thick] (in) -- (pr);
+	\draw<1-3> [blue, ->, thick] (pr) -- (out);
+	\node<2-> [] (m1) at (2,-3) {module};
+	\node<2-> [] (m2) at (4,-3) {module};
+	\node<2-> [] (m3) at (6,-3) {module};
+	\draw<2-> [mygreen, ->, thick] (pr) -- (m1);
+	\draw<2-> [mygreen, ->, thick] (pr) -- (m2);
+	\draw<2-> [mygreen, ->, thick] (pr) -- (m3);
+	\draw<3-> [gray, <->, thick] (m1) -- (m2);
+	\draw<3-> [gray, <->, thick] (m2) -- (m3);
+	\draw<4> [red, ->, thick] (in) -- (m1);
+	\draw<4> [red, ->, thick] (m3) -- (out);
+\end{tikzpicture}
+\end{center}
 
-
-	\includegraphics<1>[width=\textwidth]{images/intro/simpleChain}
-	\includegraphics<2>[width=.9\textwidth]{images/intro/complexChain}
-
-	\pnote{
-		Framework which allows you to divide your program in many steps,
-		which can be combined in arbitrary ways, and also gives you the
-		possibility to store each of your chains, with all inputs and params.
-	}
+\pnote{
+	Framework which allows you to divide your program in many steps,
+	which can be combined in arbitrary ways, and also gives you the
+	possibility to store each of your chains, with all inputs and params.
+}
 
 \end{frame}
 
@@ -281,6 +300,10 @@ Akarsh Seggemu
 	\draw [blue, ->, thick] (4.2,1.8) arc (90:-90:16pt);
 	\node at (6.2,1.7) [blue, thick] {dependencies};
 \end{tikzpicture}
+
+\pnote{
+	easy to handle
+}
 
 \end{frame}
 
@@ -376,6 +399,12 @@ Akarsh Seggemu
 \end{tikzpicture}
 }
 
+\pnote{
+	can replace modules by another\\
+	can use modules many times\\
+	can change dependencies
+}
+
 \end{frame}
 
 \begin{frame}{Visualization}
@@ -393,6 +422,13 @@ Akarsh Seggemu
 		\end{tikzpicture}
 		\end{center}
 	\end{mdframed}
+
+\pnote{
+	chain is visualized in GUI in form of a graph\\
+	see all dependencies between the modules\\
+	easier to understand complex chains
+}
+
 \end{frame}
 
 \begin{frame}{Storage}
@@ -413,6 +449,12 @@ Akarsh Seggemu
 	\draw [blue, ->, thick] (4.2,1.8) arc (90:-90:16pt);
 	\node at (6.2,1.7) [blue, thick] {dependencies};
 \end{tikzpicture}
+
+\pnote{
+	chains can always be stored and reused \\
+	format is human readable \\
+}
+
 \end{frame}
 
 \begin{frame}{Extend the modules}
@@ -428,23 +470,27 @@ Akarsh Seggemu
 		\item[]  $ \quad \vdots$
 	\end{itemize}
 	\end{mdframed}
+
+\pnote{
+	the modules can be extended by arbitrary modules without limitation
+}
+
 \end{frame}
 
 \begin{frame}{Share the modules}
 	\includegraphics[width=\textwidth]{images/worldMap}
 
 	\tikzboverlay[fill=red!20] at (3,6) {
-	%~ \begin{mdframed}[backgroundcolor=red!20, width=5cm]
-	\begin{tabular}{l}
-		Framework \\
-		- module 1 \\
-		$ \quad \vdots$\\
-		- module n\\
-		- module Tom\\
-		- module Conny\\
-		- module Lara\\
-		- module Ben\\
-	\end{tabular}
+		\begin{tabular}{l}
+			Framework \\
+			- module 1 \\
+			$ \quad \vdots$\\
+			- module n\\
+			- module Tom\\
+			- module Conny\\
+			- module Lara\\
+			- module Ben\\
+		\end{tabular}
 	};
 	\tikzoverlay[] at (1,5.5) {\includegraphics[scale=0.1]{images/smiley}};
 	\tikzoverlay[] at (7.5,6) {\includegraphics[scale=0.1]{images/smiley}};
@@ -454,6 +500,12 @@ Akarsh Seggemu
 	\tikzoverlay[] at (6.9,6.3) {Tom};
 	\tikzoverlay[] at (7.8,2.8) {Ben};
 	\tikzoverlay[] at (2.4,7.3) {Lara};
+
+\pnote{
+	share your modules with other people all around the world\\
+	international world wide project
+}
+
 \end{frame}
 
 \begin{frame}{Parallel execution}
@@ -483,6 +535,12 @@ Akarsh Seggemu
 		\end{tikzpicture}
 		\end{center}
 	\end{mdframed}
+
+\pnote{
+	feature in work:\\
+	framework finds for itself out which steps can be done in parallel\\
+	uses different threads
+}
 \end{frame}
 
 \begin{frame}{Platform independent}
@@ -491,23 +549,17 @@ Akarsh Seggemu
 	\tikzoverlay at (3.3,-1) {Microsoft Windows};
 	\tikzboverlay[fill=red!20] at (3.7,1) {Framework};
 
+
+\pnote{
+	programmed by using cmake\\
+	should work platform independent\\
+	unfortunatelly all of us worked on lunux\\
+	didnt tested
+}
+
 \end{frame}
 
-	%~ \pnote{
-		%~ - easy to use \\
-		%~ - extensible \\
-		%~ - visualization of steps \\
-%~
-		%~ - better reuse of modules \\
-		%~ - allows sharing modules \\
-%~
-		%~ - practical storage of chains with different inputs \\
-%~
-		%~ - "platform independent" \\
-		%~ - "parallel execution of steps" \\
-	%~ }
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%% part 2:  Carsten %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Working with the program}
 \subsection{User Interfaces}
@@ -745,6 +797,8 @@ run an opencv function just right on a file w/o writing any code
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%% part 3  Marcus %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{How to write a new module}
 
 \subsection{What is a module}
@@ -785,7 +839,6 @@ Modules are precompiled extensions that:
 
 
 	\pnote{
-		A method
 	}
 
 \end{frame}
@@ -839,7 +892,6 @@ target_link_libraries(ResizeModule opencv_core opencv_imgproc ModuleBase)
 
 
 	\pnote{
-		A method
 	}
 
 \end{frame}
@@ -858,10 +910,12 @@ Steps to create your own Module:
 
 
 	\pnote{
-		A method
 	}
 
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% part 4:  Akarsh %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Testing}
 \begin{frame}{run with TestRail}
@@ -871,6 +925,9 @@ Steps to create your own Module:
 \begin{frame}{Video Tutorial}
 	%~ \includegraphics[width=\textwidth]{images/tutorial}
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% part 5:  All of us %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Live Demo}
 
@@ -891,16 +948,5 @@ Steps to create your own Module:
 	}
 \end{center}
 \end{frame}
-
-
-%\beginbackup
-%\section{Appendix}
-
-%\begin{frame}
-%	\frametitle{Pack-Man}
-%...
-%\end{frame}
-
-%\backupend
 
 \end{document}
