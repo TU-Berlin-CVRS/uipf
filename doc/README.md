@@ -24,17 +24,11 @@ System Documentation
 --------------------
 
 - [Component Overview](system-overview.md)
+- [Framework Class Diagram](CoreFramework_ClassDesign_Draw.io.png)
 
 
 Project reports
 ---------------
 
 - [Summary 05.05.2015 (Initial project requirements)](summary.md)
-
-
-Test reports
-------------
-
-Tests are done using TestRail <https://htcvprojb.testrail.net/>.
-Reports are stored in pdf format in Test reports folder.
 
