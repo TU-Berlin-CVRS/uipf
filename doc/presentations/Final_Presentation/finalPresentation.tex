@@ -339,6 +339,21 @@ Akarsh Seggemu
 			\end{center}
 		\end{column}
 	\end{columns}
+\end{frame}
+
+\begin{frame}{Interface features: Graph}
+	\begin{itemize}
+		\item automatic layout of processing graph
+		\item simple- and detailview
+		\item synchronized with current step
+		\item color coded errors and executionsteps
+		\item zoom, autoscale and user dragable
+	\end{itemize}
+
+
+
+   \includegraphics<1>[width=140px]{images/graph}
+
 
 	\pnote{
 		Processing chain consists of processing steps
@@ -495,22 +510,39 @@ run an opencv function just right on a file w/o writing any code
 \section{How to write a new module}
 
 \subsection{What is a module}
-\begin{frame}[fragile]{Idea}
+\begin{frame}[fragile]{Basics}
 
-	Basic interface:
+Modules are precompiled extensions that:
+	\begin{itemize}
+		\item encapsulate functionality which can be used in processingsteps
+		\item are binary files, shareable without sourcecode (QTPlugin)
+		\item implement a simple interface
+		\item can include own libs as they need them
+		\item have Metadata displayed in the GUI
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Interface}
+
+
+
+	Basic interface: \newline
+
 	\begin{lstlisting}
-		void run(DataManager& data)
-		string name()
-		MetaData getMetaData()
-	\end{lstlisting}
+		string name();
+		void run(DataManager& data);
+		MetaData getMetaData();
+	\end{lstlisting} \pause
 
- 	MataData:
+ 	MetaData: \newline
+
 	\begin{lstlisting}
 		string, // general verbal description of the module
 		string, // category
-		map<string, DataDescription>, // input
-		map<string, DataDescription>, // output
-		map<string, ParamDescription> // params
+		DataDescriptionMap, // input
+		DataDescriptionMap, // output
+		ParamDescriptionMap // params
 	\end{lstlisting}
 
 
@@ -519,7 +551,6 @@ run an opencv function just right on a file w/o writing any code
 	}
 
 \end{frame}
-
 
 \begin{frame}[fragile]{run() method}
 
@@ -553,6 +584,46 @@ void LoadImageModule::run( DataManager& data) const
 
 \end{frame}
 
+
+\begin{frame}[fragile]{CMake}
+
+Modules need to be registered in CMakeList.txt: \newline
+
+	\begin{lstlisting}<1>
+...
+#Image Processing
+#ResizeModule
+add_library(ResizeModule SHARED modules/improc/ResizeModule.cpp)
+qt5_use_modules(ResizeModule Core ) #QtCore is needed for <QPlugin>
+target_link_libraries(ResizeModule opencv_core opencv_imgproc ModuleBase)
+...
+	\end{lstlisting}
+
+
+	\pnote{
+		A method
+	}
+
+\end{frame}
+
+\begin{frame}[fragile]{Implementation summary}
+
+Steps to create your own Module:
+	\begin{enumerate}
+		\item Copy .hpp and .cpp of an existing module e.g. the DummyModule \pause
+		\item Replace "DummyModule" with your new name \pause
+		\item implement your logic in run()  \pause
+		\item define your module's metadata \pause
+		\item edit CMakeList.txt \pause
+		\item run make
+	\end{enumerate}
+
+
+	\pnote{
+		A method
+	}
+
+\end{frame}
 
 \section{Testing}
 \begin{frame}{run with TestRail}
