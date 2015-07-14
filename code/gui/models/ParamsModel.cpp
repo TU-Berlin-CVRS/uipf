@@ -47,7 +47,7 @@ QVariant ParamsModel::data(const QModelIndex &index, int role) const
 	}
 	else if (role == Qt::TextAlignmentRole) {
         return int(Qt::AlignLeft | Qt::AlignVCenter);
-	} else if (role == Qt::ToolTipRole && mm_.getModuleMetaData(step_.module).getParams().count(paramNames_[index.row()]) > 0) {
+	} else if (role == Qt::ToolTipRole && mm_.hasModule(step_.module) && mm_.getModuleMetaData(step_.module).getParams().count(paramNames_[index.row()]) > 0) {
 		// show param description as tooltip info
 		string descr = mm_.getModuleMetaData(step_.module).getParam(paramNames_[index.row()]).getDescription();
 		return QString::fromStdString(descr);
@@ -65,7 +65,7 @@ QVariant ParamsModel::headerData(int section, Qt::Orientation orientation, int r
 		else if(orientation == Qt::Vertical) {
 			return QString(paramNames_[section].c_str());
 		}
-	} else if (role == Qt::ToolTipRole) {
+	} else if (role == Qt::ToolTipRole && mm_.hasModule(step_.module)) {
 		// show param description as tooltip info
 		MetaData meta = mm_.getModuleMetaData(step_.module);
 		if(orientation == Qt::Vertical && meta.getParams().count(paramNames_[section]) > 0) {

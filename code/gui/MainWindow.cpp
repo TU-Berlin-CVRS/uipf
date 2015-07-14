@@ -259,7 +259,7 @@ void MainWindow::loadDataFlow(string filename)
 // refresh module category dropdown and module dropdown
 void MainWindow::refreshCategoryAndModule()
 {
-    if (currentStepName.empty()){
+    if (currentStepName.empty() || !conf_.hasProcessingStep(currentStepName)){
 		resetCategoryAndModule();
 		return;
 	}
@@ -289,7 +289,7 @@ void MainWindow::refreshCategoryAndModule()
 // refresh params table
 void MainWindow::refreshParams()
 {
-	if (currentStepName.empty()){
+	if (currentStepName.empty() || !conf_.hasProcessingStep(currentStepName)){
 		resetParams();
 		return;
 	}
@@ -309,7 +309,7 @@ void MainWindow::refreshParams()
 // refresh inputs table
 void MainWindow::refreshInputs()
 {
-	if (currentStepName.empty()){
+	if (currentStepName.empty() || !conf_.hasProcessingStep(currentStepName)){
 		resetInputs();
 		return;
 	}
@@ -563,14 +563,16 @@ void MainWindow::on_deleteButton_clicked() {
 	if (!ui->deleteButton->isEnabled()) return;
     // remove from the chain
 	beforeConfigChange();
+
+	// remove the step from the configuration and reset step name
 	conf_.removeProcessingStep(currentStepName);
+	currentStepName = string("");
 
     // Get the position and remove the row
     modelStep->removeRows(ui->listProcessingSteps->currentIndex().row(),1);
 
-
+	// if there is a processing step selected, set currentStepName
 	if (ui->listProcessingSteps->currentIndex().row() == -1){
-		currentStepName = string("");
 		ui->deleteButton->setEnabled(false);
 	} else {
 		currentStepName = ui->listProcessingSteps->model()->data(ui->listProcessingSteps->currentIndex()).toString().toStdString();
@@ -642,8 +644,12 @@ void MainWindow::on_comboModule_currentIndexChanged(int index)
 {
 	string module = ui->comboModule->itemData(index).toString().toStdString();
 
-	// only update if module exists, a step is selected and the module has actually changed and combo was enabled (ensure it was changed by user and not when filling the box)
-	if (mm_.hasModule(module) && !currentStepName.empty() && conf_.getProcessingStep(currentStepName).module.compare(module) != 0 && ui->comboModule->isEnabled()) {
+	if (ui->comboModule->isEnabled() // combo was enabled (ensure it was changed by user and not when filling the box)
+	 && !currentStepName.empty() // a step is selected
+	 && mm_.hasModule(module) // only update if module exists
+	 && conf_.hasProcessingStep(currentStepName)
+	 && conf_.getProcessingStep(currentStepName).module.compare(module) != 0 // the module has actually changed
+	) {
 		beforeConfigChange();
 		conf_.setProcessingStepModule(currentStepName, module, mm_.getModuleMetaData(module));
 		refreshParams();
@@ -655,7 +661,7 @@ void MainWindow::on_comboModule_currentIndexChanged(int index)
 // react to params changes and store them in the config
 void MainWindow::on_paramChanged(std::string paramName, std::string value)
 {
-	if (!currentStepName.empty()) {
+	if (!currentStepName.empty() && conf_.hasProcessingStep(currentStepName)) {
 		beforeConfigChange();
 		map<string, string> params = conf_.getProcessingStep(currentStepName).params;
 		params[paramName] = value;
@@ -667,7 +673,7 @@ void MainWindow::on_paramChanged(std::string paramName, std::string value)
 // react to input changes and store them in the config
 void MainWindow::on_inputChanged(std::string inputName, std::pair<std::string, std::string> value)
 {
-	if (!currentStepName.empty()) {
+	if (!currentStepName.empty() && conf_.hasProcessingStep(currentStepName)) {
 		beforeConfigChange();
 		map<string, pair<string, string> > inputs = conf_.getProcessingStep(currentStepName).inputs;
 		inputs[inputName] = value;
