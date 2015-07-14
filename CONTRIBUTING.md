@@ -16,6 +16,8 @@ Following these will raise the chance of your changes to get accepted quickly.
 3. When making changes, please add a short notice to the [CHANGELOG](CHANGELOG.md) file.
    The purpose of this file is to provide an overview about what has changed between different versions.
 
+4. When you send a pull request, you provide your contribution under the same [BSD license](LICENSE) that is used
+   by the project.
 
 Thank you for your contribution!
 
