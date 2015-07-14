@@ -13,6 +13,7 @@ The framework provides currently the following data types:
 2. complex data types:
     - `list<string>`
     - `list<integer>`
+    - `list<float>`
     - `list<bool>`
     - `list<matrix>`
 
