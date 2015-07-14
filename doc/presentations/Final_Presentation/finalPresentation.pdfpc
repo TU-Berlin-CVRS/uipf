@@ -1,0 +1,120 @@
+[file]
+finalPresentation.pdf
+[notes]
+### 2
+
+### 4
+ usual workflow
+ split your program in many methods
+ each method is self contained - called module
+ e.g. load, gaussian, store
+ modules interact with each other
+ program is replaced by the chain of modules
+ get same results 
+### 5
+ framework already provides a list of modules
+ if program consists only of given modules,... 
+### 6
+ ... just order them
+ add dependencies and parameters
+ you are finished 
+### 7
+ can replace modules by another
+ can use modules many times
+ can change dependencies 
+### 8
+ chain is visualized in GUI in form of a graph
+ see all dependencies between the modules
+ easier to understand complex chains 
+### 9
+ chains can always be stored and reused 
+ format is human readable 
+ 
+### 10
+ the modules can be extended by arbitrary modules without limitation 
+### 11
+ share your modules with other people all around the world
+ international world wide project 
+### 12
+ feature in work:
+ framework finds for itself out which steps can be done in parallel
+ uses different threads 
+### 13
+ programmed by using cmake
+ should work platform independent
+ unfortunatelly all of us worked on lunux
+ didnt tested 
+### 15
+ framework provides two interfaces: GUI, Console 
+
+ these share a common file format in YAML. 
+
+ GUI can create and run chains. 
+
+ Console can run a chain and also run single modules. 
+### 17
+ Processing chain consists of processing steps 
+
+ step has a module: e.g. load, store, show, gauss, ... + parameters 
+
+ data flow is described using dependencies 
+
+ input of one module is the output of another 
+### 18
+ human readyble format
+ 
+
+ indentation is important!
+ yaml file shows a map key => value 
+
+ 1. each step has a name 
+
+ 2. has a module 
+
+ 3. has params to describe behavior of the module 
+
+ 4. input refers to the step it depends on
+ can have multiple
+ refers to image output of the input step
+ 
+
+ 5. same for show, refers to image output of gauss step 
+### 19
+ left: chain config 
+
+ right: visualization of the dataflow 
+
+ bottom logs, and progress info 
+### 21
+ open an existing chain
+ run/stop the chain
+ create a new chain/modify existing chain
+ save the chain
+ run a buggy chain 
+### 22
+ automatic layout of processing graph 
+
+ simple- and detailview 
+
+ synchronized with current step 
+
+ color coded errors and executionsteps 
+
+ zoom, autoscale and user dragable 
+### 23
+ Run a processing chain from a config file
+ Run a single module: 
+
+ usefule to test different params 
+
+ run an opencv function just right on a file w/o writing any code 
+### 27
+ 
+### 30
+ 
+### 31
+ 
+### 33
+ first: Questions?
+ We are on github!
+ second: Live Demo. 

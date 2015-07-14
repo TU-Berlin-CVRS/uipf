@@ -1,0 +1,113 @@
+[notes]
+### 2
+
+### 3
+ notes go here... 
+### 4
+ - private, free github clone 
+ - versioning is essential in software projects 
+ - it also provides issues and milestones 
+ - Programming workflow with pull requests is common in open source 
+ - git because we want to transfer to github later 
+
+ 
+### 4
+ - private, free github clone 
+ - versioning is essential in software projects 
+ - it also provides issues and milestones 
+ - Programming workflow with pull requests is common in open source 
+ - git because we want to transfer to github later 
+
+ 
+### 4
+ - private, free github clone 
+ - versioning is essential in software projects 
+ - it also provides issues and milestones 
+ - Programming workflow with pull requests is common in open source 
+ - git because we want to transfer to github later 
+
+ 
+### 4
+ - private, free github clone 
+ - versioning is essential in software projects 
+ - it also provides issues and milestones 
+ - Programming workflow with pull requests is common in open source 
+ - git because we want to transfer to github later 
+
+ 
+### 5
+ - planning by creating issues, assign to milestone 
+ - discussion per ticket/topic, all in one place 
+ - tags/labels bug, feature, task, urgent, etc... 
+ 
+### 6
+ - short title, issues should be small 
+ - assignees 
+ - due for a milestone 
+ - tagged with labels 
+### 7
+ - work on branches, master always stable 
+ - never push to master 
+ - code review helps writing cleaner code and spot problems
+ - more eyes see more 
+ - => better quality 
+ - better team integration, ppl aware of changes 
+ 
+### 7
+ - work on branches, master always stable 
+ - never push to master 
+ - code review helps writing cleaner code and spot problems
+ - more eyes see more 
+ - => better quality 
+ - better team integration, ppl aware of changes 
+ 
+### 7
+ - work on branches, master always stable 
+ - never push to master 
+ - code review helps writing cleaner code and spot problems
+ - more eyes see more 
+ - => better quality 
+ - better team integration, ppl aware of changes 
+ 
+### 7
+ - work on branches, master always stable 
+ - never push to master 
+ - code review helps writing cleaner code and spot problems
+ - more eyes see more 
+ - => better quality 
+ - better team integration, ppl aware of changes 
+ 
+### 7
+ - work on branches, master always stable 
+ - never push to master 
+ - code review helps writing cleaner code and spot problems
+ - more eyes see more 
+ - => better quality 
+ - better team integration, ppl aware of changes 
+ 
+### 8
+ - example from github 
+ - send PR, discuss it 
+### 9
+ - discussion
+ 
+### 10
+ - merged if all fine
+ 
+### 11
+ notes go here... 
+### 16
+ - store chain of the modules 
+ - execute in which order and which parameters
+ 
+
+ - chain can be created by GUI 
+ - but console we must create the file by hand
+ 
+
+ - XML has too much overhead to write it
+ 
+### 19
+ notes go here... 
+### 22
+ notes go here... 
