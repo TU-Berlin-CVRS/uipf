@@ -31,4 +31,6 @@ Project reports
 ---------------
 
 - [Summary 05.05.2015 (Initial project requirements)](requirements.md)
+- [First Presentation 12.05.2015](presentations/1st_overview/presentation.pdf)
+- [Final Presentation 14.07.2015](presentations/Final_Presentation/finalPresentation.pdf)
 
