@@ -25,6 +25,9 @@ class ModuleManager{
 		// returns meta data information for a named module
 		MetaData getModuleMetaData(const std::string& name);
 
+		// returns a list of all loaded modules names
+		std::vector<std::string> listModuleNames();
+
 		// returns a value indicating whether the named module exists
 		bool hasModule(const std::string& name);
 

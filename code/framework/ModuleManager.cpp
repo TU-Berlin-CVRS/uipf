@@ -239,6 +239,16 @@ void ModuleManager::initModules()
 	}
 }
 
+// returns a list of all loaded modules names
+std::vector<std::string> ModuleManager::listModuleNames(){
+
+	std::vector<std::string> names;
+	for(auto pit = plugins_.cbegin(); pit != plugins_.end(); ++pit) {
+		names.push_back( pit->first );
+	}
+	return names;
+}
+
 // check whether a module exists
 bool ModuleManager::hasModule(const std::string& name){
 	return (plugins_.count(name) > 0);

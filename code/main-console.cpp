@@ -33,6 +33,7 @@ int main(int argc, char** argv){
 		("input,i", po::value< vector<string> >()->composing(), "defines an input, can be used multiple times format: inputName:fileName inputName is optional if there is only one input")
 		("output,o",	po::value< vector<string> >()->composing(), "defines an output, can be used multiple times, format: outputName:fileName. outputName is optional, if there is only one input. Output is optional, if there is only one input and one output, the output filename will be chosen from the input name in this case.")
 		("param,p",	po::value< vector<string> >()->composing(),	"defines a parameter, format:  name:value")
+		("list", "list all available modules.")
 		;
 
 	// Hidden options, will be allowed command line, but will not be shown to the user.
@@ -63,8 +64,9 @@ int main(int argc, char** argv){
 	if (argc < 2) {
 		std::cerr << "Usage Error!\n\n";
 		cout << "Usage:" << endl;
-		cout << argv[0] << " -c <path to configuration file>				run a processing chain from a config file." << endl;
-		cout << argv[0] << " <moduleName> -i <input> [-p <params> -o <output>]	run a single module." << endl;
+		cout << argv[0] << " -c <path to configuration file>                    run a processing chain from a config file." << endl;
+		cout << argv[0] << " <moduleName> -i <input> [-p <params> -o <output>]  run a single module." << endl;
+		cout << argv[0] << " --list                                             list all available modules." << endl;
 		cout << "\n";
 		// show help
 		cout << visibleOptions;
@@ -86,6 +88,16 @@ int main(int argc, char** argv){
 		conf.load(configFileName);
 
 
+	} else if (vm.count("list")){
+	// list all available modules
+	// ./uipf --list
+
+		std::vector<std::string> modules = mm.listModuleNames();
+		for(auto mit = modules.begin(); mit != modules.end(); ++mit) {
+			cout << *mit << endl;
+		}
+
+		return 0;
 	} else{
 	// run a single module.
 	// ./uipf <moduleName> ...options...
