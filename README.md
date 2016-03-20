@@ -57,13 +57,19 @@ mkdir -p code/build
 cd code/build
 cmake ..
 make
+sudo make install
 ```
 
+For a custom installation prefix you may specify it in the `DESTDIR` for the make command, like so:
+`make DESTDIR=/tmp/uipf install`, which will install all uipf files under the directory `/tmp/uipf`.
+
 If something goes wrong you may run `make VERBOSE=1` for more detailed output.
+
 
 ### Building with CMake on Windows
 
 TBD.
+
 
 How to contribute
 -----------------

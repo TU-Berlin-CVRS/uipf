@@ -49,6 +49,8 @@ class ModuleManager{
 		// instantiate a named module
 		ModuleInterface* loadModule(const std::string& name);
 
+		std::vector<std::string> loadPluginPathConfig();
+
 		// check which modules exist and populate  plugins_
 		void initModules();
 

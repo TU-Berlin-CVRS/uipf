@@ -7,6 +7,8 @@
 #include <QString>
 #include <string>
 
+#include "yaml-cpp/yaml.h"
+
 #include "Logger.hpp"
 #include "ModuleBase.hpp"
 #include "ModuleInterface.hpp"
@@ -222,21 +224,70 @@ void ModuleManager::run(Configuration config){
 // that can be used later to instantiate the module
 void ModuleManager::initModules()
 {
-	QDir pluginsDir = QDir(qApp->applicationDirPath());
+	vector<std::string> pluginPaths = loadPluginPathConfig();
 
-	foreach (QString fileName, pluginsDir.entryList(QDir::Files))
-	{
-		QPluginLoader* loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
-		QObject *plugin = loader->instance();
-		if (plugin) {
-			Logger::instance()->Info("found module: " + fileName.toStdString());
-			ModuleInterface* iModule = qobject_cast<ModuleInterface* >(plugin);
+	for(auto path = pluginPaths.cbegin(); path != pluginPaths.end(); ++path) {
 
-			plugins_.insert( std::pair<std::string, QPluginLoader*>(iModule->name(), loader) );
-			delete iModule;
+		QDir pluginsDir = QDir(QString(path->c_str()));
+
+		foreach (QString fileName, pluginsDir.entryList(QDir::Files))
+		{
+			QPluginLoader* loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
+			QObject *plugin = loader->instance();
+			if (plugin) {
+				//Logger::instance()->Info("found module: " + fileName.toStdString());
+				ModuleInterface* iModule = qobject_cast<ModuleInterface* >(plugin);
+
+				plugins_.insert( std::pair<std::string, QPluginLoader*>(iModule->name(), loader) );
+				delete iModule;
+			} else {
+				LOG_E(loader->errorString().toStdString());
+			}
+
 		}
 
 	}
+
+}
+
+std::vector<std::string> ModuleManager::loadPluginPathConfig()
+{
+	// search path for uipf config files
+	vector<std::string> configPath;
+	// search in current working directory
+	configPath.push_back("./modules.yaml");
+	// search in /etc
+	configPath.push_back("/etc/uipf/modules.yaml");
+	// search in home directory of the user
+	configPath.push_back("~/.uipf-modules.yaml");
+
+	vector<std::string> pluginPaths;
+
+	// search for module path configuration files
+	for(auto cp = configPath.cbegin(); cp != configPath.end(); ++cp) {
+
+		try
+		{
+			// try to load yaml file
+			YAML::Node config = YAML::LoadFile(*cp);
+
+			// yaml file must be a sequence of module paths to search for
+			if (!config.IsSequence())
+				continue;
+
+			// create a ProcessingStep object from each config element
+			YAML::const_iterator it = config.begin();
+			for ( ; it != config.end(); ++it) {
+				pluginPaths.push_back(it->as<string>());
+			}
+		}
+		catch(...)
+		{
+		}
+	}
+	pluginPaths.push_back(".");
+
+	return pluginPaths;
 }
 
 // returns a list of all loaded modules names

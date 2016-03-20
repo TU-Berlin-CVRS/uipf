@@ -21,12 +21,29 @@ set(CMAKE_AUTOUIC ON)
 find_package(Qt5Widgets REQUIRED)
 
 
+
+#
+# external dependencies
+# http://www.cmake.org/cmake/help/v2.8.8/cmake.html#module%3aExternalProject
+#
+
+# yaml-cpp
+ExternalProject_Add(YAML_CPP
+	GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+	GIT_TAG release-0.5.2
+	TEST_COMMAND ""
+	INSTALL_COMMAND "" # skip install step for yaml-cpp
+)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/YAML_CPP-prefix/src/YAML_CPP/include)
+set(YAML_CPP_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/YAML_CPP-prefix/src/YAML_CPP-build/libyaml-cpp.a)
+
+
 #
 # Create executeables
 #
 
-# put the core framework into a shard lib
-add_library(uipf-framework SHARED
+# put the core framework into a static lib
+add_library(uipf-framework STATIC
 
 	framework/ModuleManager.cpp
 	framework/Context.cpp
@@ -46,17 +63,16 @@ add_library(uipf-framework SHARED
 
     framework/Utils.cpp
 )
-# we need to set the path to libyaml-cpp.so so it can be found by linker
-set(YAML_CPP_LIBRARY ${CMAKE_BINARY_DIR}/yaml-cpp/lib/libyaml-cpp.so)
-target_link_libraries(uipf-framework opencv_core opencv_imgproc opencv_highgui ${YAML_CPP_LIBRARY})
+target_link_libraries(uipf-framework opencv_core opencv_imgproc ${YAML_CPP_LIBRARY})
 qt5_use_modules(uipf-framework Core Widgets) # Qt is required for loading modules dynamically
+add_dependencies(uipf-framework YAML_CPP)
+
 
 # add one executeable for the console application
 add_executable(uipf
 	main-console.cpp
 )
 target_link_libraries(uipf boost_program_options uipf-framework)
-qt5_use_modules(uipf Core Gui Widgets) # Qt is required for loading modules dynamically
 
 
 
@@ -93,8 +109,10 @@ target_link_libraries (uipf-gui boost_graph uipf-framework)
 qt5_use_modules(uipf-gui Core Gui Widgets)
 
 
-add_library(ModuleBase SHARED framework/ModuleBase.cpp )
-qt5_use_modules(ModuleBase Core )
+add_library(uipf-ModuleBase SHARED framework/ModuleBase.cpp )
+qt5_use_modules(uipf-ModuleBase Core )
+
+
 
 #
 # Dynamic Modules
@@ -103,77 +121,85 @@ qt5_use_modules(ModuleBase Core )
 # dummy
 add_library(DummyModule SHARED modules/dummy/DummyModule.cpp)
 qt5_use_modules(DummyModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(DummyModule ModuleBase)
+target_link_libraries(DummyModule uipf-ModuleBase)
 
 add_library(LongRunningDummyModule SHARED modules/dummy/LongRunningDummyModule.cpp)
 qt5_use_modules(LongRunningDummyModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(LongRunningDummyModule ModuleBase)
+target_link_libraries(LongRunningDummyModule uipf-ModuleBase)
 
 # I/O
 add_library(LoadImageModule SHARED modules/io/LoadImageModule.cpp)
 qt5_use_modules(LoadImageModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(LoadImageModule opencv_core ModuleBase)
+target_link_libraries(LoadImageModule opencv_core uipf-ModuleBase)
 
 add_library(StoreImageModule SHARED modules/io/StoreImageModule.cpp)
 qt5_use_modules(StoreImageModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(StoreImageModule opencv_core ModuleBase)
+target_link_libraries(StoreImageModule opencv_core uipf-ModuleBase)
 
 add_library(ShowImageModule SHARED modules/io/ShowImageModule.cpp)
 qt5_use_modules(ShowImageModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
+target_link_libraries(ShowImageModule opencv_core opencv_imgproc opencv_highgui uipf-ModuleBase)
 
 add_library(ShowImageListModule SHARED modules/io/ShowImageListModule.cpp)
 qt5_use_modules(ShowImageListModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(ShowImageListModule opencv_core opencv_imgproc opencv_highgui ModuleBase)
+target_link_libraries(ShowImageListModule opencv_core opencv_imgproc opencv_highgui uipf-ModuleBase)
 
 # Image Processing
 add_library(GaussianModule SHARED modules/improc/GaussianModule.cpp)
 qt5_use_modules(GaussianModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(GaussianModule opencv_core opencv_imgproc ModuleBase)
+target_link_libraries(GaussianModule opencv_core opencv_imgproc uipf-ModuleBase)
 
 #for live demo...
 #add_library(ResizeModule SHARED modules/improc/ResizeModule.cpp)
 #qt5_use_modules(ResizeModule Core ) #QtCore is needed for <QPlugin>
-#target_link_libraries(ResizeModule opencv_core opencv_imgproc ModuleBase)
+#target_link_libraries(ResizeModule opencv_core opencv_imgproc uipf-ModuleBase)
 
 add_library(ConvolutionModule SHARED modules/improc/ConvolutionModule.cpp)
 qt5_use_modules(ConvolutionModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(ConvolutionModule opencv_core opencv_imgproc ModuleBase)
+target_link_libraries(ConvolutionModule opencv_core opencv_imgproc uipf-ModuleBase)
 
 add_library(SplitChannelsModule SHARED modules/improc/SplitChannelsModule.cpp)
 qt5_use_modules(SplitChannelsModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(SplitChannelsModule opencv_core opencv_imgproc ModuleBase)
+target_link_libraries(SplitChannelsModule opencv_core opencv_imgproc uipf-ModuleBase)
 
 add_library(MergeChannelsModule SHARED modules/improc/MergeChannelsModule.cpp)
 qt5_use_modules(MergeChannelsModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(MergeChannelsModule opencv_core opencv_imgproc ModuleBase)
+target_link_libraries(MergeChannelsModule opencv_core opencv_imgproc uipf-ModuleBase)
 
 
 # Data structures
 add_library(SelectListItemModule SHARED modules/data/SelectListItemModule.cpp)
 qt5_use_modules(SelectListItemModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(SelectListItemModule opencv_core opencv_imgproc ModuleBase)
+target_link_libraries(SelectListItemModule opencv_core opencv_imgproc uipf-ModuleBase)
 
 add_library(AddListItemModule SHARED modules/data/AddListItemModule.cpp)
 qt5_use_modules(AddListItemModule Core ) #QtCore is needed for <QPlugin>
-target_link_libraries(AddListItemModule opencv_core opencv_imgproc ModuleBase)
+target_link_libraries(AddListItemModule opencv_core opencv_imgproc uipf-ModuleBase)
+
 
 
 #
-# external dependencies
-# http://www.cmake.org/cmake/help/v2.8.8/cmake.html#module%3aExternalProject
+# installation targets
 #
 
-
-# yaml-cpp
-ExternalProject_Add(YAML_CPP
-	GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-	GIT_TAG release-0.5.2
-	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/yaml-cpp -DBUILD_SHARED_LIBS=YES
+install(TARGETS uipf uipf-gui uipf-ModuleBase
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
 )
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/yaml-cpp/include)
-FIND_LIBRARY(YAML_CPP_LIBRARY yaml-cpp ${CMAKE_CURRENT_BINARY_DIR}/yaml-cpp/lib)
+install(TARGETS
+			AddListItemModule
+			ConvolutionModule
+			DummyModule
+			GaussianModule
+			LoadImageModule
+			LongRunningDummyModule
+			MergeChannelsModule
+			SelectListItemModule
+			ShowImageListModule
+			ShowImageModule
+			SplitChannelsModule
+			StoreImageModule
 
-add_dependencies(uipf-framework YAML_CPP)
-add_dependencies(uipf-framework YAML_CPP_LIBRARY)
+        LIBRARY DESTINATION lib/uipf
+)
 
