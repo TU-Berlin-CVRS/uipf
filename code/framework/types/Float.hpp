@@ -12,8 +12,12 @@ class Float : public Data {
 			typedef SMARTPOINTER<Float> ptr;
 			typedef const SMARTPOINTER<Float> c_ptr;
 	public:
+		// default constructor
+		Float() : f_(0.0) {};
 		// constructor
 		Float(float f) : f_(f) {};
+		// copy constructor
+		Float(const Float& f) : f_(f.f_) {};
 		// destructor
 		~Float(void){};
 

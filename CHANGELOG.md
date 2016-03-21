@@ -6,6 +6,7 @@ Currently under development
 
 - Bug: It was not possible to compile and use external modules
 - Enhancement: Added a command to allow listing of all loaded modules `uipf --list`
+- Enhancement: Added Default and Copy Constructors to the Data types
 
 
 Version 1.0.0-beta, July 11, 2015

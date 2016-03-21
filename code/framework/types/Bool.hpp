@@ -13,8 +13,12 @@ class Bool : public Data {
 		typedef const SMARTPOINTER<Bool> c_ptr;
 
 	public:
+		// default constructor
+		Bool() : b_(false) {};
 		// constructor
 		Bool(bool b) : b_(b) {};
+		// copy constructor
+		Bool(const Bool& b) : b_(b.b_) {};
 		// destructor
 		~Bool(void){};
 

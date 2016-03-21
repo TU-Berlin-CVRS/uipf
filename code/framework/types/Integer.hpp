@@ -13,8 +13,12 @@ class Integer : public Data {
 		typedef const SMARTPOINTER<Integer> c_ptr;
 
 	public:
+		// default constructor
+		Integer() : i_(0) {};
 		// constructor
 		Integer(int i) : i_(i) {};
+		// copy constructor
+		Integer(const Integer& i) : i_(i.i_) {};
 		// destructor
 		~Integer(void){};
 
