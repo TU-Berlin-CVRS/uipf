@@ -15,6 +15,8 @@ Modules are precompiled extensions that:
  
 ## How can I write a new Module?
 
+### Introduction
+
 To write your own Module you basically have to do the following steps:
  
 1. Create a c++ class that derives from ModuleInterface. This mainly requires three Methods:
@@ -72,3 +74,29 @@ To write your own Module you basically have to do the following steps:
    Of course you don't need to use the `CMakeList.txt` of the whole project. You may create your own one just for your Module.
 
 Now you can build your new module with `make` and use it in the GUI as well as the console.
+
+### Compiling your module
+
+TBD
+
+### Logging and error handling
+
+TBD
+
+Logging makros
+
+```
+LOG_I(
+LOG_E(
+LOG_W(
+```
+
+Error handling:
+
+To abort the run of the module you can throw any exception. THere is one exception class provided which can carry a
+message:
+`throw InvalidConfigException("the object mesh is invalid");`
+
+
+
+
