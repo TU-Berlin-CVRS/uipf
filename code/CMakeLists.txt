@@ -8,7 +8,7 @@ project(UIPFramework)
 
 # CMake settings
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
@@ -109,7 +109,16 @@ target_link_libraries (uipf-gui boost_graph uipf-framework)
 qt5_use_modules(uipf-gui Core Gui Widgets)
 
 
-add_library(uipf-ModuleBase SHARED framework/ModuleBase.cpp )
+add_library(uipf-ModuleBase STATIC
+	framework/ModuleBase.cpp
+	framework/types/Data.cpp
+	framework/types/String.cpp
+	framework/types/Float.cpp
+	framework/types/Integer.cpp
+	framework/types/Bool.cpp
+	framework/types/Matrix.cpp
+)
+#add_library(uipf-ModuleBase SHARED framework/ModuleBase.cpp )
 qt5_use_modules(uipf-ModuleBase Core )
 
 
@@ -185,6 +194,7 @@ target_link_libraries(AddListItemModule opencv_core opencv_imgproc uipf-ModuleBa
 install(TARGETS uipf uipf-gui uipf-ModuleBase
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
 )
 install(TARGETS
 			AddListItemModule
@@ -202,4 +212,14 @@ install(TARGETS
 
         LIBRARY DESTINATION lib/uipf
 )
-
+#install header files
+file(GLOB headerFilesFramework "${CMAKE_CURRENT_SOURCE_DIR}/framework/*.hpp")
+file(GLOB headerFilesTypes "${CMAKE_CURRENT_SOURCE_DIR}/framework/types/*.hpp")
+install(FILES
+	${headerFilesFramework}
+	DESTINATION include/uipf/framework
+)
+install(FILES
+	${headerFilesTypes}
+	DESTINATION include/uipf/framework/types
+)

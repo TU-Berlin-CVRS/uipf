@@ -232,6 +232,9 @@ void ModuleManager::initModules()
 
 		foreach (QString fileName, pluginsDir.entryList(QDir::Files))
 		{
+			if (!fileName.endsWith(".so")) {
+				continue;
+			}
 			QPluginLoader* loader = new QPluginLoader(pluginsDir.absoluteFilePath(fileName));
 			QObject *plugin = loader->instance();
 			if (plugin) {
@@ -262,6 +265,9 @@ std::vector<std::string> ModuleManager::loadPluginPathConfig()
 	configPath.push_back("~/.uipf-modules.yaml");
 
 	vector<std::string> pluginPaths;
+	// also add two default search paths
+	pluginPaths.push_back("/usr/lib/uipf");
+	pluginPaths.push_back("/usr/local/lib/uipf");
 
 	// search for module path configuration files
 	for(auto cp = configPath.cbegin(); cp != configPath.end(); ++cp) {
@@ -284,8 +290,8 @@ std::vector<std::string> ModuleManager::loadPluginPathConfig()
 		catch(...)
 		{
 		}
+
 	}
-	pluginPaths.push_back(".");
 
 	return pluginPaths;
 }
