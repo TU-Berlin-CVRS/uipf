@@ -110,6 +110,7 @@ qt5_use_modules(uipf-gui Core Gui Widgets)
 
 
 add_library(uipf-ModuleBase STATIC
+	framework/DataManager.cpp
 	framework/ModuleBase.cpp
 	framework/types/Data.cpp
 	framework/types/String.cpp
