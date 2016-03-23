@@ -23,13 +23,13 @@ class Integer : public Data {
 		~Integer(void){};
 
 		// returns the value of the integer
-		int getContent();
+		int getContent() const;
 
 		// sets the value of the integer
 		void setContent(int);
 
 		// returns the data type of this data object: in this case: INTEGER
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// value of the integer

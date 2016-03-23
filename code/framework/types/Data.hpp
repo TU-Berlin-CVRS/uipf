@@ -46,7 +46,7 @@ class Data {
 
 		// returns the data type of this data object
 		// this is a virtual method, which has to be overwritten in the class, which derives of Data
-		virtual Type getType() = 0;
+		virtual Type getType() const = 0;
 
 };
 

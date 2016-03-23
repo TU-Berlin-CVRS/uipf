@@ -29,7 +29,7 @@ class Matrix : public Data {
 		void setContent(cv::Mat&);
 
 		// returns the data type of this data object: in this case: MATRIX
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// content of the matrix

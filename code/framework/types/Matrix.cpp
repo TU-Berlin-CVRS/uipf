@@ -21,6 +21,6 @@ void Matrix::setContent(Mat& m){
 }
 
 // returns the data type of this data object: in this case: MATRIX
-Type Matrix::getType() {
+Type Matrix::getType() const {
 	return MATRIX;
 }

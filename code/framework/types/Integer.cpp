@@ -3,7 +3,7 @@
 using namespace uipf;
 
 // returns the value of the integer
-int Integer::getContent(){
+int Integer::getContent() const {
 	return i_;
 }
 
@@ -11,11 +11,11 @@ int Integer::getContent(){
 /*
 i	new integer value
 */
-void Integer::setContent(int i){
+void Integer::setContent(int i) {
 	i_ = i;
 }
 
 // returns the data type of this data object: in this case: INTEGER
-Type Integer::getType(){
+Type Integer::getType() const {
 	return INTEGER;
 }

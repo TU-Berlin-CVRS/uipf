@@ -23,13 +23,13 @@ class Bool : public Data {
 		~Bool(void){};
 
 		// returns the value of the boolean
-		bool getContent();
+		bool getContent() const;
 
 		// sets the value of the boolean
 		void setContent(bool);
 
 		// returns the data type of this data object: in this case: BOOL
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// value of the boolean

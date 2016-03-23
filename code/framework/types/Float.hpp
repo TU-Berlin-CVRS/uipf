@@ -22,13 +22,13 @@ class Float : public Data {
 		~Float(void){};
 
 		// returns the value of the float
-		float getContent();
+		float getContent() const;
 
 		// sets the value of the float
 		void setContent(float);
 
 		// returns the data type of this data object: in this case: FLOAT
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// value of the float
