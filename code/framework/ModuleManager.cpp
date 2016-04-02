@@ -146,15 +146,15 @@ void ModuleManager::run(Configuration config){
 			DataManager dataMnrg(inputs, proSt.params, *outputs);
 			module->run(dataMnrg);
 
-		} catch (ErrorException& e) {
+		} catch (const ErrorException& e) {
 			GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::ERROR,false);
 			LOG_E( string("Error: ") + e.what() );
 			break;
-		} catch (InvalidConfigException& e) {
+		} catch (const InvalidConfigException& e) {
 			GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::ERROR,false);
 			LOG_E( string("Invalid config: ") + e.what() );
 			break;
-		} catch (std::exception& e) {
+		} catch (const std::exception& e) {
 			GUIEventDispatcher::instance()->triggerSelectSingleNodeInGraphView(proSt.name,gui::ERROR,false);
 			LOG_E( string("Error: module threw exception: ") + e.what() );
 			break;
