@@ -117,7 +117,7 @@ inline int DataManager::getParam( const std::string& strName, int defaultValue) 
 {
 	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
-		return atoi(params_[strName].c_str());
+		return std::stoi(params_[strName]);
 	}
 	else
 	{
@@ -130,7 +130,13 @@ inline float DataManager::getParam(const std::string& strName, float defaultValu
 {
 	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
-		return atof(params_[strName].c_str());
+		// std::stof() is locale aware, meaning params are not portable between platforms
+		// the following is a locale independend stof():
+		float value = defaultValue;
+		std::istringstream istr(params_[strName]);
+		istr.imbue(std::locale("C"));
+		istr >> value;
+		return value;
 	}
 	else
 	{
@@ -143,7 +149,13 @@ inline double DataManager::getParam( const std::string& strName, double defaultV
 {
 	if (params_.find(strName) != params_.end() && !params_[strName].empty())
 	{
-		return atof(params_[strName].c_str());
+		// std::stod() is locale aware, meaning params are not portable between platforms
+		// the following is a locale independend stod():
+		double value = defaultValue;
+		std::istringstream istr(params_[strName]);
+		istr.imbue(std::locale("C"));
+		istr >> value;
+		return value;
 	}
 	else
 	{
