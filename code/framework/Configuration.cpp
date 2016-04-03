@@ -381,7 +381,8 @@ void Configuration::print() {
 
 	string out = getYAML();
 
-	LOG_I(out);
+	cout << out;
+	cout << endl;
 }
 
 // stores the current module configuration in a yaml file
