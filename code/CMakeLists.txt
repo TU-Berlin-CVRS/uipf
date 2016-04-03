@@ -110,8 +110,12 @@ qt5_use_modules(uipf-gui Core Gui Widgets)
 
 
 add_library(uipf-ModuleBase STATIC
-	framework/DataManager.cpp
 	framework/ModuleBase.cpp
+
+	framework/Context.cpp
+	framework/GUIEventDispatcher.cpp
+
+	framework/DataManager.cpp
 	framework/types/Data.cpp
 	framework/types/String.cpp
 	framework/types/Float.cpp
@@ -120,7 +124,7 @@ add_library(uipf-ModuleBase STATIC
 	framework/types/Matrix.cpp
 )
 #add_library(uipf-ModuleBase SHARED framework/ModuleBase.cpp )
-qt5_use_modules(uipf-ModuleBase Core )
+qt5_use_modules(uipf-ModuleBase Core Gui)
 
 
 
