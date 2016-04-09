@@ -31,11 +31,12 @@ The following dependencies are needed to build:
   - [Boost serialisation](http://www.boost.org/doc/libs/release/libs/serialization/), needs to be available on the system
 - [Boost program-options](http://www.boost.org/doc/libs/release/libs/program_options/)
 - [Boost graph](http://www.boost.org/doc/libs/release/libs/graph/)
+- [OpenCV](http://opencv.org/), version 2.3 or higher (currently untested with the 3.x branch)
 - [Qt 5](http://doc.qt.io/qt-5/index.html), at least 5.3
 
 On Debian/Ubuntu you can install the above packages by running the following command:
 
-	sudo apt-get install libboost-serialization-dev libboost-program-options-dev libboost-graph-dev qtbase5-dev qtbase5-dev-tools
+	sudo apt-get install libboost-serialization-dev libboost-program-options-dev libboost-graph-dev libopencv-dev qtbase5-dev qtbase5-dev-tools
 
 The following additional packages may be needed for building C++ code:
 
