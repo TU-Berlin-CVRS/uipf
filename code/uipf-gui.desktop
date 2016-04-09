@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=UIPF GUI
+Comment=Unified Image Processing Framework (GUI)
+Exec=uipf-gui %f
+Categories=Graphics;Development;Science
+Terminal=false
+MimeType=application/x-yaml;

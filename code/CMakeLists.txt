@@ -228,3 +228,8 @@ install(FILES
 	${headerFilesTypes}
 	DESTINATION include/uipf/framework/types
 )
+install(FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/uipf-gui.desktop
+	${CMAKE_CURRENT_SOURCE_DIR}/uipf.desktop
+	DESTINATION /usr/share/applications
+)
