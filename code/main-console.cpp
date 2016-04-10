@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <QApplication>
+#include <QCoreApplication>
 #include "framework/ModuleManager.hpp"
 #include "framework/Configuration.hpp"
 #include "framework/Utils.hpp"
@@ -74,7 +74,7 @@ int main(int argc, char** argv){
 	}
 
 	// used by the module manager to access Qt components, TODO maybe move to module manager?
-	QApplication app (argc,argv);
+	QCoreApplication app (argc,argv);
 
 	ModuleManager mm;
 	Configuration conf;
