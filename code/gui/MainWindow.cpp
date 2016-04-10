@@ -17,6 +17,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <QDebug>
+#include <libgen.h>
+#include <unistd.h>
 
 #include "MainWindow.hpp"
 #include "ImageWindow.hpp"
@@ -235,6 +237,12 @@ void MainWindow::loadDataFlow(string filename)
     setWindowTitle(tr((currentFileName + string(" - ") + WINDOW_TITLE).c_str()));
 
 	conf_.load(currentFileName);
+
+	// set current working directory to directory of the .yaml file
+	char bFileName[currentFileName.length() + 1];
+	std::size_t length = currentFileName.copy(bFileName, currentFileName.length());
+	bFileName[length]='\0';
+	chdir(dirname(bFileName));
 
     // only for debug, print the loaded config
 	//conf_.print();
