@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
+#include <libgen.h>
 #include <QCoreApplication>
+
 #include "framework/ModuleManager.hpp"
 #include "framework/Configuration.hpp"
 #include "framework/Utils.hpp"
@@ -87,6 +89,11 @@ int main(int argc, char** argv){
 		string configFileName = argv[2];
 		conf.load(configFileName);
 
+		// set current working directory to directory of the .yaml file to make relative paths work
+		char bFileName[configFileName.length() + 1];
+		std::size_t length = configFileName.copy(bFileName, configFileName.length());
+		bFileName[length]='\0';
+		chdir(dirname(bFileName));
 
 	} else if (vm.count("list")){
 	// list all available modules

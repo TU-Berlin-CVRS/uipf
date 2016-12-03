@@ -238,7 +238,7 @@ void MainWindow::loadDataFlow(string filename)
 
 	conf_.load(currentFileName);
 
-	// set current working directory to directory of the .yaml file
+	// set current working directory to directory of the .yaml file to make relative paths work
 	char bFileName[currentFileName.length() + 1];
 	std::size_t length = currentFileName.copy(bFileName, currentFileName.length());
 	bFileName[length]='\0';
