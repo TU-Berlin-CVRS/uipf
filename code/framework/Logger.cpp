@@ -21,7 +21,10 @@ Logger* Logger::instance()
 void Logger::Warn(const std::string& strMessage)
 {
 	std::stringstream output;
-	output << "[WARNING] " << strMessage << std::endl;
+
+	// output in yellow using ANSI codes http://en.wikipedia.org/wiki/ANSI_escape_code
+	output << "\033[1;33m[WARNING] " << strMessage << "\033[0m" << std::endl;
+
 	print(output);
 
 	//send signal to GUI
@@ -32,8 +35,9 @@ void Logger::Error(const std::string& strMessage)
 {
 	std::stringstream output;
 
-	output << "\033[1;31m[ERROR] " << strMessage << "\033[0m" << std::endl;//output in red using ANSI codes (linux only):
-									       //http://en.wikipedia.org/wiki/ANSI_escape_code
+	// output in red using ANSI codes http://en.wikipedia.org/wiki/ANSI_escape_code
+	output << "\033[1;31m[ERROR] " << strMessage << "\033[0m" << std::endl;
+
 	print(output);
 
 	//send signal to GUI
@@ -43,7 +47,8 @@ void Logger::Error(const std::string& strMessage)
 void Logger::Info(const std::string& strMessage)
 {
 	std::stringstream output;
-	output << "[INFO] " << strMessage << std::endl;
+	// output in bold (more visible than normal stdout) using ANSI codes http://en.wikipedia.org/wiki/ANSI_escape_code
+	output << "\033[1m[INFO] " << strMessage << "\033[0m" << std::endl;
 	print(output);
 
 	//send signal to GUI

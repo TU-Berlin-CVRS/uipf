@@ -13,19 +13,23 @@ class Integer : public Data {
 		typedef const SMARTPOINTER<Integer> c_ptr;
 
 	public:
+		// default constructor
+		Integer() : i_(0) {};
 		// constructor
 		Integer(int i) : i_(i) {};
+		// copy constructor
+		Integer(const Integer& i) : i_(i.i_) {};
 		// destructor
 		~Integer(void){};
 
 		// returns the value of the integer
-		int getContent();
+		int getContent() const;
 
 		// sets the value of the integer
 		void setContent(int);
 
 		// returns the data type of this data object: in this case: INTEGER
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// value of the integer

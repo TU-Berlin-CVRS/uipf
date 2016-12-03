@@ -13,19 +13,23 @@ class Bool : public Data {
 		typedef const SMARTPOINTER<Bool> c_ptr;
 
 	public:
+		// default constructor
+		Bool() : b_(false) {};
 		// constructor
 		Bool(bool b) : b_(b) {};
+		// copy constructor
+		Bool(const Bool& b) : b_(b.b_) {};
 		// destructor
 		~Bool(void){};
 
 		// returns the value of the boolean
-		bool getContent();
+		bool getContent() const;
 
 		// sets the value of the boolean
 		void setContent(bool);
 
 		// returns the data type of this data object: in this case: BOOL
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// value of the boolean

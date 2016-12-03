@@ -3,14 +3,6 @@
 using namespace cv;
 using namespace uipf;
 
-// constructor
-/*
-oMat	the content of the matrix	(matrix_ = oMat)
-*/
-Matrix::Matrix(Mat& oMat) :matrix_(oMat){
-}
-
-
 // get content (returns a cloned version of Mat by default)
 // this is due to prevent overwriting accidentally
 Mat Matrix::getContent(bool bAutoClone /*= true*/) const{
@@ -29,6 +21,6 @@ void Matrix::setContent(Mat& m){
 }
 
 // returns the data type of this data object: in this case: MATRIX
-Type Matrix::getType() {
+Type Matrix::getType() const {
 	return MATRIX;
 }

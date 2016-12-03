@@ -3,7 +3,7 @@
 using namespace uipf;
 
 // returns the value of the boolean
-bool Bool::getContent(){
+bool Bool::getContent() const {
 	return b_;
 }
 
@@ -11,11 +11,11 @@ bool Bool::getContent(){
 /*
 b	new boolean value
 */
-void Bool::setContent(bool b){
+void Bool::setContent(bool b) {
 	b_ = b;
 }
 
 // returns the data type of this data object: in this case: BOOL
-Type Bool::getType(){
+Type Bool::getType() const {
 	return BOOL;
 }

@@ -12,19 +12,23 @@ class Float : public Data {
 			typedef SMARTPOINTER<Float> ptr;
 			typedef const SMARTPOINTER<Float> c_ptr;
 	public:
+		// default constructor
+		Float() : f_(0.0) {};
 		// constructor
 		Float(float f) : f_(f) {};
+		// copy constructor
+		Float(const Float& f) : f_(f.f_) {};
 		// destructor
 		~Float(void){};
 
 		// returns the value of the float
-		float getContent();
+		float getContent() const;
 
 		// sets the value of the float
 		void setContent(float);
 
 		// returns the data type of this data object: in this case: FLOAT
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// value of the float

@@ -23,7 +23,7 @@ class List : public Data {
 		~List(void){};
 
 		// returns the content of the list
-		std::list<typename T::ptr> getContent();
+		std::list<typename T::ptr> getContent() const;
 
 		// sets the content of the list
 		void setContent(std::list<typename T::ptr>);
@@ -39,7 +39,7 @@ class List : public Data {
 		void addItem(typename T::ptr item);
 
 		// returns the data type of this data object: in this case: LIST
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// content of the list
@@ -51,7 +51,7 @@ class List : public Data {
 
 // returns the content of the list
 template <typename T>
-std::list<typename T::ptr> List<T>::getContent(){
+std::list<typename T::ptr> List<T>::getContent() const {
 	return list_;
 }
 
@@ -103,19 +103,19 @@ void List<T>::addItem(typename T::ptr item) {
 
 // returns the data type of this data object: in this case: LIST
 template <>
-inline Type List<String>::getType() { return STRING_LIST; }
+inline Type List<String>::getType() const { return STRING_LIST; }
 
 template <>
-inline Type List<Integer>::getType() { return INTEGER_LIST; }
+inline Type List<Integer>::getType() const { return INTEGER_LIST; }
 
 template <>
-inline Type List<Float>::getType() { return FLOAT_LIST; }
+inline Type List<Float>::getType() const { return FLOAT_LIST; }
 
 template <>
-inline Type List<Bool>::getType() { return BOOL_LIST; }
+inline Type List<Bool>::getType() const { return BOOL_LIST; }
 
 template <>
-inline Type List<Matrix>::getType() { return MATRIX_LIST; }
+inline Type List<Matrix>::getType() const { return MATRIX_LIST; }
 
 
 

@@ -5,15 +5,17 @@ This document describes how custom Modules can be built for the uipf.
 
 ## What are Modules?
 
-Modules are precompiled extensions that:
+Modules are precompiled extensions/plugins that:
 
- - encapsulate functionality which can be used in processingsteps
+ - encapsulate functionality which can be used in processing steps
  - are binary files, shareable without sourcecode (QTPlugin)
  - implement a simple interface
  - can include own libs as they need them
  - have Metadata displayed in the GUI
  
 ## How can I write a new Module?
+
+### Introduction
 
 To write your own Module you basically have to do the following steps:
  
@@ -72,3 +74,148 @@ To write your own Module you basically have to do the following steps:
    Of course you don't need to use the `CMakeList.txt` of the whole project. You may create your own one just for your Module.
 
 Now you can build your new module with `make` and use it in the GUI as well as the console.
+
+### Compiling your module
+
+If your module is not generic enough to make it part of UIPF itself, you can
+will likely be working in a separte directory when developing it. 
+
+#### Compiling with CMake
+
+Assuming the following file structure in your module:
+
+- `src/ExampleModule.hpp`:
+  
+  ```cpp
+  #include <uipf/framework/ModuleBase.hpp>
+  
+  class ExampleModule :  public QObject, uipf::ModuleBase
+  {
+  	Q_OBJECT
+  	Q_PLUGIN_METADATA(IID "org.tu-berlin.uipf.ExampleModule" )
+  	Q_INTERFACES(uipf::ModuleInterface)
+  
+  public:
+  	// constructor tells ModuleBase our name so we don't need to implement name()
+  	ExampleModule(void) : uipf::ModuleBase("example"){};
+  
+  	// destructor needs to be virtual otherwise it not called due polymorphism
+  	virtual ~ExampleModule(void){};
+  
+  	void run( uipf::DataManager& data ) const Q_DECL_OVERRIDE;
+  
+  	uipf::MetaData getMetaData() const Q_DECL_OVERRIDE;
+  };
+  ```
+
+- `src/ExampleModule.cpp`:
+
+  ```cpp
+  #include "ExampleModule.hpp"
+  
+  using namespace uipf;
+  
+  void ExampleModule::run( DataManager& data) const
+  {
+  	// implement module functionality here working on input/output data and parameters using DataManager
+  }
+  
+  MetaData ExampleModule::getMetaData() const
+  {
+  	using namespace std;
+  
+  	map<string, DataDescription> input = {
+  		// describe inputs here
+  	};
+  	map<string, DataDescription> output = {
+  		// describe outputs here
+  	};
+  	map<string, ParamDescription> params = {
+  		// describe parameters here
+  	};
+  
+  	return MetaData(
+  			"A minimal Example module",
+  			"pathSfM",
+  			input,
+  			output,
+  			params
+  	);
+  }
+  ```
+
+To compile your module with [cmake](https://cmake.org/), create the following `CMakelists.txt` file in the root folder:
+
+```cmake
+cmake_minimum_required(VERSION 2.8.8)
+project(example)
+
+set(CMAKE_CXX_STANDARD 11)
+
+# make Qt work
+set(CMAKE_AUTOMOC ON)
+# make sure MOC will find UIPF
+SET(CMAKE_AUTOMOC_MOC_OPTIONS
+-I/usr/local/include
+)
+# find Qt library for QPlugin
+find_package(Qt5Widgets REQUIRED)
+find_library(ModuleBase uipf-ModuleBase)
+
+# build example module
+add_library(ExampleModule SHARED src/ExampleModule.cpp)
+qt5_use_modules(ExampleModule Core) #QtCore is needed for <QPlugin>
+target_link_libraries(ExampleModule ${ModuleBase})
+```
+
+You can now compile your module using the following commands:
+
+    mkdir build && cd build
+    cmake ..
+    make
+    
+This will create a `libExampleModule.so` file in the current directory, which is the module binary file.
+
+#### Configure UIPF to load the module
+
+When started, UIPF will search for a module configuration file in the following locations:
+
+- `/usr/lib/uipf`
+- `/usr/local/lib/uipf`
+- Additionally to the above two paths, you can configure more
+  search paths by creating a configuration file.
+  The configuration file can be located in the following locations:
+  
+  - current working directory (`./modules.yaml`)
+  - your home directory (`~/.uipf-modules.yaml`)
+  - system-wide configuration (`/etc/uipf/modules.yaml`)
+  
+  The configuration file should contain a [YAML](http://www.yaml.org/) list of paths to search for modules, e.g.:
+  
+  ```yaml
+  - ~/project1/uipf-modules/build
+  - ~/project2/uipf-modules/build
+  ```
+
+
+### Logging and error handling
+
+TBD
+
+Logging makros
+
+```
+LOG_I(
+LOG_E(
+LOG_W(
+```
+
+Error handling:
+
+To abort the run of the module you can throw any exception. There is one exception class provided which can carry a
+message:
+`throw InvalidConfigException("the object mesh is invalid");`
+
+
+
+

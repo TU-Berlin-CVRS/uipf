@@ -12,8 +12,12 @@ class Matrix : public Data {
 		typedef const SMARTPOINTER<Matrix> c_ptr;
 
 	public:
+		// default constructor
+		Matrix() {}
 		// constructor
-		Matrix(cv::Mat&);
+		Matrix(cv::Mat& mat): matrix_(mat) {}
+		// copy constructor
+		Matrix(const Matrix& mat): matrix_(mat.matrix_.clone()) {}
 		// destructor
 		~Matrix(void){};
 
@@ -25,7 +29,7 @@ class Matrix : public Data {
 		void setContent(cv::Mat&);
 
 		// returns the data type of this data object: in this case: MATRIX
-		Type getType() override;
+		Type getType() const override;
 
 	private:
 		// content of the matrix

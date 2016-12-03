@@ -4,7 +4,7 @@ using namespace std;
 using namespace uipf;
 
 // returns the value of the string
-string String::getContent(){
+string String::getContent() const {
 	return str_;
 }
 
@@ -12,11 +12,11 @@ string String::getContent(){
 /*
 str		new string value
 */
-void String::setContent(string str){
+void String::setContent(string str) {
 	str_ = str;
 }
 
 // returns the data type of this data object: in this case: STRING
-Type String::getType(){
+Type String::getType() const {
 	return STRING;
 }

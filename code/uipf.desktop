@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Execute UIPF Processing Chain
+Comment=Unified Image Processing Framework (Terminal)
+Exec=uipf -c %f
+Categories=Graphics;Development;Science
+Terminal=true
+MimeType=application/x-yaml;
+NoDisplay=true
