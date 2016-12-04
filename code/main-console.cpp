@@ -7,6 +7,7 @@
 #include "framework/Configuration.hpp"
 #include "framework/Utils.hpp"
 #include "framework/Logger.hpp"
+#include "framework/uipf.hpp"
 
 // foor Boost:
 #include <boost/program_options/options_description.hpp>
@@ -110,7 +111,7 @@ int main(int argc, char** argv){
 	// ./uipf <moduleName> ...options...
 
 		if (vm.count("version")) {
-			cout << "Version: 1.0" << "\n";
+			cout << "Version: " << UIPF_VERSION << endl;
 			return 0;
 		}
 

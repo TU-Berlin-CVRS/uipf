@@ -6,6 +6,17 @@ include(ExternalProject)
 # project name
 project(UIPFramework)
 
+# project version
+set(UIPFramework_VERSION_MAJOR 1)
+set(UIPFramework_VERSION_MINOR 0)
+set(UIPFramework_VERSION_PATCH 0)
+set(UIPFramework_VERSION "${UIPFramework_VERSION_MAJOR}.${UIPFramework_VERSION_MINOR}.${UIPFramework_VERSION_PATCH}-beta2")
+configure_file (
+	"${PROJECT_SOURCE_DIR}/framework/uipf.hpp.in"
+	"${PROJECT_BINARY_DIR}/framework/uipf.hpp"
+)
+include_directories("${PROJECT_BINARY_DIR}")
+
 # CMake settings
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #set(CMAKE_BUILD_TYPE Debug)
