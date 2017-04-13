@@ -6,6 +6,8 @@ independent, reuseable modules which can also be run stand alone as well as in c
 It comes with a Graphical Processing Chain Editor and also a console interface for running the processing
 chains and modules.
 
+> This repository contains the code of version 1.0 of the framework. Version 2.0 and higher can be found on <https://github.com/uipf/uipf>
+
 Installation
 ------------
 
